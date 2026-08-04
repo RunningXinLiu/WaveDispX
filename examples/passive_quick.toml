@@ -1,0 +1,73 @@
+[run]
+name = "passive_quick"
+mode = "passive"
+output_directory = "../output_python/passive_quick"
+workers = 4
+frequency_block_size = 8
+source_block_size = 8
+radial_interpolation_step_m = 0.5
+store_source_responses = false
+
+[[model.layers]]
+thickness_m = 10.0
+vp_mps = 380.0
+vs_mps = 220.0
+density_kgm3 = 2000.0
+qp = inf
+qs = inf
+
+[[model.layers]]
+thickness_m = inf
+vp_mps = 760.0
+vs_mps = 440.0
+density_kgm3 = 2000.0
+qp = inf
+qs = inf
+
+[geometry.receivers]
+layout = "line"
+start_x_m = -100.0
+stop_x_m = 100.0
+spacing_m = 5.0
+y_m = 0.0
+
+[ambient_sources]
+component = "vertical"
+layout = "annulus"
+count = 24
+seed = 42
+inner_radius_m = 250.0
+outer_radius_m = 350.0
+angular_sampling = "stratified"
+
+[noise]
+temporal_model = "stationary_gaussian"
+seed = 314159
+duration_s = 60.0
+dt_s = 0.01
+window_s = 10.0
+overlap = 0.0
+psd_shape = "ricker"
+dominant_frequency_hz = 7.0
+minimum_frequency_hz = 3.0
+maximum_frequency_hz = 10.0
+source_amplitude = 1.0
+independent_sources = true
+event_rate_hz = 0.4
+
+[processing]
+correlation_normalization = "spectral_whitening"
+dispersion_method = "phase_shift"
+frequency_min_hz = 3.5
+frequency_max_hz = 9.5
+velocity_min_mps = 150.0
+velocity_max_mps = 500.0
+velocity_step_mps = 2.0
+distance_taper_fraction = 0.5
+zero_padding = 8.0
+radial_kernel_lookup_step = 0.002
+picker_smoothness = 0.35
+picker_maximum_jump_mps = 30.0
+picker_minimum_energy = 0.05
+rayleigh_modes = 3
+love_modes = 3

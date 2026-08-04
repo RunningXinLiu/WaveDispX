@@ -1,0 +1,42 @@
+# Operating-system and editor metadata
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.asv
+
+# Python caches, environments, test state, and compiled extensions
+__pycache__/
+*.py[cod]
+*.so
+*.dylib
+*.dll
+*.o
+*.a
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+.venv/
+venv/
+
+# Notebook and local tool state
+.ipynb_checkpoints/
+.codegraph/
+.playwright-cli/
+
+# Local credentials and logs
+.env
+.env.*
+*.log
+
+# Generated WaveDispX/MATLAB numerical products.  Source, examples, manuals,
+# and curated documentation screenshots remain tracked.
+/output/
+/output_python/
+/**/output/

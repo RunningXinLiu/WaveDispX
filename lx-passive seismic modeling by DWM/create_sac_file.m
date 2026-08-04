@@ -1,0 +1,20 @@
+function sacfile = create_sac_file(filename, data, lat, lon, SR, i, dt, component)
+    sacfile = readsac(['./','/pulse.sac']);
+    sacfile.FILENAME = filename;
+    sacfile.B = 0;
+    sacfile.DELTA = dt;
+    sacfile.NPTS = length(data);
+    sacfile.E = (length(data)-1)*dt;
+    sacfile.DIST = sqrt(SR.rx(i)^2 + SR.ry(i)^2);
+    sacfile.STLA = lat;
+    sacfile.STLO = lon;
+    sacfile.IFTYPE = 'ITIME';
+    sacfile.DATA1 = data;
+    sacfile.LCALDA = 1;
+    sacfile.DEPMIN = min(sacfile.DATA1);
+    sacfile.DEPMAX = max(sacfile.DATA1);
+    sacfile.DEPMEN = mean(sacfile.DATA1);
+    sacfile.KSTNM = sprintf('R%03d', i);
+    sacfile.KNETWK = 'SY';
+    sacfile.KCMPNM = upper(component);
+end

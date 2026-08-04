@@ -1,0 +1,58 @@
+# Observation-system example: receivers.csv is read directly; this case runs
+# shot S001 from shots.csv.  In the UI, upload shots.csv and select S001.
+[run]
+name = "observation_system_active_S001"
+mode = "active"
+output_directory = "../../output_python/observation_system_active_S001"
+workers = 4
+frequency_block_size = 8
+source_block_size = 1
+radial_interpolation_step_m = 0.5
+store_source_responses = false
+
+[[model.layers]]
+thickness_m = 10.0
+vp_mps = 380.0
+vs_mps = 220.0
+density_kgm3 = 2000.0
+qp = inf
+qs = inf
+
+[[model.layers]]
+thickness_m = inf
+vp_mps = 760.0
+vs_mps = 440.0
+density_kgm3 = 2000.0
+qp = inf
+qs = inf
+
+[geometry.receivers]
+layout = "file"
+coordinates_file = "receivers.csv"
+
+[active_source]
+# Selected row: S001,0.0,0.0 from shots.csv
+x_m = 0.0
+y_m = 0.0
+component = "both"
+wavelet = "ricker"
+dominant_frequency_hz = 5.0
+maximum_frequency_hz = 10.0
+dt_s = 0.01
+
+[processing]
+correlation_normalization = "none"
+dispersion_method = "hankel"
+frequency_min_hz = 2.5
+frequency_max_hz = 8.5
+velocity_min_mps = 120.0
+velocity_max_mps = 500.0
+velocity_step_mps = 2.0
+distance_taper_fraction = 0.0
+zero_padding = 5.0
+radial_kernel_lookup_step = 0.002
+picker_smoothness = 0.3
+picker_maximum_jump_mps = 30.0
+picker_minimum_energy = 0.05
+rayleigh_modes = 3
+love_modes = 3

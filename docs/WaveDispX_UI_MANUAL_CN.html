@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WaveDispX 波场正演与频散分析｜界面操作与完整案例手册</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌊%3C/text%3E%3C/svg%3E">
+  <style>
+    :root {
+      --ink: #18212f;
+      --muted: #647084;
+      --paper: #f4f7fb;
+      --card: #ffffff;
+      --line: #dce3ec;
+      --active: #d64545;
+      --active-soft: #fff1ef;
+      --passive: #117a73;
+      --passive-soft: #eaf8f5;
+      --array: #7557b8;
+      --blue: #225f9c;
+      --shadow: 0 18px 50px rgba(36, 50, 72, .10);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 5% 2%, rgba(34, 95, 156, .09), transparent 29rem),
+        radial-gradient(circle at 98% 18%, rgba(17, 122, 115, .08), transparent 32rem),
+        var(--paper);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    code { background: #eef2f7; border-radius: 6px; padding: .12em .38em; }
+    .layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 28px 22px;
+      border-right: 1px solid var(--line);
+      background: rgba(250, 252, 255, .93);
+      backdrop-filter: blur(16px);
+      z-index: 5;
+    }
+    .brand { font-weight: 850; font-size: 1.25rem; letter-spacing: -.02em; }
+    .brand small { display: block; margin-top: 4px; color: var(--muted); font-size: .78rem; font-weight: 600; }
+    nav { margin-top: 28px; }
+    nav a {
+      display: block;
+      padding: 8px 11px;
+      margin: 3px 0;
+      border-radius: 9px;
+      color: #425066;
+      font-size: .91rem;
+    }
+    nav a:hover, nav a.active { background: #e9eff7; color: #154d82; text-decoration: none; }
+    .side-note { margin-top: 24px; padding: 13px; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); font-size: .82rem; }
+    main { width: min(1480px, 100%); margin: 0 auto; padding: 42px 48px 100px; }
+    .hero {
+      padding: 52px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 28px;
+      color: #fff;
+      background: linear-gradient(130deg, #152a45 0%, #1d5581 55%, #147b73 100%);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .hero::after { content: ""; position: absolute; width: 370px; height: 370px; right: -120px; top: -180px; border: 80px solid rgba(255,255,255,.08); border-radius: 50%; }
+    .eyebrow { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; opacity: .76; font-weight: 750; }
+    h1 { max-width: 940px; font-size: clamp(2.2rem, 4vw, 4.3rem); line-height: 1.08; margin: 15px 0 20px; letter-spacing: -.045em; }
+    .hero p { max-width: 860px; font-size: 1.08rem; opacity: .9; }
+    .hero-badges, .badges { display: flex; flex-wrap: wrap; gap: 9px; }
+    .hero-badges span, .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 999px; font-size: .78rem; font-weight: 750; }
+    .hero-badges span { background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.18); }
+    section { scroll-margin-top: 26px; margin-top: 52px; }
+    h2 { margin: 0 0 18px; font-size: 2rem; letter-spacing: -.025em; }
+    h3 { margin: 24px 0 10px; font-size: 1.25rem; }
+    .lede { max-width: 940px; color: var(--muted); font-size: 1.02rem; }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+    .card { background: rgba(255,255,255,.96); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: 0 8px 28px rgba(34,49,73,.055); }
+    .span-3 { grid-column: span 3; } .span-4 { grid-column: span 4; } .span-6 { grid-column: span 6; } .span-12 { grid-column: span 12; }
+    .step-num { display: inline-grid; place-items: center; width: 31px; height: 31px; border-radius: 50%; background: #1e5e98; color: white; font-weight: 800; }
+    .card p:last-child { margin-bottom: 0; }
+    .callout { border-left: 4px solid var(--blue); padding: 13px 16px; background: #edf5fc; border-radius: 0 12px 12px 0; }
+    .callout.warn { border-color: #d28b18; background: #fff7e7; }
+    .callout.good { border-color: var(--passive); background: var(--passive-soft); }
+    .command { padding: 15px 18px; border-radius: 12px; background: #101923; color: #d9e9f7; overflow-x: auto; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .91rem; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    th, td { text-align: left; vertical-align: top; padding: 10px 13px; border-bottom: 1px solid var(--line); }
+    th { background: #eef3f8; color: #3c4960; font-weight: 760; }
+    tr:last-child td { border-bottom: 0; }
+    .matrix td:first-child { font-weight: 800; white-space: nowrap; }
+    .case {
+      padding: 32px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(255,255,255,.97);
+      box-shadow: var(--shadow);
+    }
+    .case + .case { margin-top: 42px; }
+    .case-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 22px; margin-bottom: 20px; }
+    .case-head h2 { margin-bottom: 5px; }
+    .case-id { color: var(--muted); font-family: ui-monospace, monospace; font-size: .85rem; }
+    .badge.active { color: #9f2727; background: var(--active-soft); }
+    .badge.passive { color: #08635c; background: var(--passive-soft); }
+    .badge.line { color: #225f9c; background: #eaf2fb; }
+    .badge.array { color: #61449d; background: #f0ebfb; }
+    .badge.pass { color: #17683b; background: #eaf7ee; }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0; }
+    .metric { padding: 15px; border: 1px solid var(--line); border-radius: 13px; background: #f8fafc; }
+    .metric small { display: block; color: var(--muted); }
+    .metric strong { display: block; font-size: 1.35rem; margin-top: 2px; }
+    figure { margin: 28px 0; }
+    figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 14px; background: white; cursor: zoom-in; box-shadow: 0 8px 32px rgba(32,46,65,.08); }
+    figcaption { color: var(--muted); margin-top: 9px; font-size: .86rem; }
+    .figure-label { display: inline-block; margin-bottom: 8px; color: #344258; font-weight: 800; }
+    details { border: 1px solid var(--line); border-radius: 12px; background: #fafbfd; margin: 14px 0; }
+    details summary { cursor: pointer; padding: 12px 15px; font-weight: 750; }
+    details > div { padding: 0 15px 15px; color: #46546a; }
+    .file-links { display: flex; flex-wrap: wrap; gap: 9px; margin: 16px 0; }
+    .file-links a { padding: 7px 11px; border: 1px solid #cfd8e5; border-radius: 9px; background: #f8fafc; font-size: .86rem; }
+    .legend { display: flex; gap: 18px; flex-wrap: wrap; color: var(--muted); font-size: .88rem; }
+    .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 10px; align-items: center; margin: 22px 0; }
+    .flow-step { min-height: 116px; display: grid; align-content: center; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: white; text-align: center; }
+    .flow-step strong { display: block; color: #214c73; }
+    .flow-arrow { color: var(--blue); font-size: 1.5rem; font-weight: 900; }
+    .equation { padding: 16px 18px; border-radius: 12px; background: #f7f3ea; border: 1px solid #e4d7bd; color: #3c3428; overflow-x: auto; }
+    .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+    .modal { display: none; position: fixed; z-index: 50; inset: 0; padding: 32px; background: rgba(7,13,22,.93); overflow: auto; }
+    .modal.open { display: block; }
+    .modal img { display: block; max-width: none; width: auto; min-width: min(1400px, 94vw); height: auto; margin: 34px auto; box-shadow: 0 20px 80px #000; }
+    .modal-close { position: fixed; right: 25px; top: 18px; border: 0; border-radius: 999px; background: white; width: 42px; height: 42px; font-size: 1.4rem; cursor: pointer; }
+    footer { margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--muted); font-size: .87rem; }
+    @media (max-width: 1100px) {
+      .layout { display: block; }
+      aside { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      nav { display: flex; overflow-x: auto; gap: 4px; }
+      nav a { white-space: nowrap; }
+      .side-note { display: none; }
+      main { padding: 28px 22px 70px; }
+      .hero { padding: 36px 28px; }
+      .span-3, .span-4, .span-6 { grid-column: span 12; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); text-align: center; }
+    }
+    @media print {
+      aside { display: none; }
+      .layout { display: block; }
+      main { max-width: none; padding: 0; }
+      .hero { color: #111; background: white; box-shadow: none; border: 1px solid #aaa; }
+      .case { break-before: page; box-shadow: none; }
+      figure { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <div class="brand">WaveDispX 手册<small>界面参数 · 完整截图 · 可复现结果</small></div>
+    <nav>
+      <a href="#start">1. 启动与流程</a>
+      <a href="#parameters">2. 参数输入地图</a>
+      <a href="#geometry">3. Line / Array / CSV</a>
+      <a href="#file-survey">4. 文件观测系统示例</a>
+      <a href="#noise-time">5. 被动源位置与时间</a>
+      <a href="#matrix">6. 四案例矩阵</a>
+      <a href="#active-line">7. 主动源 + 线阵</a>
+      <a href="#active-array">8. 主动源 + 面阵</a>
+      <a href="#passive-line">9. 被动源 + 线阵</a>
+      <a href="#passive-array">10. 被动源 + 面阵</a>
+      <a href="#high-modes">11. 物理 3C 高阶基准</a>
+      <a href="#compare">12. 结果比较与方法</a>
+      <a href="#export">13. 运行与导出</a>
+    </nav>
+    <div class="side-note">所有界面截图均为真实浏览器完整滚动页，未裁掉底部参数。点击任意图片可查看原始像素。</div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">WaveDispX / local user manual / 2026-07-30</div>
+      <h1>波场正演与频散分析<br>界面操作与完整案例手册</h1>
+      <p>每个案例把同一组参数、输入审核和最终正演结果一一对应。覆盖主动/被动、线阵/二维面阵，并给出可直接载入界面的 TOML。</p>
+      <div class="hero-badges">
+        <span>4 个高质量案例</span><span>1 套文件观测系统</span><span>Shot CSV 选择</span><span>Poisson 事件表</span><span>中文 hover tips</span><span>离线可打开</span>
+      </div>
+    </header>
+
+    <section id="start">
+      <h2>1. 启动与标准流程</h2>
+      <p class="lede">界面不是只做 preflight。它在一个会话中完成输入、审核、正演、有限记录噪声互相关、频散能量、理论曲线、拾取和结果保存。</p>
+      <pre class="command">conda run -n seisloc wavedispx-ui</pre>
+      <div class="grid">
+        <div class="card span-3"><span class="step-num">1</span><h3>建立算例</h3><p>模板起步、上传 TOML，或在 cell-like 表单中修改模型、Geometry、源与处理参数。</p></div>
+        <div class="card span-3"><span class="step-num">2</span><h3>输入审核</h3><p>先看模型、密度、源—检几何、源时序/PSD、理论频散窗口和采样检查。</p></div>
+        <div class="card span-3"><span class="step-num">3</span><h3>运行</h3><p>逐阶段运行正演、观测/NCF、频散拾取、保存；或点击“一键运行全部”。</p></div>
+        <div class="card span-3"><span class="step-num">4</span><h3>结果导出</h3><p>保存 TOML、HDF5、坐标、拾取、收敛表、manifest 和完整六联汇总图。</p></div>
+      </div>
+      <p class="callout good"><strong>截图阅读：</strong>本手册先给出完整参数页，再给出同一算例的完整审核页和最终结果图。图片没有使用固定高度或裁剪；点击可放大。</p>
+    </section>
+
+    <section id="parameters">
+      <h2>2. 参数输入地图</h2>
+      <p class="lede">界面中每个参数标签右侧的 <strong>?</strong> 都有中文 hover tip，包含物理意义、单位和常见影响。下表说明参数组与正演流程的关系。</p>
+      <table>
+        <thead><tr><th>参数组</th><th>界面输入</th><th>进入哪一步</th><th>重点检查</th></tr></thead>
+        <tbody>
+          <tr><td>速度—密度模型</td><td>层厚、Vp、Vs、ρ、Qp、Qs</td><td>离散波数法 Green 函数、理论频散</td><td>Vp &gt; Vs、末层为半空间、单位正确</td></tr>
+          <tr><td>接收器 Geometry</td><td>线阵、二维面阵或 x_m,y_m CSV</td><td>距离采样、孔径、空间混叠</td><td>台数、孔径、源检零距、径向分箱</td></tr>
+          <tr><td>主动源</td><td>炮点、分量、Ricker 主频、fmax、dt</td><td>炮集与 Rayleigh/Love 成像</td><td>Nyquist、最短周期采样、频带</td></tr>
+          <tr><td>被动源空间分布</td><td>源环、源线或 CSV；源数、种子、方位采样</td><td>有限记录照明与 Green 传递函数</td><td>方位缺口、源—检距离、独立源数</td></tr>
+          <tr><td>噪声时间与 PSD</td><td>时长、dt、窗长、PSD、随机种子</td><td>混合接收器记录与 NCF</td><td>独立窗数、相关窗长度、PSD 覆盖</td></tr>
+          <tr><td>频散处理</td><td>phase shift / Hankel-FJ、f、c、dc、taper</td><td>频散能量和拾取</td><td>理论曲线是否落在扫描窗内</td></tr>
+          <tr><td>高级计算</td><td>workers、分块、径向插值、归一化、补零</td><td>速度、内存和数值误差</td><td>先保留模板值，再做敏感性测试</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="geometry">
+      <h2>3. Line、Array 与文件 Geometry</h2>
+      <div class="grid">
+        <div class="card span-4"><h3>参数设计｜线阵</h3><p>输入 x 起点、终点、间距和固定 y。适合一维测线，空间采样含义直接，计算速度最快。</p></div>
+        <div class="card span-4"><h3>参数设计｜二维面阵</h3><p>分别设置 x/y 起止和间距。主动源使用实际径向源距；被动源把台站对按 <code>distance_bin_m</code> 归并。</p></div>
+        <div class="card span-4"><h3>文件输入｜CSV</h3><p>任意二维阵列使用 <code>x_m,y_m</code> 两列。界面提供模板下载；坐标必须有限且不能重复。</p></div>
+      </div>
+      <p class="callout"><strong>面阵预检：</strong>主动面阵的空间采样用“唯一径向源距的中位间隔”估计；被动面阵用“台站对径向距离箱宽度”估计。频散成像看到的是这些径向采样，而不是笛卡尔最近台距本身。</p>
+      <p class="callout warn"><strong>当前边界：</strong>二维/不规则阵列在频散阶段按距离做径向平均，不保留方位各向异性。如果目标是方向性频散，应先按方位扇区分组。</p>
+    </section>
+
+    <section id="file-survey">
+      <h2>4. 可直接输入的观测系统示例</h2>
+      <p class="lede">下面不是格式示意，而是一套已校验、可直接运行的文件输入。接收器、主动炮点和被动噪声源都有明确的平面坐标；CSV 可在文本编辑器、Excel 或 GIS 中生成。</p>
+      <div class="file-links"><a href="../examples/observation_system/receivers.csv">接收器 receivers.csv</a><a href="../examples/observation_system/shots.csv">炮点 shots.csv</a><a href="../examples/observation_system/noise_sources.csv">噪声源 noise_sources.csv</a><a href="../examples/observation_system/active_selected_shot.toml">主动配置</a><a href="../examples/observation_system/passive_poisson.toml">被动 Poisson 配置</a><a href="../examples/observation_system/README_CN.md">示例说明</a></div>
+      <table>
+        <thead><tr><th>文件</th><th>关键列</th><th>本例内容</th><th>程序如何使用</th></tr></thead>
+        <tbody>
+          <tr><td><code>receivers.csv</code></td><td><code>receiver_id,x_m,y_m</code></td><td>21 个轻微弯曲的不规则线阵接收点</td><td><code>receiver_id</code> 只用于识别；正演读取 x/y 并计算实际源检距。</td></tr>
+          <tr><td><code>shots.csv</code></td><td><code>shot_id,x_m,y_m</code></td><td>S001=(0,0)、S002=(-120,0)、S003=(120,0) m</td><td>界面载入多炮表后选择一炮；当前计算核心为“一炮一个算例”。</td></tr>
+          <tr><td><code>noise_sources.csv</code></td><td><code>source_id,x_m,y_m</code></td><td>48 个围绕阵列的指定噪声源</td><td><code>layout=file</code> 时逐行使用给定位置，不再用空间种子随机放置。</td></tr>
+        </tbody>
+      </table>
+      <p class="callout"><strong>多炮的边界要说清楚：</strong>Shot CSV 可以保存整个观测系统，但一次正演会在界面中选择其中一行。输出 <code>input.toml</code> 把选中炮的 x/y 固化到 <code>[active_source]</code>，输出 <code>sources.csv</code> 保存该炮位置。若要跑 S001/S002/S003 三炮，应建立三个算例或批处理三个 TOML。</p>
+      <figure><span class="figure-label">A. Shot CSV 实际界面｜完整滚动参数页</span><img src="manual_assets/active-shot-csv-parameters-full.png" alt="主动源 Shot CSV 上传和炮号选择的完整界面"><figcaption>主动快速模板中上传 shots.csv 后，界面列出文件并显示所选 S001=(0,0) m；下方完整保留分量、Ricker 子波、Hankel 频散范围和校验按钮。截图为 1600×2246 px 的真实完整滚动页。</figcaption></figure>
+      <div class="grid">
+        <figure class="span-6"><span class="figure-label">B. 文件接收器 + 选中 S001 炮点</span><img src="manual_assets/observation-active-preflight.png" alt="文件输入接收器和主动炮点的完整审核图"><figcaption>红星为所选 S001=(0,0) m；蓝色倒三角为 receivers.csv 的 21 个接收器。Vp、Vs、ρ、Ricker 子波与理论频散同时显示。</figcaption></figure>
+        <figure class="span-6"><span class="figure-label">C. 文件接收器 + 48 个文件噪声源</span><img src="manual_assets/observation-passive-preflight.png" alt="文件输入接收器和被动噪声源的完整审核图"><figcaption>红星逐点对应 noise_sources.csv；左下是固定 seed 后的 Poisson-Ricker 单源时序预览。</figcaption></figure>
+      </div>
+      <pre class="command">conda run -n seisloc wavedispx validate examples/observation_system/active_selected_shot.toml
+conda run -n seisloc wavedispx validate examples/observation_system/passive_poisson.toml</pre>
+    </section>
+
+    <section id="noise-time">
+      <h2>5. 被动噪声源的位置、PSD 与激发时间</h2>
+      <p class="lede">空间随机性和时间随机性是两个独立问题：<code>ambient_sources.seed</code> 只负责参数化源位置；<code>noise.seed</code> 负责有限记录中的随机波形或离散事件。文件输入位置时，空间 seed 不改变 CSV 坐标。</p>
+      <table>
+        <thead><tr><th>时间模型</th><th>有没有离散激发时刻</th><th>每个独立窗怎样生成</th><th>运行输出</th></tr></thead>
+        <tbody>
+          <tr><td><code>stationary_gaussian</code></td><td>没有。它表示整个窗内连续存在的带限平稳随机过程。</td><td>PSD 有效频带内生成独立复高斯系数，再乘以 PSD 振幅谱并做 iFFT。</td><td>保存混合记录和 NCF，不生成事件目录。</td></tr>
+          <tr><td><code>poisson_ricker</code></td><td>有。每个源、每个窗都有随机事件数和时刻。</td><td>N~Poisson(λTw)；τ~Uniform(0,Tw)；极性 ±1，权重 0.5–1.0。</td><td>额外保存 <code>noise_events.csv</code> 和 <code>results.h5/noise_events/</code>。</td></tr>
+        </tbody>
+      </table>
+      <pre class="equation">第 w 个窗、第 s 个源：
+Nₛw ~ Poisson(event_rate_hz × window_s)
+τₙ ~ Uniform(0, window_s)
+t_absolute = w × window_s + τₙ
+Sₛw(f) = A_PSD(f) × Σₙ aₙ exp(-i 2π f τₙ)</pre>
+      <p><code>noise.seed=314159</code> 会固定事件数、时刻、极性和权重，因此同一配置可以逐事件复现。<code>independent_sources=true</code> 时每个源有独立时间函数；关闭时所有位置共享同一个时间函数，只适合相干源敏感性试验。</p>
+      <div class="flow" aria-label="被动有限记录计算流程">
+        <div class="flow-step"><strong>1. 源位置</strong>环 / 线随机生成，或直接读取 noise_sources.csv</div><div class="flow-arrow">→</div>
+        <div class="flow-step"><strong>2. 源时序</strong>Gaussian 连续噪声，或 Poisson 离散事件 × PSD</div><div class="flow-arrow">→</div>
+        <div class="flow-step"><strong>3. 离散波数法传播并混合</strong>uᵣ(f)=ΣₛGᵣₛ(f)Sₛ(f)</div><div class="flow-arrow">→</div>
+        <div class="flow-step"><strong>4. 接收端处理</strong>混合记录分窗 → 接收器互谱/互相关 → NCF → phase shift</div>
+      </div>
+      <p class="callout good"><strong>关键结论：</strong>程序内部不是先对每个噪声源的理论 Green 函数做互相关。所有源先传播并叠加成真实的有限时长接收器波形，源维度在混合后消失；NCF 只使用这些接收器记录。</p>
+      <h3>本例实际输出的事件表</h3>
+      <div class="file-links"><a href="../output_python/observation_system_passive_poisson/noise_events.csv">打开完整 noise_events.csv</a><a href="../output_python/observation_system_passive_poisson/manifest.json">查看 manifest</a><a href="../output_python/observation_system_passive_poisson/results.h5">下载 results.h5</a></div>
+      <table>
+        <thead><tr><th>window_index</th><th>source_index / 坐标</th><th>窗内时刻</th><th>绝对时刻</th><th>weight</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0 / (303.612, 9.144) m</td><td>5.098369 s</td><td>5.098369 s</td><td>-0.834707</td></tr>
+          <tr><td>0</td><td>0 / (303.612, 9.144) m</td><td>4.549180 s</td><td>4.549180 s</td><td>+0.936035</td></tr>
+          <tr><td>0</td><td>1 / (313.908, 50.983) m</td><td>0.853924 s</td><td>0.853924 s</td><td>-0.666318</td></tr>
+        </tbody>
+      </table>
+      <p class="callout warn"><strong>这个 48 源、120 s 算例用于解释输入与事件机制，不是高收敛生产参数。</strong>要获得本手册后面那种连续、干净的被动频散，应采用 192–384 个源和 600–1800 s 的独立窗叠加。</p>
+    </section>
+
+    <section id="matrix">
+      <h2>6. 本手册的四案例矩阵</h2>
+      <table class="matrix">
+        <thead><tr><th>案例</th><th>接收器</th><th>源/记录</th><th>频散方法</th><th>最终质量</th></tr></thead>
+        <tbody>
+          <tr><td>主动 + 线阵</td><td>200 台，199 m</td><td>Ricker 20 Hz，双分量</td><td>Hankel/FJ，5–50 Hz</td><td>Rayleigh MAE 1.94 m/s；Love 1.25 m/s</td></tr>
+          <tr><td>主动 + 面阵</td><td>21×21，441 台，282.8 m</td><td>Ricker 20 Hz，双分量</td><td>Hankel/FJ，5–50 Hz</td><td>Rayleigh MAE 1.84 m/s；Love 1.12 m/s</td></tr>
+          <tr><td>被动 + 线阵</td><td>121 台，600 m</td><td>384 源，1800 s，90 窗</td><td>Phase shift，5–18.8 Hz</td><td>Rayleigh MAE 0.80 m/s；无歧义频点</td></tr>
+          <tr><td>被动 + 面阵</td><td>21×21，441 台，565.7 m</td><td>384 源，1200 s，60 窗</td><td>Phase shift，5–18.8 Hz</td><td>Rayleigh MAE 0.84 m/s；无歧义频点</td></tr>
+        </tbody>
+      </table>
+      <p class="lede">四个案例使用相同两层模型：上层厚 10 m，Vp/Vs/ρ = 380/220/2000；半空间为 760/440/2000。这样 Geometry 和源类型的差别不会与模型差别混在一起。</p>
+    </section>
+
+    <section class="case" id="active-line">
+      <div class="case-head"><div><div class="badges"><span class="badge active">ACTIVE</span><span class="badge line">LINE</span><span class="badge pass">READY / CLEAN RIDGE</span></div><h2>7. 主动源 + 线阵</h2><div class="case-id">manual_active_line</div></div></div>
+      <div class="file-links"><a href="../examples/manual_active_line.toml">打开完整 TOML</a><a href="../output_python/manual_active_line/manifest.json">查看 manifest</a><a href="../output_python/manual_active_line/picked_rayleigh.csv">Rayleigh 拾取</a><a href="../output_python/manual_active_line/picked_love.csv">Love 拾取</a></div>
+      <table><tbody>
+        <tr><th>Geometry</th><td>x=1–200 m，Δx=1 m，y=0；200 台；炮点 (0,0)</td><th>源</th><td>vertical + horizontal；Ricker 20 Hz；fmax=100 Hz；dt=0.001 s</td></tr>
+        <tr><th>处理</th><td>Hankel/FJ；5–50 Hz；100–500 m/s；dc=1 m/s</td><th>高级</th><td>workers=自动；频率块 16；径向 Green 插值 0.5 m</td></tr>
+      </tbody></table>
+      <div class="metrics"><div class="metric"><small>接收器 / 孔径</small><strong>200 / 199 m</strong></div><div class="metric"><small>Rayleigh MAE</small><strong>1.94 m/s</strong></div><div class="metric"><small>Love MAE</small><strong>1.25 m/s</strong></div><div class="metric"><small>总计算时间</small><strong>2.94 s</strong></div></div>
+      <figure><span class="figure-label">A. 完整参数页（1600×完整内容高度）</span><img src="manual_assets/active-line-parameters-full.png" alt="主动线阵完整参数界面"><figcaption>从 TOML 读取后的完整建立算例页面；模型、线阵、主动炮点、Ricker 子波和 Hankel 扫描窗处于同一页。</figcaption></figure>
+      <figure><span class="figure-label">B. 完整输入审核页</span><img src="manual_assets/active-line-review-full.png" alt="主动线阵完整输入审核界面"><figcaption>所有必需和建议检查通过后才进入正演。</figcaption></figure>
+      <figure><span class="figure-label">C. 原始六联 preflight 图</span><img src="manual_assets/manual_active_line-preflight.png" alt="主动线阵六联输入审核图"><figcaption>独立 PNG 便于放大检查模型、Geometry、子波、谱和理论曲线。</figcaption></figure>
+      <figure><span class="figure-label">D. 最终完整结果</span><img src="manual_assets/manual_active_line-summary.png" alt="主动线阵最终完整结果"><figcaption>白虚线为理论模态，黑线为自动拾取；Rayleigh 与 Love 基阶主能量脊连续。</figcaption></figure>
+      <p class="callout good"><strong>结果解释：</strong>线阵 1 m 采样能够支持 50 Hz 上限；Hankel/FJ 图中的重复弧形能量包含理论高阶模态和有限孔径旁瓣，基阶拾取与理论曲线的 MAE 小于 2 m/s。</p>
+    </section>
+
+    <section class="case" id="active-array">
+      <div class="case-head"><div><div class="badges"><span class="badge active">ACTIVE</span><span class="badge array">2-D ARRAY</span><span class="badge pass">READY / CLEAN RIDGE</span></div><h2>8. 主动源 + 二维面阵</h2><div class="case-id">manual_active_array</div></div></div>
+      <div class="file-links"><a href="../examples/manual_active_array.toml">打开完整 TOML</a><a href="../output_python/manual_active_array/manifest.json">查看 manifest</a><a href="../output_python/manual_active_array/picked_rayleigh.csv">Rayleigh 拾取</a><a href="../output_python/manual_active_array/picked_love.csv">Love 拾取</a></div>
+      <table><tbody>
+        <tr><th>Geometry</th><td>x=5–205 m、y=-100–100 m；Δx=Δy=10 m；21×21=441 台</td><th>径向采样</th><td>炮点 (0,0)；唯一径向源距 194 个；中位间隔约 0.91 m</td></tr>
+        <tr><th>源</th><td>双分量 Ricker 20 Hz；fmax=100 Hz；dt=0.001 s</td><th>处理</th><td>Hankel/FJ；5–50 Hz；100–500 m/s；dc=1 m/s</td></tr>
+      </tbody></table>
+      <div class="metrics"><div class="metric"><small>接收器 / 孔径</small><strong>441 / 282.8 m</strong></div><div class="metric"><small>Rayleigh MAE</small><strong>1.84 m/s</strong></div><div class="metric"><small>Love MAE</small><strong>1.12 m/s</strong></div><div class="metric"><small>总计算时间</small><strong>3.69 s</strong></div></div>
+      <figure><span class="figure-label">A. 完整参数页</span><img src="manual_assets/active-array-parameters-full.png" alt="主动面阵完整参数界面"><figcaption>二维面阵六个边界/间距字段和炮点参数完整可见。</figcaption></figure>
+      <figure><span class="figure-label">B. 完整输入审核页</span><img src="manual_assets/active-array-review-full.png" alt="主动面阵完整输入审核界面"><figcaption>预检按实际径向源距间隔判断空间采样，不把 10 m 笛卡尔网格间距直接当成频散道距。</figcaption></figure>
+      <figure><span class="figure-label">C. 原始六联 preflight 图</span><img src="manual_assets/manual_active_array-preflight.png" alt="主动面阵六联输入审核图"></figure>
+      <figure><span class="figure-label">D. 最终完整结果</span><img src="manual_assets/manual_active_array-summary.png" alt="主动面阵最终完整结果"><figcaption>面阵经径向源距采样后，Rayleigh/Love 基阶与线阵结果一致，Geometry 图明确显示 21×21 接收器。</figcaption></figure>
+      <p class="callout"><strong>为什么 10 m 网格仍能得到密集径向采样：</strong>二维网格中存在大量不同的 √(x²+y²) 源距；本例 441 台产生 194 个唯一径向偏移，径向间隔的中位数约 0.91 m。</p>
+    </section>
+
+    <section class="case" id="passive-line">
+      <div class="case-head"><div><div class="badges"><span class="badge passive">PASSIVE</span><span class="badge line">LINE</span><span class="badge pass">90 WINDOWS / CLEAN RIDGE</span></div><h2>9. 被动源 + 线阵</h2><div class="case-id">manual_passive_line</div></div></div>
+      <div class="file-links"><a href="../examples/manual_passive_line.toml">打开完整 TOML</a><a href="../output_python/manual_passive_line/manifest.json">查看 manifest</a><a href="../output_python/manual_passive_line/convergence.csv">收敛表</a><a href="../output_python/manual_passive_line/picked_rayleigh.csv">Rayleigh 拾取</a></div>
+      <table><tbody>
+        <tr><th>Geometry</th><td>x=-300–300 m，Δx=5 m；121 台；孔径 600 m</td><th>噪声源</th><td>384 个竖直随机源；800–1200 m 源环；分层方位采样；seed=42</td></tr>
+        <tr><th>有限记录</th><td>stationary Gaussian；1800 s；dt=0.005 s；20 s 窗；90 个独立窗</td><th>PSD / 处理</th><td>Ricker PSD，3–18.8 Hz，主频 12 Hz；白化；phase shift；taper=0.5</td></tr>
+      </tbody></table>
+      <div class="metrics"><div class="metric"><small>噪声源 / 独立窗</small><strong>384 / 90</strong></div><div class="metric"><small>Rayleigh MAE</small><strong>0.80 m/s</strong></div><div class="metric"><small>歧义频点</small><strong>0%</strong></div><div class="metric"><small>总计算时间</small><strong>16.08 s</strong></div></div>
+      <figure><span class="figure-label">A. 完整参数页</span><img src="manual_assets/passive-line-parameters-full.png" alt="被动线阵完整参数界面"><figcaption>384 源、1800 s、PSD、线阵和 phase-shift 参数均完整显示；底部状态对应 manual_passive_line。</figcaption></figure>
+      <figure><span class="figure-label">B. 完整输入审核页</span><img src="manual_assets/passive-line-review-full.png" alt="被动线阵完整输入审核界面"><figcaption>源环方位覆盖、孔径、相关窗、径向 Green 插值和空间混叠均通过。</figcaption></figure>
+      <figure><span class="figure-label">C. 原始六联 preflight 图</span><img src="manual_assets/manual_passive_line-preflight.png" alt="被动线阵六联输入审核图"></figure>
+      <figure><span class="figure-label">D. 最终完整结果</span><img src="manual_assets/manual_passive_line-summary.png" alt="被动线阵最终完整结果"><figcaption>左下为全部噪声源混合后的接收器记录所计算的对称 NCF；中下为 phase-shift 频散能量。</figcaption></figure>
+      <p class="callout good"><strong>这是高收敛被动示例：</strong>60 s 只有 3 个窗时频散相对最终图 L2 差异为 0.635；600 s/30 窗降到 0.149；1800 s/90 窗作为最终参考，拾取 MAE 为 0.80 m/s。</p>
+      <p>这里不是逐源理想 Green 互相关。程序先为每个噪声源生成独立有限时长随机过程，经 Green 传递函数传播后在每个接收器混合，再仅从混合接收器波形分窗计算 NCF。</p>
+    </section>
+
+    <section class="case" id="passive-array">
+      <div class="case-head"><div><div class="badges"><span class="badge passive">PASSIVE</span><span class="badge array">2-D ARRAY</span><span class="badge pass">60 WINDOWS / CLEAN RIDGE</span></div><h2>10. 被动源 + 二维面阵</h2><div class="case-id">manual_passive_array</div></div></div>
+      <div class="file-links"><a href="../examples/manual_passive_array.toml">打开完整 TOML</a><a href="../output_python/manual_passive_array/manifest.json">查看 manifest</a><a href="../output_python/manual_passive_array/convergence.csv">收敛表</a><a href="../output_python/manual_passive_array/picked_rayleigh.csv">Rayleigh 拾取</a></div>
+      <table><tbody>
+        <tr><th>Geometry</th><td>x/y=-200–200 m；Δx=Δy=20 m；21×21=441 台；孔径 565.7 m</td><th>径向分箱</th><td>distance_bin=5 m；台站对按距离归并后做 phase shift</td></tr>
+        <tr><th>噪声源</th><td>384 个竖直源；800–1200 m 源环；分层方位采样</td><th>有限记录</th><td>1200 s；dt=0.01 s；20 s 窗；60 个独立窗；Ricker PSD 3–18.8 Hz</td></tr>
+      </tbody></table>
+      <div class="metrics"><div class="metric"><small>接收器 / 台站对</small><strong>441 / 97,020</strong></div><div class="metric"><small>Rayleigh MAE</small><strong>0.84 m/s</strong></div><div class="metric"><small>频散 L2：600→1200 s</small><strong>0.034</strong></div><div class="metric"><small>总计算时间</small><strong>314.84 s</strong></div></div>
+      <figure><span class="figure-label">A. 完整参数页</span><img src="manual_assets/passive-array-parameters-full.png" alt="被动面阵完整参数界面"><figcaption>21×21 面阵、5 m 径向距离箱、384 源和 1200 s 有限记录均在同一完整页面中。</figcaption></figure>
+      <figure><span class="figure-label">B. 完整输入审核页</span><img src="manual_assets/passive-array-review-full.png" alt="被动面阵完整输入审核界面"><figcaption>运行状态为 READY。唯一警告是 PSD 截止频率处每周期 5.3 个采样点；它是建议项，Nyquist 与所有必需检查均通过。</figcaption></figure>
+      <figure><span class="figure-label">C. 原始六联 preflight 图</span><img src="manual_assets/manual_passive_array-preflight.png" alt="被动面阵六联输入审核图"></figure>
+      <figure><span class="figure-label">D. 最终完整结果</span><img src="manual_assets/manual_passive_array-summary.png" alt="被动面阵最终完整结果"><figcaption>加密到 441 台并采用 5 m 径向箱后，高速度旁瓣明显下降，基阶能量连续且拾取贴合理论曲线。</figcaption></figure>
+      <p class="callout good"><strong>为什么这版比 11×11 面阵好：</strong>接收器从 121 台加密到 441 台，台站对从 7,260 增至 97,020，径向箱从 10 m 缩小为 5 m。频散图的基阶更窄、更连续，MAE 从视觉异常案例改善到 0.84 m/s。</p>
+      <p class="callout warn"><strong>计算代价：</strong>面阵 NCF 需要处理大量台站对。本机此例约 315 s、峰值内存约 1.60 GiB；时间明显高于被动线阵，属于换取径向覆盖的真实成本。</p>
+    </section>
+
+    <section class="case" id="high-modes">
+      <div class="case-head"><div><div class="badges"><span class="badge active">ACTIVE</span><span class="badge passive">PASSIVE 3C</span><span class="badge pass">192 SOURCES / 1800 s</span></div><h2>11. 物理三分量高阶模态基准</h2><div class="case-id">active_high_modes_3c + passive_high_modes_3c</div></div></div>
+      <div class="file-links"><a href="../examples/active_high_modes_3c.toml">主动完整 TOML</a><a href="../examples/passive_high_modes_3c.toml">被动完整 TOML</a><a href="../output_python/passive_high_modes_3c/convergence.csv">60/600/1800 s 收敛表</a><a href="../output_python/passive_high_modes_3c/manifest.json">被动 manifest</a></div>
+      <table><tbody>
+        <tr><th>模型</th><td>5 m：Vp/Vs/ρ=340/180/1850；15 m：560/300/2000；半空间：1050/600/2200</td><th>目的</th><td>把多个高阶截止频率放入 3–28 Hz，并增强 RR 对高阶 Rayleigh 的耦合。</td></tr>
+        <tr><th>主动</th><td>165 台，2 m 道距，双分量 Ricker；联合 RR/ZR/RZ/ZZ</td><th>被动</th><td>133 台，3 m 道距；192 个 Fx/Fy/Fz 源；1800 s/90 窗；RR/TT/ZZ NCF</td></tr>
+        <tr><th>方法</th><td colspan="3">主方法保留 Hankel（主动）和 phase-shift（被动），同时输出 Bessel/FJ 与另外两种方法对照。</td></tr>
+      </tbody></table>
+      <p class="callout"><strong>3C 不是后处理造能量：</strong>每个噪声源先产生独立全局 Fx/Fy/Fz；按每个源—接收器方位分解为 Fr/Ft，用 RR/TT/ZR/RZ/ZZ Green 张量传播并旋回 X/Y/Z。互相关阶段只看混合接收记录；二维阵列还会针对每一个台站对重新旋成 RR/TT。</p>
+      <figure><span class="figure-label">A. 被动 192 源 / 1800 s 完整结果</span><img src="../output_python/passive_high_modes_3c/summary.png" alt="被动物理三分量高阶模态完整结果"><figcaption>同一张图明确给出三层 Vp/Vs、密度、192 源与线阵 Geometry、ZZ NCF、主 phase-shift 频散和输入 PSD。</figcaption></figure>
+      <figure><span class="figure-label">B. ZZ、RR 与联合 Rayleigh</span><img src="../output_python/passive_high_modes_3c/passive_components.png" alt="被动三分量频散对照"><figcaption>RR 对高阶的响应明显强于 ZZ；联合图只做分量归一化 RMS，原始 RR/ZZ 图始终单独保存供核验。</figcaption></figure>
+      <figure><span class="figure-label">C. Phase-shift / Bessel(FJ) / Hankel</span><img src="../output_python/passive_high_modes_3c/passive_method_comparison.png" alt="被动三种频散方法对照"><figcaption>FJ/Hankel 对第一、第二高阶的理论曲线支持更强，但有限线阵的周期旁瓣也更多；不能把每条亮纹都解释成新模态。</figcaption></figure>
+      <p class="callout good"><strong>定量结果：</strong>主动联合图第二条高阶的中位归一化能量约 0.51，约 69% 有效频点高于 0.35；RR 单分量对该阶的支持率约 96%，ZZ 为 0%。被动 1800 s 中，600→1800 s 的 NCF 相对 L2 为 0.163、频散图为 0.223，说明基本阶已稳而高阶仍受物理激发与有限孔径限制。</p>
+    </section>
+
+    <section id="compare">
+      <h2>12. 结果比较与方法选择</h2>
+      <table>
+        <thead><tr><th>问题</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr><td>主动源用什么成像？</td><td>四案例中的主动源使用 Hankel/FJ。它利用柱面波径向结构，Rayleigh 和 Love 都可计算。</td></tr>
+          <tr><td>被动源用什么成像？</td><td>被动 NCF 使用 phase shift：对径向距离道集按候选相速度补偿相位并叠加。</td></tr>
+          <tr><td>背景噪声是否内部互相关？</td><td>是。先混合所有源形成有限时长接收器记录，再对接收器记录分窗做互相关/互谱叠加；不是直接拿逐源理论 Green 相关冒充数据。</td></tr>
+          <tr><td>为什么被动线阵比快速模板好？</td><td>384 个方位分层源 + 1800 s/90 窗，使非相干波动衰减；快速模板的 24 源/60 s 只用于验通。</td></tr>
+          <tr><td>面阵为什么慢？</td><td>接收器数增加会使台站对近似按 N² 增长；441 台对应 97,020 个唯一台站对。</td></tr>
+          <tr><td>图中的旁瓣都是假频吗？</td><td>不是。部分是有限孔径和离散距离采样产生的成像旁瓣，部分可对应理论高阶模态。应看理论曲线、拾取误差、脊集中度和收敛表共同判断。</td></tr>
+        </tbody>
+      </table>
+      <div class="legend"><span><i class="dot" style="background:white;border:1px solid #666"></i>白虚线：理论模态</span><span><i class="dot" style="background:#111"></i>黑线：自动拾取</span><span><i class="dot" style="background:#e34b3d"></i>暖色：归一化高能量</span></div>
+    </section>
+
+    <section id="export">
+      <h2>13. 运行、复现与导出</h2>
+      <h3>界面运行</h3>
+      <ol>
+        <li>在“建立算例”上传本手册对应的 TOML，点击“读取 TOML”。</li>
+        <li>点击“校验并绘制输入”，切到“输入审核”，确认 READY 和六联图。</li>
+        <li>第一次按 1→2→3→4 分阶段运行；稳定后可使用“一键运行全部”。</li>
+        <li>在“结果与导出”下载完整 TOML、拾取、收敛表和 manifest。</li>
+      </ol>
+      <h3>命令行全盘执行</h3>
+      <pre class="command">conda run -n seisloc wavedispx run examples/manual_active_line.toml
+conda run -n seisloc wavedispx run examples/manual_active_array.toml
+conda run -n seisloc wavedispx run examples/manual_passive_line.toml
+conda run -n seisloc wavedispx run examples/manual_passive_array.toml</pre>
+      <details><summary>输出文件说明</summary><div><code>input.toml</code> 为可复现输入；<code>results.h5</code> 保存波形/NCF/频散矩阵；<code>receivers.csv</code> 与 <code>sources.csv</code> 保存本次实际使用的 Geometry；<code>picked_*.csv</code> 为拾取；<code>convergence.csv</code> 为被动时长收敛；Poisson 模型额外输出 <code>noise_events.csv</code>；<code>manifest.json</code> 保存运行时间、内存和质量指标。</div></details>
+      <p class="callout"><strong>建议交付给频散项目的最小包：</strong>TOML + receivers.csv + sources.csv + results.h5 + manifest.json。这样对方既能读取原始/NCF 道集，也能核对模型、Geometry、源与处理参数。</p>
+    </section>
+
+    <footer>本手册中的四套结果均由本机 <code>seisloc</code> 环境和 C++17/pybind11 离散波数法（DWM）核心实际运行生成。性能数字与当前机器有关；物理参数、随机种子和输出质量指标可由所附 TOML/manifest 复现。</footer>
+  </main>
+</div>
+
+<div class="modal" id="imageModal" aria-hidden="true"><button class="modal-close" aria-label="关闭">×</button><img alt="放大图"></div>
+<script>
+  const modal = document.getElementById('imageModal');
+  const modalImage = modal.querySelector('img');
+  document.querySelectorAll('figure img').forEach(img => img.addEventListener('click', () => {
+    modalImage.src = img.src; modalImage.alt = img.alt; modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false');
+  }));
+  const closeModal = () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); modalImage.removeAttribute('src'); };
+  modal.querySelector('button').addEventListener('click', closeModal);
+  modal.addEventListener('click', event => { if (event.target === modal) closeModal(); });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeModal(); });
+  const navLinks = [...document.querySelectorAll('nav a')];
+  const targets = navLinks.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+  const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id));
+  }), { rootMargin: '-20% 0px -70% 0px' });
+  targets.forEach(target => observer.observe(target));
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<title>WaveDispX 原生桌面工作台手册</title>
+<style>
+:root{--navy:#172638;--blue:#2f80ed;--ink:#172433;--muted:#617285;--line:#dbe3eb;--bg:#f4f7fa;--ok:#daf4e7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.72 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}
+header{background:linear-gradient(135deg,var(--navy),#254b70);color:white;padding:54px max(28px,calc((100% - 1220px)/2))}header h1{font-size:40px;margin:0 0 8px}header p{margin:0;color:#c9d8e8;font-size:18px}
+main{max-width:1220px;margin:28px auto 80px;padding:0 24px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:26px;margin:20px 0;box-shadow:0 5px 18px #16324b0c}
+h2{margin-top:0;font-size:26px}h3{font-size:20px;margin-top:28px}.lead{font-size:17px}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.step{border-left:4px solid var(--blue);background:#f0f6ff;padding:14px;border-radius:7px}.step b{display:block;color:#175fbb}
+code,pre{font-family:Menlo,Consolas,monospace}pre{background:#121d29;color:#e3eef9;padding:16px;border-radius:9px;overflow:auto}.shot{width:100%;height:auto;border:1px solid var(--line);border-radius:10px;display:block;margin:14px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.case{border:1px solid var(--line);border-radius:10px;padding:16px}.case h3{margin-top:0}.tag{display:inline-block;background:#e9f2ff;color:#175fbb;padding:2px 9px;border-radius:99px;margin-right:5px;font-size:13px}
+table{border-collapse:collapse;width:100%}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#edf3f8}.ok{background:var(--ok);border-left:5px solid #168f5b;padding:14px}.warn{background:#fff4d8;border-left:5px solid #d79512;padding:14px}a{color:#1769c2}
+@media(max-width:900px){.flow,.grid{grid-template-columns:1fr}header h1{font-size:31px}}
+</style>
+</head>
+<body>
+<header><h1>WaveDispX Desktop</h1><p>主动 / 被动波场正演、真实有限记录互相关与频散分析 · PySide6 原生工作台</p></header>
+<main>
+<section class="card"><h2>启动</h2><p class="lead">无需浏览器，无需打包成 .app；直接在 <code>seisloc</code> 环境运行。</p><pre>cd /Volumes/lx_exFAT/PassiveFW_versionstable
+conda run -n seisloc python -m pip install -e . --no-build-isolation
+conda run -n seisloc wavedispx-desktop</pre><p>源码入口：<code>conda run -n seisloc python -m wavedispx.desktop</code></p><div class="ok">桌面界面没有另一套简化算法。所有按钮均调用与 CLI、Notebook、Streamlit 相同的 <code>CaseSession → WaveDispXWorkflow</code>。</div></section>
+
+<section class="card"><h2>五步工作流</h2><div class="flow"><div class="step"><b>1 建立算例</b>模板、参数树、完整 TOML、文件输入</div><div class="step"><b>2 输入审核</b>模型、Geometry、PSD、理论曲线和 required 检查</div><div class="step"><b>3 分阶段计算</b>后台线程运行正演、波形/NCF、频散</div><div class="step"><b>4 结果浏览</b>完整 summary、对照图、HDF5/CSV/manifest</div><div class="step"><b>5 流程与方法</b>phase shift、FJ、Hankel 与收敛边界</div></div><img class="shot" src="images/desktop_passive_grid_parameters.png" alt="集中参数页"><p>双击当前值列编辑。每个参数使用中文名称与独立单位列；悬停或单击后，下方蓝色帮助卡持续显示“控制什么、允许/约束、推荐起点、调大/调小影响和当前设置判断”。模式、布局、分量、方法及开关使用带中文解释的下拉选项；写入 TOML 的仍是标准英文值。“参数树 ↔ 完整 TOML”双向同步。修改后审核状态自动过期，重新通过 required 后才解锁计算。</p></section>
+
+<section class="card"><h2>输入设计与文件格式</h2><table><tr><th>按钮</th><th>配置</th><th>用途</th></tr><tr><td>＋/－ 模型层</td><td><code>model.layers[]</code></td><td>在半空间前增删有限层；末层保持 inf</td></tr><tr><td>线阵 / 二维面阵</td><td><code>geometry.receivers</code></td><td>参数化 line 或 grid</td></tr><tr><td>接收器 CSV</td><td><code>x_m,y_m</code></td><td>任意二维台阵</td></tr><tr><td>源环 / 源线 / 噪声源 CSV</td><td><code>ambient_sources</code></td><td>被动源空间照明</td></tr><tr><td>炮点 CSV</td><td><code>shot_id,x_m,y_m</code></td><td>从多炮表明确选择一炮</td></tr><tr><td>PSD CSV</td><td><code>frequency_hz,power</code></td><td>外部非负、频率递增功率谱</td></tr></table><p>完整例子位于 <code>examples/observation_system/</code>：<code>receivers.csv</code>、<code>shots.csv</code>、<code>noise_sources.csv</code>、<code>noise_psd.csv</code>。</p></section>
+
+<section class="card"><h2>主动 / 被动 × 线阵 / 面阵</h2><div class="grid"><article class="case"><h3>主动线阵</h3><span class="tag">active_quick.toml</span><span class="tag">16 receivers</span><p>5–80 m、5 m 道距；炮点 (0,0)；Ricker 8 Hz；vertical+horizontal；Hankel。</p><img class="shot" src="images/desktop_active_review.png" alt="主动线阵审核"></article><article class="case"><h3>主动二维面阵</h3><span class="tag">manual_active_array.toml</span><span class="tag">441 receivers</span><p>21×21 面阵；按实际二维炮检距正演，审核有效径向采样和空间混叠。</p><img class="shot" src="images/desktop_active_array_review.png" alt="主动面阵审核"></article><article class="case"><h3>被动线阵</h3><span class="tag">passive_quick.toml</span><span class="tag">41 receivers</span><p>200 m 孔径；24 源环；60 s / 6 独立窗；phase shift。quick 参数会显示收敛建议。</p><img class="shot" src="images/desktop_passive_line_review.png" alt="被动线阵审核"></article><article class="case"><h3>被动二维面阵</h3><span class="tag">passive_grid_quick.toml</span><span class="tag">121 receivers</span><p>11×11 面阵；台站对按 5 m 径向距离箱转成 NCF 道集。</p><img class="shot" src="images/desktop_passive_grid_review.png" alt="被动面阵审核"></article></div><div class="warn">quick 模板只用于流程验收。正式被动收敛优先使用 192–384 个方位均匀源和 600–1800 s 有限记录。源数改善方位照明；独立窗数降低互相关方差，二者不能完全互相替代。</div></section>
+
+<section class="card"><h2>计算和结果</h2><ol><li><b>正演 / Green：</b>主动产生炮集；被动建立每源—每接收器带限 Green 传递。</li><li><b>波形 / NCF：</b>被动在每个窗生成各源时间函数，在接收端混合后才做接收器互相关；不使用逐源理想 NCF trick。</li><li><b>频散：</b>主动默认 Hankel，被动默认 phase shift；<code>compare_methods=true</code> 同网格输出 phase shift / FJ(Bessel) / Hankel。</li><li><b>保存：</b>summary、HDF5、CSV、manifest、可复现 input.toml 和分量/方法对照。</li></ol><h3>主动结果页</h3><img class="shot" src="images/desktop_active_results.png" alt="主动结果页"><h3>被动结果页</h3><img class="shot" src="images/desktop_passive_results.png" alt="被动结果页"></section>
+
+<section class="card"><h2>方法说明与报错</h2><img class="shot" src="images/desktop_methods_guide.png" alt="方法说明页"><p><b>phase shift：</b>按候选相速度施加 <code>exp(+iωr/c)</code> 并沿距离叠加。<b>FJ/Bessel：</b>使用 <code>J0(ωr/c)</code> 核。<b>Hankel：</b>使用出射波 Hankel 核。有限孔径、近场、体波、稀疏检距和成像核都会产生不同旁瓣，因此应使用同网格方法对照。</p><p>报错框固定显示参数位置、问题、怎么改和原始技术信息；输入审核表中的红色 FAIL 阻塞计算，黄色 WARN 是建议项。</p></section>
+
+<section class="card"><h2>自动截图与验收</h2><pre>QT_QPA_PLATFORM=offscreen conda run -n seisloc python -m wavedispx.desktop \
+  --template examples/passive_grid_quick.toml \
+  --page review --screenshot /tmp/wavedispx_review.png</pre><p>本手册界面图全部由上述真实窗口截图功能生成，并非设计稿或拼图。更详细的逐项说明见 <a href="DESKTOP_UI_GUIDE_CN.md">Markdown 手册</a>。</p></section>
+</main></body></html>
