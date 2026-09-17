@@ -60,6 +60,7 @@ S002,-20,0</pre>
 
 <section id="cases"><h2>7. 看实际波形和完整结果</h2><figure><a href="manual_assets/current-active-results.png"><img src="manual_assets/current-active-results.png" alt="当前主动结果浏览完整窗口"></a><figcaption>结果浏览页可切换汇总图、分量图和方法对照，并打开输出目录。</figcaption></figure>
 <h3>主要示例：宽频主动源与长记录被动源</h3>
+<p><strong>波形坐标约定：</strong>主动shot gather横轴为offset，纵轴为时间，0在上、时间向下增加（这是时间轴，不是深度轴）。被动NCF横轴为−T到+T的lag，纵轴为台间距，近距在下、远距在上。双边图使用真实负/正分支，不镜像对称叠加结果；频散成像仍使用原有正lag对称叠加数据，不因换图轴而改变。红蓝颜色共用整图99%绝对振幅分位裁色，未逐道归一化。</p>
 <p>本节更新后全量回归254项通过。它验证软件行为，不等于全部物理/统计收敛。</p>
 <p>新会话默认使用“被动源｜长记录示例”（384源、1800 s），而不是24源60秒quick；已打开的旧会话需自行载入模板，避免覆盖未保存编辑。下面被动主图在同一配置基础上显式延长到3600 s。</p>
 <table><tr><th>本轮实际参数</th><th>主动</th><th>被动主图</th></tr><tr><td>处理频带</td><td>4.06263–44.106054 Hz</td><td>3–18.8 Hz</td></tr><tr><td>速度范围 / dv</td><td>140–580 m/s / 0.5 m/s</td><td>140–580 m/s / 0.2 m/s</td></tr><tr><td>输出 df</td><td>0.1 Hz</td><td>0.01 Hz</td></tr><tr><td>实际保存记录 / NCF lag</td><td>2.301 s周期；末样点2.300 s；dt=0.001 s</td><td>总长3600 s；窗长20 s；最大lag=5.455 s；dt=0.005 s</td></tr><tr><td>不同时间尺度的频率间隔</td><td>1/2.301≈0.435 Hz</td><td>单噪声窗1/20=0.05 Hz；保留正lag的FFT周期5.46 s，对应约0.183 Hz</td></tr></table>

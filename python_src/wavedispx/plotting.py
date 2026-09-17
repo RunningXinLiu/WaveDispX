@@ -19,6 +19,30 @@ from .processing import DispersionImage, DispersionPicks, TheoreticalDispersion
 from .noise import source_spectral_amplitude
 
 
+def plot_ncf_branches(axis, branches, *, title: str):
+    """Display actual negative/positive NCF, never mirror the symmetric stack.
+
+    Stored branch axes are both nonnegative lag magnitudes. Reverse the
+    negative branch, omit its duplicate zero, and sort distances for display.
+    """
+    positive, negative = branches.positive, branches.negative
+    if (not np.array_equal(positive.lag_time_s, negative.lag_time_s)
+            or not np.array_equal(positive.distance_m, negative.distance_m)):
+        raise ValueError("positive/negative NCF axes must match")
+    lag = np.concatenate((-negative.lag_time_s[:0:-1], positive.lag_time_s))
+    data = np.concatenate((negative.data[:0:-1], positive.data), axis=0)
+    order = np.argsort(positive.distance_m)
+    distance = positive.distance_m[order]
+    scale = max(float(np.percentile(np.abs(data), 99.0)), np.finfo(float).tiny)
+    artist = axis.pcolormesh(lag, distance, data[:, order].T,
+                            shading="nearest", cmap="seismic", vmin=-scale, vmax=scale)
+    axis.set(xlabel="Lag time (s)", ylabel="Interstation distance (m)", title=title)
+    axis.set_xlim(lag[0], lag[-1])
+    axis.set_ylim(distance[0], distance[-1])
+    axis.axvline(0, color="0.4", linewidth=0.6, linestyle=":")
+    return artist
+
+
 def _plot_das_geometry(axis, geometry) -> None:
     if geometry is None:
         return
@@ -305,31 +329,16 @@ def plot_passive_summary(
     axes[0, 2].legend()
     axes[0, 2].grid(alpha=0.25)
     axes[0, 2].set_aspect("equal", adjustable="datalim")
-    ncf = simulation.ncf.data
-    ncf_scale = np.percentile(np.abs(ncf), 99.0)
-    axes[1, 0].imshow(
-        ncf,
-        origin="lower",
-        aspect="auto",
-        extent=(
-            simulation.ncf.distance_m[0],
-            simulation.ncf.distance_m[-1],
-            simulation.ncf.lag_time_s[0],
-            simulation.ncf.lag_time_s[-1],
-        ),
-        cmap="seismic",
-        vmin=-ncf_scale,
-        vmax=ncf_scale,
-    )
-    axes[1, 0].set(
-        xlabel="Interstation distance (m)",
-        ylabel="Lag time (s)",
+    component = "das" if config.das.enabled else "zz"
+    plot_ncf_branches(
+        axes[1, 0],
+        simulation.strategy_stacks["baseline_linear"].component_branches[component],
         title=(
-            "Mixed-record symmetric DAS-DAS NCF"
+            "Mixed-record two-sided DAS-DAS NCF"
             if config.das.enabled
-            else "Mixed-record symmetric ZZ NCF"
+            else "Mixed-record two-sided ZZ NCF"
             if config.ambient_sources.component == "three_component"
-            else "Mixed-record symmetric NCF"
+            else "Mixed-record two-sided NCF"
         ),
     )
     _plot_dispersion(

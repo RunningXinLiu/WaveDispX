@@ -1,5 +1,15 @@
 # WaveDispX DAS 本地证据登记
 
+## PLOT-AXES-003：双边NCF显示（2026-09-17）
+
+仅显示修改：被动横轴−T…+T，纵轴距离从近（下）到远（上）；主动保持offset横轴、0在上且向下增长的时间轴。汇总图及网页/桌面/Notebook共享阶段绘图统一使用此约定。
+使用baseline_linear的实际negative/positive分支，反转负支并去掉重复零点后拼接，不镜像symmetric分支；距离排序只用于显示。共用全图99%绝对幅值分位裁色，不逐道归一化。频散仍使用原有symmetric数据，未改变计算。
+
+通过 `scripts/replot_passive_summary.py` 从保存的HDF5重绘手册3600秒案例，无重新正演；重绘前后 results.h5 SHA256均为 `4e9a58fc04ce93dd45b2e559f2e21fa75c0a5edc20437bc8c3b267b5d3cc5379`。
+QC `docs/manual_assets/showcase-passive-summary-ncf.png` 已查看；汇总图同步更新。
+回归 `test_plotting_axes.py test_workflow.py test_runner.py test_das.py`：**37 passed in 22.27s**，验证实际异幅正负支、唯一零点、距离排序、主动时间轴方向和运行保存链路。
+绘图源码SHA256：plotting.py `68d285d10cfcd0c5c3c3b5561da5474b44c98b366ffa80bc80f574d307f775cf`；workflow_plotting.py `9b3edb831631df930055ed6574d6bf4f7c8c8520ae46f206a7db327f01a16595`。
+
 ## AUTO-SHOWCASE-002：推荐策略修订与手册实算（2026-09-17）
 
 状态：指定两层算例完成实算与图像检查；**不是完全统计收敛/跨求解器验收**。

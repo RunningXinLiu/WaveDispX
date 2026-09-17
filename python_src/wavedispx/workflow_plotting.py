@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from .workflow import WaveDispXWorkflow
+from .plotting import plot_ncf_branches
 
 
 def plot_receiver_layout_comparison(reviews: dict[str, object]):
@@ -198,25 +199,9 @@ def plot_workflow_observations(workflow: WaveDispXWorkflow):
             )
         ),
     )
-    ncf = observations.ncf.data
-    ncf_scale = np.percentile(np.abs(ncf), 99.0)
-    axes[1].imshow(
-        ncf,
-        origin="lower",
-        aspect="auto",
-        extent=(
-            observations.ncf.distance_m[0],
-            observations.ncf.distance_m[-1],
-            observations.ncf.lag_time_s[0],
-            observations.ncf.lag_time_s[-1],
-        ),
-        cmap="seismic",
-        vmin=-ncf_scale,
-        vmax=ncf_scale,
-    )
-    axes[1].set(
-        xlabel="Interreceiver distance (m)",
-        ylabel="Lag time (s)",
+    branches = observations.strategy_stacks["baseline_linear"].component_branches
+    plot_ncf_branches(
+        axes[1], branches["das" if workflow.config.das.enabled else "zz"],
         title=(
             f"DAS–DAS NCF ({observations.independent_window_count} windows)"
             if workflow.config.das.enabled
@@ -224,26 +209,14 @@ def plot_workflow_observations(workflow: WaveDispXWorkflow):
         ),
     )
     if three_component:
-        rr = observations.component_ncfs["rr"]
-        rr_scale = np.percentile(np.abs(rr.data), 99.0)
-        axes[2].imshow(
-            rr.data,
-            origin="lower",
-            aspect="auto",
-            extent=(rr.distance_m[0], rr.distance_m[-1], rr.lag_time_s[0], rr.lag_time_s[-1]),
-            cmap="seismic",
-            vmin=-rr_scale,
-            vmax=rr_scale,
-        )
-        axes[2].set(
-            xlabel="Interreceiver distance (m)",
-            ylabel="Lag time (s)",
+        plot_ncf_branches(
+            axes[2], branches["rr"],
             title=f"Pair-rotated RR NCF ({observations.independent_window_count} windows)",
         )
     figure.suptitle(
         f"Passive finite record {workflow.config.noise.duration_s:g} s | "
         f"independent window {workflow.config.noise.window_s:g} s | "
-        f"displayed NCF lag 0–{observations.ncf.lag_time_s[-1]:.3f} s"
+        f"two-sided NCF lag ±{observations.ncf.lag_time_s[-1]:.3f} s"
     )
     return figure
 
