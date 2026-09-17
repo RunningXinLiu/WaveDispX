@@ -31,6 +31,13 @@ stop_x_m = 80.0
 spacing_m = 5.0
 y_m = 0.0
 
+[das]
+enabled = false
+geometry_mode = "uniform"
+gauge_length_m = 10.0
+measurement = "strain_rate"
+fiber_azimuth_deg = 0.0
+
 [active_source]
 x_m = 0.0
 y_m = 0.0
@@ -39,14 +46,15 @@ wavelet = "ricker"
 dominant_frequency_hz = 8.0
 maximum_frequency_hz = 20.0
 dt_s = 0.005
+record_duration_s = 0.0             # 0 = model/group-velocity automatic design
 
 [processing]
 correlation_normalization = "none"
 dispersion_method = "hankel"
-frequency_min_hz = 3.0
+frequency_min_hz = 10.0
 frequency_max_hz = 18.0
-velocity_min_mps = 120.0
-velocity_max_mps = 500.0
+velocity_min_mps = 140.0
+velocity_max_mps = 580.0
 velocity_step_mps = 2.0
 distance_taper_fraction = 0.0
 zero_padding = 5.0

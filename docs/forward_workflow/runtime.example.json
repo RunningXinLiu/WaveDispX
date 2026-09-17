@@ -1,0 +1,19 @@
+{
+  "contract_version": "1.0.1",
+  "state": "template_not_runnable",
+  "project_root": null,
+  "output_root": null,
+  "execution": {
+    "host": null,
+    "python_argv": [],
+    "mpi_argv": [],
+    "allocated_cpus": null,
+    "allocated_gpus": 0
+  },
+  "solver_paths": {
+    "sasem": null,
+    "wavedispx": null,
+    "specfem2d": null
+  },
+  "notes": "Fill existing authorized environments and allocation. Paths/SSH aliases are platform-specific; never include credentials. No scientific defaults are supplied."
+}

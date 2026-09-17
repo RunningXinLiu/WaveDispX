@@ -1,11 +1,13 @@
-"""Elastic Rayleigh and Love phase velocities using disba/Dunkin."""
+"""Elastic Rayleigh and Love phase-velocity theory backends."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Literal
 
 import numpy as np
-from disba import PhaseDispersion
+from disba import GroupDispersion, PhaseDispersion
 
 from ..config import ModelConfig
 
@@ -16,6 +18,8 @@ class TheoreticalDispersion:
     rayleigh_mps: np.ndarray
     love_mps: np.ndarray
     solver: str = "disba/dunkin"
+    rayleigh_group_mps: np.ndarray | None = None
+    love_group_mps: np.ndarray | None = None
 
 
 def _curves(
@@ -51,10 +55,37 @@ def theoretical_dispersion(
     *,
     rayleigh_modes: int = 4,
     love_modes: int = 4,
+    backend: Literal["disba", "qedisp"] = "disba",
+    qedisp_forward: str | Path | None = None,
+    compute_group: bool = False,
+    qedisp_group_library: str | Path | None = None,
 ) -> TheoreticalDispersion:
     frequency = np.asarray(frequency_hz, dtype=np.float64).reshape(-1)
     if frequency.size == 0 or np.any(frequency <= 0) or np.any(np.diff(frequency) <= 0):
         raise ValueError("frequency_hz must be finite, positive, and strictly increasing")
+    if backend == "qedisp":
+        from .qedisp import run_qedisp_forward
+
+        result = run_qedisp_forward(
+            model,
+            frequency,
+            rayleigh_modes=rayleigh_modes,
+            love_modes=love_modes,
+            executable=qedisp_forward,
+            compute_group=compute_group,
+            group_library=qedisp_group_library,
+        )
+        return TheoreticalDispersion(
+            frequency_hz=result.frequency_hz,
+            rayleigh_mps=result.rayleigh_mps,
+            love_mps=result.love_mps,
+            solver="QEDispInv/quadratic-extrema",
+            rayleigh_group_mps=result.rayleigh_group_mps,
+            love_group_mps=result.love_group_mps,
+        )
+    if backend != "disba":
+        raise ValueError("backend must be 'disba' or 'qedisp'")
+
     thickness_km = np.array(
         [0.0 if np.isinf(layer.thickness_m) else layer.thickness_m / 1000.0 for layer in model.layers]
     )
@@ -66,5 +97,26 @@ def theoretical_dispersion(
     )
     rayleigh = _curves(solver, frequency, "rayleigh", rayleigh_modes)
     love = _curves(solver, frequency, "love", love_modes)
-    return TheoreticalDispersion(frequency, rayleigh, love)
-
+    rayleigh_group = None
+    love_group = None
+    if compute_group:
+        group_solver = GroupDispersion(
+            thickness_km,
+            vp_kmps,
+            vs_kmps,
+            density_gcm3,
+            algorithm="dunkin",
+            dc=0.0001,
+            dt=0.025,
+        )
+        rayleigh_group = _curves(
+            group_solver, frequency, "rayleigh", rayleigh_modes
+        )
+        love_group = _curves(group_solver, frequency, "love", love_modes)
+    return TheoreticalDispersion(
+        frequency,
+        rayleigh,
+        love,
+        rayleigh_group_mps=rayleigh_group,
+        love_group_mps=love_group,
+    )

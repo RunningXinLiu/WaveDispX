@@ -24,6 +24,8 @@ def run_active(config: RunConfig) -> RunArtifacts:
         config.model,
         config.active_source,
         config.receivers,
+        das=config.das,
+        processing=config.processing,
         workers=config.workers,
         distance_block_size=config.frequency_block_size * 8,
     )

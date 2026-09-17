@@ -19,6 +19,8 @@ dependencies = [
 dev = ["pytest>=8"]
 ui = ["streamlit>=1.40"]
 desktop = ["PySide6>=6.8"]
+nnws = ["torch>=2.0"]
+stackmaster = ["stockwell==1.2"]
 notebook = [
     "nbformat>=5.10",
     "nbclient>=0.10",
@@ -36,6 +38,9 @@ package-dir = {"" = "python_src"}
 
 [tool.setuptools.packages.find]
 where = ["python_src"]
+
+[tool.setuptools.package-data]
+nnws = ["LICENSE", "CITATION.cff"]
 
 [tool.pytest.ini_options]
 testpaths = ["python_tests"]

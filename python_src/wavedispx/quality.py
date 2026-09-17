@@ -3,8 +3,197 @@
 from __future__ import annotations
 
 import numpy as np
+from scipy.signal import hilbert
 
-from .processing import DispersionImage, DispersionPicks
+from .egf_reference import PassiveEgfReference
+from .processing import DispersionImage, DispersionPicks, NCFGather
+
+
+def egf_equivalence_metrics(
+    ncf: NCFGather,
+    reference: PassiveEgfReference,
+    *,
+    component_name: str,
+    frequency_range_hz: tuple[float, float],
+    minimum_velocity_mps: float,
+    maximum_velocity_mps: float,
+    correlation_normalization: str,
+) -> dict[str, float | int | bool | str]:
+    """Compare an NCF branch with the raw active reference without time shifting.
+
+    Phase, arrival, unit-norm waveform, single-scalar spectral-shape, and early
+    ghost metrics are always reported.  Absolute amplitude is reported only
+    when both the reference calibration and receiver preprocessing preserve a
+    physical amplitude convention.
+    """
+    if component_name not in reference.component_names:
+        raise ValueError(f"reference has no {component_name!r} component")
+    if minimum_velocity_mps <= 0 or maximum_velocity_mps <= minimum_velocity_mps:
+        raise ValueError("velocity bounds must satisfy 0 < minimum < maximum")
+    lag = np.asarray(ncf.lag_time_s, dtype=np.float64).reshape(-1)
+    if lag.size < 2 or not np.allclose(np.diff(lag), np.diff(lag)[0]):
+        raise ValueError("NCF lag_time_s must be uniformly sampled")
+    dt = float(lag[1] - lag[0])
+    if not np.isclose(dt, reference.time_s[1] - reference.time_s[0]):
+        raise ValueError("NCF and active reference sampling intervals differ")
+    sample_count = min(lag.size, reference.time_s.size)
+    candidate = np.asarray(ncf.data[:sample_count], dtype=np.float64)
+    if candidate.ndim != 2 or candidate.shape[1] != ncf.distance_m.size:
+        raise ValueError("NCF data must be lag-by-distance")
+    if reference.calibration_operator == "negative_time_derivative_of_ncf":
+        candidate = -np.gradient(candidate, dt, axis=0)
+    elif reference.calibration_operator not in {
+        "identity",
+        "none_raw_green_function",
+    }:
+        raise ValueError(
+            f"unsupported EGF calibration operator: {reference.calibration_operator}"
+        )
+    component_index = reference.component_names.index(component_name)
+    reference_component = reference.components[
+        :sample_count, :, component_index
+    ]
+    target_reference = np.empty_like(candidate)
+    pair_distance = reference.distance_m[reference.pair_distance_index]
+    pair_bin = np.abs(
+        pair_distance[:, None] - np.asarray(ncf.distance_m)[None, :]
+    ).argmin(axis=1)
+    aggregated_pair_count = np.bincount(
+        pair_bin, minlength=ncf.distance_m.size
+    )
+    if np.any(aggregated_pair_count == 0):
+        raise ValueError("active reference has no receiver pairs for an NCF distance bin")
+    pair_reference = reference_component[:, reference.pair_distance_index]
+    for distance_index in range(ncf.distance_m.size):
+        target_reference[:, distance_index] = np.mean(
+            pair_reference[:, pair_bin == distance_index], axis=1
+        )
+
+    frequency = np.fft.rfftfreq(sample_count, dt)
+    selected_frequency = (
+        (frequency >= frequency_range_hz[0])
+        & (frequency <= frequency_range_hz[1])
+    )
+    if np.count_nonzero(selected_frequency) < 2:
+        raise ValueError("EGF comparison band contains fewer than two frequency samples")
+    candidate_spectrum = np.fft.rfft(candidate, axis=0)
+    reference_spectrum = np.fft.rfft(target_reference, axis=0)
+    band_candidate_spectrum = np.zeros_like(candidate_spectrum)
+    band_reference_spectrum = np.zeros_like(reference_spectrum)
+    band_candidate_spectrum[selected_frequency] = candidate_spectrum[selected_frequency]
+    band_reference_spectrum[selected_frequency] = reference_spectrum[selected_frequency]
+    band_candidate = np.fft.irfft(
+        band_candidate_spectrum, n=sample_count, axis=0
+    )
+    band_reference = np.fft.irfft(
+        band_reference_spectrum, n=sample_count, axis=0
+    )
+
+    time = lag[:sample_count, None]
+    distance = np.asarray(ncf.distance_m, dtype=np.float64)[None, :]
+    signal_window = (
+        (time >= distance / maximum_velocity_mps)
+        & (time <= distance / minimum_velocity_mps)
+    )
+    candidate_signal = band_candidate[signal_window]
+    reference_signal = band_reference[signal_window]
+    candidate_norm = float(np.linalg.norm(candidate_signal))
+    reference_norm = float(np.linalg.norm(reference_signal))
+    epsilon = np.finfo(float).eps
+    waveform_correlation = float(
+        np.dot(candidate_signal, reference_signal)
+        / max(candidate_norm * reference_norm, epsilon)
+    )
+    normalized_l2 = float(
+        np.linalg.norm(
+            candidate_signal / max(candidate_norm, epsilon)
+            - reference_signal / max(reference_norm, epsilon)
+        )
+    )
+    best_scale = float(
+        np.dot(candidate_signal, reference_signal)
+        / max(np.dot(candidate_signal, candidate_signal), epsilon)
+    )
+    scaled_l2 = float(
+        np.linalg.norm(best_scale * candidate_signal - reference_signal)
+        / max(reference_norm, epsilon)
+    )
+
+    selected_candidate = candidate_spectrum[selected_frequency]
+    selected_reference = reference_spectrum[selected_frequency]
+    reference_amplitude = np.abs(selected_reference)
+    valid_phase = reference_amplitude > 1e-8 * reference_amplitude.max(initial=0.0)
+    valid_phase &= np.abs(selected_candidate) > 1e-12 * np.abs(selected_candidate).max(
+        initial=0.0
+    )
+    phase_difference = np.angle(
+        selected_candidate[valid_phase] * np.conj(selected_reference[valid_phase])
+    )
+    phase_weight = reference_amplitude[valid_phase]
+    phase_rms = float(
+        np.sqrt(
+            np.sum(phase_weight * phase_difference**2)
+            / max(np.sum(phase_weight), epsilon)
+        )
+    )
+
+    amplitude_candidate = np.abs(selected_candidate[valid_phase])
+    amplitude_reference = reference_amplitude[valid_phase]
+    log_amplitude_difference = np.log(
+        np.maximum(amplitude_candidate, epsilon)
+        / np.maximum(amplitude_reference, epsilon)
+    )
+    log_shape_difference = log_amplitude_difference - np.median(
+        log_amplitude_difference
+    )
+    spectral_shape_log_rms = float(np.sqrt(np.mean(log_shape_difference**2)))
+    # The interferometric identity is defined only up to a source/medium scale
+    # factor here.  Whitening/one-bit further remove physical amplitude, so no
+    # current reference operator establishes absolute amplitude equivalence.
+    amplitude_available = False
+    absolute_amplitude_log_rms = (
+        float(np.sqrt(np.mean(log_amplitude_difference**2)))
+        if amplitude_available
+        else float("nan")
+    )
+
+    candidate_envelope = np.abs(hilbert(band_candidate, axis=0))
+    reference_envelope = np.abs(hilbert(band_reference, axis=0))
+    peak_bias = []
+    for distance_index in range(ncf.distance_m.size):
+        selected_time = np.flatnonzero(signal_window[:, distance_index])
+        if selected_time.size == 0:
+            continue
+        candidate_peak = selected_time[
+            int(np.argmax(candidate_envelope[selected_time, distance_index]))
+        ]
+        reference_peak = selected_time[
+            int(np.argmax(reference_envelope[selected_time, distance_index]))
+        ]
+        peak_bias.append((candidate_peak - reference_peak) * dt)
+    median_peak_bias = float(np.round(np.median(peak_bias), 12))
+
+    prearrival = time < distance / maximum_velocity_mps
+    total_energy = float(np.sum(band_candidate**2))
+    prearrival_energy_fraction = float(
+        np.sum(band_candidate[prearrival] ** 2) / max(total_energy, epsilon)
+    )
+    return {
+        "valid_distance_count": int(ncf.distance_m.size),
+        "waveform_correlation_no_shift": waveform_correlation,
+        "normalized_l2_unit_norm": normalized_l2,
+        "best_global_amplitude_scale": best_scale,
+        "scaled_waveform_l2": scaled_l2,
+        "phase_rms_rad": phase_rms,
+        "median_envelope_peak_time_bias_s": median_peak_bias,
+        "prearrival_ghost_energy_fraction": prearrival_energy_fraction,
+        "spectral_shape_log_rms_after_global_scale": spectral_shape_log_rms,
+        "absolute_amplitude_available": amplitude_available,
+        "absolute_amplitude_log_rms": absolute_amplitude_log_rms,
+        "time_shift_optimized": False,
+        "reference_calibration_operator": reference.calibration_operator,
+        "correlation_normalization": correlation_normalization,
+    }
 
 
 def _reference_velocity(

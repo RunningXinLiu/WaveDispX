@@ -19,6 +19,7 @@ import tomllib
 from typing import Any, Literal
 
 from .config import RunConfig, config_from_mapping
+from .preflight import build_preflight_review
 from .workflow import WaveDispXWorkflow
 
 
@@ -189,16 +190,23 @@ def explain_input_error(error: Exception) -> InputIssue:
         (
             ("active_source.maximum_frequency_hz",),
             "建立算例 → 主动源与子波",
-            "Ricker 主频、正演最高频率、dt",
+            "主频/参考频率、正演最高频率、dt",
             "主动源频率关系或时间采样不满足要求。",
-            "保证正演最高频率 ≥ Ricker 主频且 < 1/(2dt)；可降低最高频率或减小 dt。",
+            "保证正演最高频率 ≥ 主频/参考频率且 < 1/(2dt)；可降低最高频率或减小 dt。",
         ),
         (
             ("active_source", "active source"),
             "建立算例 → 主动源与子波",
             "active_source.*",
             "主动源位置、分量或子波参数无效。",
-            "检查炮点 x/y、分量、Ricker 主频、最高频率和 dt；坐标必须为有限数字。",
+            "检查炮点 x/y、分量、子波、主频/参考频率、最高频率和 dt；坐标必须为有限数字。",
+        ),
+        (
+            ("das.", "DAS v1", "gauge_length_m", "DAS channel CSV"),
+            "建立算例 → DAS 有限标距",
+            "das.enabled / geometry_mode / gauge_length_m / measurement / fiber_azimuth_deg",
+            "DAS 参数无效，或启用了尚未验证的源分量/成像组合。",
+            "uniform 模式标距必须 >0；channel_file 模式要把接收器设为 file，并在同一 CSV 中填写 x_m,y_m 加端点列或逐道标距/方位；主动/被动源先用 vertical，频散方法设 phase_shift 且关闭 compare_methods。",
         ),
         (
             ("processing maximum values",),
@@ -274,6 +282,111 @@ def load_template_mapping(path: str | Path) -> dict[str, Any]:
     if not template.is_file():
         raise CaseInputError(f"模板文件不存在：{template}")
     return parse_toml_bytes(template.read_bytes())
+
+
+_AUTOMATIC_PARAMETER_PATHS = (
+    ("processing", "frequency_min_hz"),
+    ("processing", "frequency_max_hz"),
+    ("processing", "frequency_step_hz"),
+    ("processing", "velocity_min_mps"),
+    ("processing", "velocity_max_mps"),
+    ("processing", "velocity_step_mps"),
+)
+
+
+def apply_automatic_parameters(
+    mapping: dict[str, Any],
+    *,
+    base_directory: str | Path | None = None,
+) -> tuple[dict[str, Any], dict[str, float | int | str]]:
+    """Return a copy with model/geometry-aware defaults written as normal values.
+
+    The values are intentionally materialized instead of hidden behind an
+    ``auto`` switch.  A UI or notebook can therefore show them, let the user
+    edit any one of them, and save the exact values used by the run.
+    """
+
+    candidate = deepcopy(mapping)
+    config = config_from_mapping(candidate, base_directory=base_directory)
+    review = build_preflight_review(config)
+    diagnostics = review.diagnostics
+    processing = candidate.setdefault("processing", {})
+    processing.update(
+        frequency_min_hz=round(
+            float(diagnostics["recommended_frequency_min_hz"]), 6
+        ),
+        frequency_max_hz=round(
+            float(diagnostics["recommended_frequency_max_hz"]), 6
+        ),
+        frequency_step_hz=float(
+            diagnostics["recommended_display_frequency_step_hz"]
+        ),
+        velocity_min_mps=float(diagnostics["recommended_velocity_min_mps"]),
+        velocity_max_mps=float(diagnostics["recommended_velocity_max_mps"]),
+        velocity_step_mps=float(diagnostics["recommended_velocity_step_mps"]),
+    )
+    # Timing must use the newly applied band, not the previous editable band.
+    diagnostics = build_preflight_review(
+        config_from_mapping(candidate, base_directory=base_directory)
+    ).diagnostics
+    processing["frequency_step_hz"] = float(
+        diagnostics["recommended_display_frequency_step_hz"]
+    )
+    if config.mode == "active":
+        source = candidate.setdefault("active_source", {})
+        dt_s = float(source["dt_s"])
+        recommended = float(diagnostics["recommended_active_record_duration_s"])
+        source["record_duration_s"] = math.ceil(recommended / dt_s) * dt_s
+    else:
+        noise = candidate.setdefault("noise", {})
+        dt_s = float(noise["dt_s"])
+        recommended_window = float(diagnostics["recommended_passive_window_s"])
+        current_window = float(noise["window_s"])
+        noise["window_s"] = math.ceil(
+            max(current_window, recommended_window) / dt_s
+        ) * dt_s
+        recommended_lag = float(
+            diagnostics["recommended_passive_maximum_lag_s"]
+        )
+        noise["maximum_lag_s"] = math.ceil(recommended_lag / dt_s) * dt_s
+        if noise["maximum_lag_s"] >= noise["window_s"]:
+            noise["window_s"] = noise["maximum_lag_s"] + dt_s
+        if noise["window_s"] > noise["duration_s"]:
+            raise CaseInputError(
+                f"noise.duration_s 至少需要 {noise['window_s']:.3f} s，"
+                "才能容纳推荐独立窗；请先增加总记录时长。"
+            )
+    return candidate, diagnostics
+
+
+def reset_automatic_parameters(
+    mapping: dict[str, Any], template_mapping: dict[str, Any]
+) -> dict[str, Any]:
+    """Reset only imaging/time-window defaults from a selected template."""
+
+    candidate = deepcopy(mapping)
+    for table_name, field_name in _AUTOMATIC_PARAMETER_PATHS:
+        template_table = template_mapping.get(table_name, {})
+        target_table = candidate.setdefault(table_name, {})
+        if field_name in template_table:
+            target_table[field_name] = deepcopy(template_table[field_name])
+        elif field_name == "frequency_step_hz":
+            target_table[field_name] = 0.0
+    mode = candidate.get("run", {}).get("mode")
+    if mode == "active":
+        source = candidate.setdefault("active_source", {})
+        source["record_duration_s"] = deepcopy(
+            template_mapping.get("active_source", {}).get("record_duration_s", 0.0)
+        )
+    elif mode == "passive":
+        noise = candidate.setdefault("noise", {})
+        template_noise = template_mapping.get("noise", {})
+        if "window_s" in template_noise:
+            noise["window_s"] = deepcopy(template_noise["window_s"])
+        noise["maximum_lag_s"] = deepcopy(
+            template_noise.get("maximum_lag_s", 0.0)
+        )
+    return candidate
 
 
 def stage_uploaded_file(
@@ -377,6 +490,8 @@ def _toml_scalar(value: Any) -> str:
         if math.isnan(value):
             return "nan"
         return repr(value)
+    if isinstance(value, (list, tuple)):
+        return "[" + ", ".join(_toml_scalar(item) for item in value) + "]"
     raise CaseInputError(f"无法写入 TOML 的值类型：{type(value).__name__}")
 
 
@@ -387,6 +502,7 @@ def toml_dumps(mapping: dict[str, Any]) -> str:
         "run",
         "model",
         "geometry",
+        "das",
         "active_source",
         "ambient_sources",
         "noise",
@@ -396,10 +512,17 @@ def toml_dumps(mapping: dict[str, Any]) -> str:
     ordered_keys.extend(key for key in mapping if key not in ordered_keys)
 
     def write_table(prefix: str, table: dict[str, Any]) -> None:
+        def is_table_array(value: Any) -> bool:
+            return (
+                isinstance(value, list)
+                and bool(value)
+                and all(isinstance(item, dict) for item in value)
+            )
+
         scalar_items = {
             key: value
             for key, value in table.items()
-            if not isinstance(value, (dict, list))
+            if not isinstance(value, dict) and not is_table_array(value)
         }
         if scalar_items:
             lines.append(f"[{prefix}]")
@@ -409,10 +532,8 @@ def toml_dumps(mapping: dict[str, Any]) -> str:
             child = f"{prefix}.{key}"
             if isinstance(value, dict):
                 write_table(child, value)
-            elif isinstance(value, list):
+            elif is_table_array(value):
                 for item in value:
-                    if not isinstance(item, dict):
-                        raise CaseInputError(f"{child} 只支持表数组")
                     lines.append(f"[[{child}]]")
                     lines.extend(
                         f"{item_key} = {_toml_scalar(item_value)}"

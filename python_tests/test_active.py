@@ -3,7 +3,7 @@ from pathlib import Path
 import h5py
 import numpy as np
 
-from wavedispx.active import simulate_active_shot
+from wavedispx.active import active_source_wavelet, simulate_active_shot
 from wavedispx.config import ActiveSourceConfig, ReceiverLineConfig, load_config
 
 
@@ -24,3 +24,18 @@ def test_active_shot_matches_matlab_golden():
     result = simulate_active_shot(model, source, regular_receivers, workers=2)
     np.testing.assert_allclose(result.distance_m, distance, rtol=0, atol=0)
     np.testing.assert_allclose(result.components, expected_components, rtol=2e-8, atol=2e-12)
+
+
+def test_unit_impulse_has_flat_discrete_amplitude_spectrum():
+    time_s = np.arange(512, dtype=np.float64) * 0.005
+    waveform = active_source_wavelet(time_s, "unit_impulse", 6.25)
+    amplitude = np.abs(np.fft.rfft(waveform))
+    np.testing.assert_allclose(amplitude, np.ones_like(amplitude), rtol=0, atol=0)
+
+
+def test_active_config_accepts_unit_impulse(tmp_path):
+    text = (ROOT / "examples/active_quick.toml").read_text()
+    text = text.replace('wavelet = "ricker"', 'wavelet = "unit_impulse"')
+    path = tmp_path / "active_impulse.toml"
+    path.write_text(text)
+    assert load_config(path).active_source.wavelet == "unit_impulse"

@@ -15,6 +15,7 @@ from typing import Any, Callable
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT
+import numpy as np
 
 from PySide6.QtCore import QObject, QRunnable, QSize, Qt, QThreadPool, QUrl, Signal, Slot
 from PySide6.QtGui import QCloseEvent, QDesktopServices, QFont, QPixmap
@@ -23,6 +24,7 @@ from PySide6.QtWidgets import (
     QComboBox,
     QFileDialog,
     QFrame,
+    QGridLayout,
     QHBoxLayout,
     QInputDialog,
     QLabel,
@@ -47,6 +49,7 @@ from PySide6.QtWidgets import (
 )
 
 from wavedispx.app_service import (
+    apply_automatic_parameters,
     CaseInputError,
     CaseSession,
     coordinate_csv_count,
@@ -54,8 +57,10 @@ from wavedispx.app_service import (
     load_template_mapping,
     parse_shot_csv,
     parse_toml_bytes,
+    reset_automatic_parameters,
     toml_dumps,
 )
+from wavedispx.das import load_das_geometry_csv
 from wavedispx.preflight import (
     PreflightReview,
     plot_preflight_review,
@@ -73,9 +78,15 @@ from .config_editor import ConfigTreeEditor
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 TEMPLATES = {
     "主动源｜快速检查": PROJECT_ROOT / "examples/active_quick.toml",
+    "DAS｜主动线阵快速检查": PROJECT_ROOT / "examples/active_das_line_quick.toml",
+    "DAS｜主动面阵快速检查": PROJECT_ROOT / "examples/active_das_grid_quick.toml",
+    "DAS｜逐道光缆文件": PROJECT_ROOT / "examples/active_das_channel_file_quick.toml",
     "主动源｜正式两层模型": PROJECT_ROOT / "examples/active_two_layer.toml",
     "主动源｜高阶模态 3C": PROJECT_ROOT / "examples/active_high_modes_3c.toml",
     "被动源｜快速检查": PROJECT_ROOT / "examples/passive_quick.toml",
+    "DAS｜被动线阵快速检查": PROJECT_ROOT / "examples/passive_das_line_quick.toml",
+    "DAS｜被动面阵快速检查": PROJECT_ROOT / "examples/passive_das_grid_quick.toml",
+    "DAS｜被动逐道光缆": PROJECT_ROOT / "examples/passive_das_channel_file_quick.toml",
     "被动源｜正式收敛": PROJECT_ROOT / "examples/passive_two_layer.toml",
     "被动源｜高阶模态物理 3C": PROJECT_ROOT / "examples/passive_high_modes_3c.toml",
     "被动源｜二维面阵": PROJECT_ROOT / "examples/passive_grid_quick.toml",
@@ -224,26 +235,28 @@ class ParameterPage(QWidget):
 
         tools = QFrame()
         tools.setObjectName("card")
-        tools_layout = QHBoxLayout(tools)
+        tools_layout = QGridLayout(tools)
         tools_layout.setContentsMargins(10, 8, 10, 8)
-        for label, key, tooltip in (
+        for index, (label, key, tooltip) in enumerate((
+            ("自动填入 f/v/df/dv", "apply_auto_design", "按当前模型、源谱、Geometry 与 DAS 标距计算频散范围/网格，并填入主动记录时长或被动 NCF lag。填入后仍可逐项编辑。"),
+            ("恢复模板默认", "reset_auto_design", "只恢复所选模板中的 f/v/df/dv 与记录窗/lag；不覆盖模型、Geometry 或源位置。"),
             ("＋ 模型层", "add_layer", "在末层半空间之前增加一个有限层，并复制邻近层的 Vp/Vs/ρ/Q 作为可编辑起点。修改层厚和速度后必须重新审核理论频散。"),
             ("－ 模型层", "remove_layer", "删除最下面一个有限层；末层 inf 半空间始终保留。该操作会使全部正演、NCF 和频散缓存失效。"),
             ("线阵", "receiver_line", "用参数设计线阵：x 起点、x 终点、道间距和固定 y。会替换当前接收器表，但不会改模型或源。"),
             ("二维面阵", "receiver_grid", "用 x/y 起终点和间距设计规则二维阵列。被动处理还会增加径向距离箱 distance_bin_m。"),
             ("接收器 CSV", "receiver_file", "导入任意二维接收器坐标。文件必须为 UTF-8 CSV，至少两行，包含 x_m,y_m，且不能有重复位置。"),
+            ("DAS 光缆 CSV", "das_channel_file", "导入逐道 DAS 几何。每行除 x_m,y_m 外填写两个端点，或填写该道标距与方位；同时切换为接收器文件输入。"),
             ("源环", "source_annulus", "被动源改为环形方位照明；默认使用 stratified 方位抽样和至少 192 个源，适合检验近似弥散场恢复。"),
             ("源线", "source_line", "被动源改为道路/线性噪声带；单侧照明可能造成 NCF 不对称，解释结果时应保留该限制。"),
             ("噪声源 CSV", "source_file", "导入已知噪声源位置 x_m,y_m；源数会按有效数据行自动更新，空间随机种子不再改变位置。"),
             ("炮点 CSV", "shot_file", "读取 shot_id,x_m,y_m 多炮表并明确选择本次的一炮；选中坐标会固化到 active_source。"),
             ("PSD CSV", "psd_file", "导入 frequency_hz,power 外部功率谱；频率必须严格递增、功率非负，输入审核会画出实际谱形。"),
-        ):
+        )):
             button = QToolButton()
             button.setText(label)
             button.setToolTip(tooltip)
             button.clicked.connect(lambda checked=False, name=key: self.action_requested.emit(name))
-            tools_layout.addWidget(button)
-        tools_layout.addStretch(1)
+            tools_layout.addWidget(button, index // 7, index % 7)
         layout.addWidget(tools)
 
         self.tabs = QTabWidget()
@@ -621,7 +634,7 @@ class GuidePage(QWidget):
             <h2>WaveDispX 计算链</h2>
             <ol>
               <li><b>输入审核：</b>从层状 Vp/Vs/ρ/Q、源和接收器构建 geometry，画子波/PSD，并独立计算理论 Rayleigh/Love 曲线。</li>
-              <li><b>正演：</b>用分层介质离散波数 Green 张量计算频率域源—接收器传递；主动源再与 Ricker 谱卷积，被动源保留带限传递函数。</li>
+              <li><b>正演：</b>用分层介质离散波数 Green 张量计算频率域源—接收器传递；主动源使用 Ricker 或理想单位脉冲时间函数，被动源保留带限传递函数。</li>
               <li><b>真实被动记录：</b>每个源在每个独立时间窗生成随机源时间函数，全部源在接收器端线性混合，程序只对混合后的接收器记录做互相关/互谱累积。没有把逐源理想互相关当作有限记录结果。</li>
               <li><b>频散成像：</b>主动默认 Hankel；被动默认 phase_shift。选择 compare_methods 可在同一网格对照 phase_shift、Bessel(FJ) 和 Hankel，识别方法相关旁瓣。</li>
               <li><b>拾取与理论：</b>动态规划在归一化能量上拾取连续脊线；白色理论线由同一层状模型独立计算，不参与正演频散能量的生成。</li>
@@ -637,6 +650,7 @@ class GuidePage(QWidget):
               <li>接收器/噪声源：<code>x_m,y_m</code></li>
               <li>主动炮点：<code>shot_id,x_m,y_m</code>（shot_id 可选）</li>
               <li>外部 PSD：<code>frequency_hz,power</code></li>
+              <li>DAS 逐道光缆：<code>channel_id,x_m,y_m,endpoint_minus_x_m,endpoint_minus_y_m,endpoint_plus_x_m,endpoint_plus_y_m</code>；也可用每道 <code>gauge_length_m,fiber_azimuth_deg</code></li>
             </ul>
             """
         )
@@ -665,6 +679,10 @@ class MainWindow(QMainWindow):
         initial = Path(template_path).expanduser().resolve() if template_path else TEMPLATES["被动源｜快速检查"]
         self.session = CaseSession(initial.parent)
         self._build_ui()
+        for template_name, template_file in TEMPLATES.items():
+            if template_file.resolve() == initial:
+                self.template_combo.setCurrentText(template_name)
+                break
         self._connect_ui()
         self._load_mapping(load_template_mapping(initial), initial.parent, f"已载入 {initial.name}")
         self.validate_case(navigate=False, show_ready_dialog=False)
@@ -787,6 +805,12 @@ class MainWindow(QMainWindow):
         self.navigation.setCurrentRow(index)
 
     def _load_mapping(self, mapping: dict[str, Any], base: Path, message: str) -> None:
+        mapping = deepcopy(mapping)
+        mapping.setdefault("processing", {}).setdefault("frequency_step_hz", 0.0)
+        if mapping.get("run", {}).get("mode") == "passive":
+            mapping.setdefault("noise", {}).setdefault("maximum_lag_s", 0.0)
+        else:
+            mapping.setdefault("active_source", {}).setdefault("record_duration_s", 0.0)
         self.session = CaseSession(base)
         self.parameter_page.set_mapping(mapping)
         self._dirty = True
@@ -893,7 +917,32 @@ class MainWindow(QMainWindow):
     def _parameter_action(self, action: str) -> None:
         try:
             mapping = self.parameter_page.mapping()
-            if action == "add_layer":
+            if action == "apply_auto_design":
+                mapping, diagnostics = apply_automatic_parameters(
+                    mapping, base_directory=self.session.workspace_directory
+                )
+                self.run_page.append_log(
+                    "已套用自动推荐："
+                    f"f={float(diagnostics['recommended_frequency_min_hz']):.2f}–"
+                    f"{float(diagnostics['recommended_frequency_max_hz']):.2f} Hz，"
+                    f"df={float(diagnostics['recommended_display_frequency_step_hz']):.4g} Hz"
+                )
+            elif action == "reset_auto_design":
+                template = load_template_mapping(
+                    TEMPLATES[self.template_combo.currentText()]
+                )
+                mode = mapping.get("run", {}).get("mode")
+                if template.get("run", {}).get("mode") != mode:
+                    template = load_template_mapping(
+                        TEMPLATES[
+                            "主动源｜快速检查"
+                            if mode == "active"
+                            else "被动源｜快速检查"
+                        ]
+                    )
+                mapping = reset_automatic_parameters(mapping, template)
+                self.run_page.append_log("已恢复当前模式模板的自动参数默认值。")
+            elif action == "add_layer":
                 layers = mapping.setdefault("model", {}).setdefault("layers", [])
                 if not layers:
                     layers.append({"thickness_m": float("inf"), "vp_mps": 760.0, "vs_mps": 440.0, "density_kgm3": 2000.0, "qp": float("inf"), "qs": float("inf")})
@@ -927,6 +976,8 @@ class MainWindow(QMainWindow):
                 }
             elif action == "receiver_file":
                 self._choose_receiver_file(mapping)
+            elif action == "das_channel_file":
+                self._choose_das_channel_file(mapping)
             elif action == "source_annulus":
                 self._require_passive(mapping)
                 current = mapping.setdefault("ambient_sources", {})
@@ -981,6 +1032,35 @@ class MainWindow(QMainWindow):
         if mapping.get("run", {}).get("mode") == "passive":
             receivers["distance_bin_m"] = 5.0
         mapping.setdefault("geometry", {})["receivers"] = receivers
+
+    def _choose_das_channel_file(self, mapping: dict[str, Any]) -> None:
+        filename, _ = QFileDialog.getOpenFileName(
+            self,
+            "选择逐道 DAS 光缆 CSV",
+            str(PROJECT_ROOT / "examples"),
+            "CSV (*.csv)",
+        )
+        if not filename:
+            raise CaseInputError("未选择 DAS 光缆 CSV")
+        path = Path(filename).resolve()
+        das_geometry = load_das_geometry_csv(path)
+        receivers: dict[str, Any] = {
+            "layout": "file",
+            "coordinates_file": str(path),
+        }
+        if mapping.get("run", {}).get("mode") == "passive":
+            receivers["distance_bin_m"] = 5.0
+        mapping.setdefault("geometry", {})["receivers"] = receivers
+        das = mapping.setdefault("das", {})
+        das.update(
+            enabled=True,
+            geometry_mode="channel_file",
+            measurement=das.get("measurement", "strain_rate"),
+            gauge_length_m=float(
+                np.median(das_geometry.gauge_length_by_channel_m)
+            ),
+            fiber_azimuth_deg=0.0,
+        )
 
     def _choose_source_file(self, mapping: dict[str, Any]) -> None:
         self._require_passive(mapping)

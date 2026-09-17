@@ -34,6 +34,13 @@ stop_y_m = 25.0
 spacing_y_m = 5.0
 distance_bin_m = 5.0
 
+[das]
+enabled = false
+geometry_mode = "uniform"
+gauge_length_m = 10.0
+measurement = "strain_rate"
+fiber_azimuth_deg = 0.0
+
 [ambient_sources]
 component = "vertical"
 layout = "annulus"

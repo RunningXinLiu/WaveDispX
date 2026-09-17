@@ -16,6 +16,7 @@ import numpy as np
 from .active import ActiveAnalysis, ActiveShotGather, analyze_active_shot, simulate_active_shot
 from .artifacts import RunArtifacts, save_active_results, save_passive_results
 from .config import RunConfig, config_from_mapping, load_config
+from .egf_reference import PassiveEgfReference, build_passive_egf_reference
 from .geometry import Geometry, build_geometry, receiver_positions
 from .passive import (
     PassiveAnalysis,
@@ -71,6 +72,11 @@ def _keys(config: RunConfig) -> tuple[str, str, str]:
         "receiver_file": _file_signature(receiver_file),
         "workers": config.workers,
         "frequency_block_size": config.frequency_block_size,
+        "das": asdict(config.das),
+        "record_design": {
+            key: getattr(config.processing, key)
+            for key in ("frequency_min_hz", "frequency_max_hz", "rayleigh_modes", "love_modes")
+        },
     }
     if config.mode == "active":
         forward = _hash_value(
@@ -81,7 +87,11 @@ def _keys(config: RunConfig) -> tuple[str, str, str]:
         forward = _hash_value(
             {
                 **common_forward,
-                "ambient_sources": asdict(config.ambient_sources),
+                "ambient_sources": {
+                    key: value
+                    for key, value in asdict(config.ambient_sources).items()
+                    if key != "activity_file"
+                },
                 "ambient_source_file": _file_signature(
                     config.ambient_sources.coordinates_file
                 ),
@@ -109,6 +119,10 @@ def _keys(config: RunConfig) -> tuple[str, str, str]:
                 "noise": asdict(config.noise),
                 "source_block_size": config.source_block_size,
                 "correlation_normalization": config.processing.correlation_normalization,
+                "source_selection": asdict(config.source_selection),
+                "source_activity_file": _file_signature(
+                    config.ambient_sources.activity_file
+                ),
             }
         )
     analysis = _hash_value(
@@ -127,6 +141,7 @@ class WaveDispXWorkflow:
         self.geometry: Geometry | None = None
         self.shot: ActiveShotGather | None = None
         self.transfer: PassiveTransfer | None = None
+        self.egf_reference: PassiveEgfReference | None = None
         self.correlation: PassiveCorrelation | None = None
         self.active_analysis: ActiveAnalysis | None = None
         self.passive_analysis: PassiveAnalysis | None = None
@@ -165,6 +180,7 @@ class WaveDispXWorkflow:
         if new_forward != self._forward_key:
             self.shot = None
             self.transfer = None
+            self.egf_reference = None
             self.correlation = None
             self.active_analysis = None
             self.passive_analysis = None
@@ -208,6 +224,8 @@ class WaveDispXWorkflow:
                     self.config.model,
                     self.config.active_source,
                     self.config.receivers,
+                    das=self.config.das,
+                    processing=self.config.processing,
                     workers=self.config.workers,
                     distance_block_size=self.config.frequency_block_size * 8,
                 )
@@ -215,9 +233,23 @@ class WaveDispXWorkflow:
                 self.active_analysis = None
                 self.artifacts = None
             return self.shot
-        if self.transfer is None or force:
-            self.transfer = build_passive_transfer(self.config, self.geometry)
-            self.timings["forward"] = self.transfer.build_seconds
+        needs_node_egf = not self.config.das.enabled
+        if (
+            self.transfer is None
+            or (needs_node_egf and self.egf_reference is None)
+            or force
+        ):
+            if self.transfer is None or force:
+                self.transfer = build_passive_transfer(self.config, self.geometry)
+                self.timings["forward"] = self.transfer.build_seconds
+            if needs_node_egf and (self.egf_reference is None or force):
+                self.egf_reference = build_passive_egf_reference(
+                    self.config, self.geometry
+                )
+                self.timings["egf_reference"] = self.egf_reference.build_seconds
+            elif not needs_node_egf:
+                self.egf_reference = None
+                self.timings.pop("egf_reference", None)
             self.correlation = None
             self.passive_analysis = None
             self.artifacts = None
@@ -230,7 +262,10 @@ class WaveDispXWorkflow:
             return forward
         if self.correlation is None or force:
             self.correlation = accumulate_passive_correlation(
-                self.config, self.geometry, self.transfer
+                self.config,
+                self.geometry,
+                self.transfer,
+                egf_reference=self.egf_reference,
             )
             self.timings["correlation"] = self.correlation.correlation_seconds
             self.passive_analysis = None
@@ -247,7 +282,7 @@ class WaveDispXWorkflow:
             return self.active_analysis
         if self.passive_analysis is None or force:
             self.passive_analysis = analyze_passive_correlation(
-                self.config, self.correlation
+                self.config, self.correlation, self.egf_reference
             )
             self.timings["imaging"] = self.passive_analysis.imaging_seconds
             self.artifacts = None
@@ -317,6 +352,7 @@ class WaveDispXWorkflow:
         else:
             timings = {
                 "transfer": self.timings.get("forward", 0.0),
+                "egf_reference": self.timings.get("egf_reference", 0.0),
                 "correlation": self.timings.get("correlation", 0.0),
                 "imaging": self.timings.get("imaging", 0.0),
                 "total": total,
@@ -324,10 +360,29 @@ class WaveDispXWorkflow:
             simulation = PassiveSimulation(
                 geometry=self.geometry,
                 transfer=self.transfer,
+                egf_reference=self.egf_reference,
                 preview_record=self.correlation.preview_record,
                 preview_time_s=self.correlation.preview_time_s,
                 ncf=self.correlation.ncf,
                 component_ncfs=self.correlation.component_ncfs,
+                strategy_stacks=self.correlation.strategy_stacks,
+                source_selection=self.correlation.source_selection,
+                pairwise_nnws=self.correlation.pairwise_nnws,
+                nnws_v2=self.correlation.nnws_v2,
+                pair_spz_selection=self.correlation.pair_spz_selection,
+                supervised_egf_oracle=(
+                    self.correlation.supervised_egf_oracle
+                ),
+                supervised_pair_egf_oracle=(
+                    self.correlation.supervised_pair_egf_oracle
+                ),
+                pair_crossfit_coherence=(
+                    self.correlation.pair_crossfit_coherence
+                ),
+                pair_tau_p_selection=(
+                    self.correlation.pair_tau_p_selection
+                ),
+                pair_window_ncf=self.correlation.pair_window_ncf,
                 dispersion=analysis.dispersion,
                 picks=analysis.picks,
                 theory=analysis.theory,
@@ -335,6 +390,10 @@ class WaveDispXWorkflow:
                 component_images=analysis.component_images,
                 method_comparison=analysis.method_comparison,
                 convergence=analysis.convergence,
+                strategy_images=analysis.strategy_images,
+                strategy_component_images=analysis.strategy_component_images,
+                strategy_dispersion_quality=analysis.strategy_dispersion_quality,
+                strategy_egf_quality=analysis.strategy_egf_quality,
                 noise_event_catalog=self.correlation.noise_event_catalog,
                 independent_window_count=self.correlation.independent_window_count,
                 timings=timings,
@@ -372,7 +431,12 @@ class WaveDispXWorkflow:
             portable = deepcopy(self.source_mapping)
             receivers = portable.get("geometry", {}).get("receivers", {})
             if receivers.get("layout") == "file":
-                receivers["coordinates_file"] = "receivers.csv"
+                receivers["coordinates_file"] = (
+                    "das_channels.csv"
+                    if self.config.das.enabled
+                    and self.config.das.geometry_mode == "channel_file"
+                    else "receivers.csv"
+                )
             ambient = portable.get("ambient_sources", {})
             if ambient.get("layout") == "file":
                 ambient["coordinates_file"] = "sources.csv"

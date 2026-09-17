@@ -1,20 +1,87 @@
 """Ambient-noise correlation, dispersion imaging, picking, and theory."""
 
+from .array_dispersion import (
+    ArrayDispersionImage,
+    MATLAB_KERNEL_METHODS,
+    SpatialCoherency,
+    bin_spatial_coherency,
+    canonical_array_method,
+    estimate_spatial_coherency,
+    method_input_contract,
+    spac_dispersion,
+    wavefield_dispersion,
+)
 from .dispersion import DispersionImage, combine_dispersion_images, surface_wave_dispersion
-from .ncf import NCFGather, linear_array_ncf, receiver_array_3c_ncf, receiver_array_ncf
+from .ftan import (
+    FTANCurve,
+    FTANImage,
+    PairFTANResult,
+    correlation_to_egf,
+    pair_ftan,
+    phase_to_group_velocity,
+)
+from .ncf import (
+    NCFBranches,
+    NCFGather,
+    NCFPairBranches,
+    NCFPairGather,
+    bin_pair_ncf_branches,
+    linear_array_ncf,
+    linear_array_ncf_branches,
+    receiver_array_3c_ncf,
+    receiver_array_3c_ncf_branches,
+    receiver_array_ncf,
+    receiver_array_ncf_branches,
+    receiver_pair_ncf_branches,
+)
 from .picking import DispersionPicks, pick_dispersion_ridge
+from .qedisp import (
+    QEDispForwardResult,
+    QEDispKernels,
+    find_qedisp_forward,
+    find_qedisp_group_library,
+    run_qedisp_forward,
+)
 from .theory import TheoreticalDispersion, theoretical_dispersion
 
 __all__ = [
+    "ArrayDispersionImage",
     "DispersionImage",
     "DispersionPicks",
+    "FTANCurve",
+    "FTANImage",
+    "MATLAB_KERNEL_METHODS",
+    "NCFBranches",
     "NCFGather",
+    "NCFPairBranches",
+    "NCFPairGather",
+    "PairFTANResult",
+    "QEDispForwardResult",
+    "QEDispKernels",
+    "SpatialCoherency",
     "TheoreticalDispersion",
+    "bin_spatial_coherency",
+    "canonical_array_method",
     "combine_dispersion_images",
+    "correlation_to_egf",
+    "estimate_spatial_coherency",
+    "find_qedisp_forward",
+    "find_qedisp_group_library",
+    "bin_pair_ncf_branches",
     "linear_array_ncf",
+    "linear_array_ncf_branches",
+    "method_input_contract",
     "receiver_array_3c_ncf",
+    "receiver_array_3c_ncf_branches",
     "receiver_array_ncf",
+    "receiver_array_ncf_branches",
+    "receiver_pair_ncf_branches",
     "pick_dispersion_ridge",
+    "pair_ftan",
+    "phase_to_group_velocity",
+    "run_qedisp_forward",
+    "spac_dispersion",
     "surface_wave_dispersion",
     "theoretical_dispersion",
+    "wavefield_dispersion",
 ]

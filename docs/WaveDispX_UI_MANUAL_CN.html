@@ -164,6 +164,7 @@
   </style>
 </head>
 <body>
+<div style="padding:20px;background:#eaf4ff;color:#163451">当前操作请打开 <a href="WaveDispX_USER_MANUAL_CN.html">新版完整手册（2026-09-17）</a>。本页保留历史四布局案例与网页截图；自动填参、df/dv、记录时长和lag以新版为准。</div>
 <div class="layout">
   <aside>
     <div class="brand">WaveDispX 手册<small>界面参数 · 完整截图 · 可复现结果</small></div>
@@ -179,19 +180,20 @@
       <a href="#passive-line">9. 被动源 + 线阵</a>
       <a href="#passive-array">10. 被动源 + 面阵</a>
       <a href="#high-modes">11. 物理 3C 高阶基准</a>
-      <a href="#compare">12. 结果比较与方法</a>
-      <a href="#export">13. 运行与导出</a>
+      <a href="#das">12. DAS 面阵与逐道光缆</a>
+      <a href="#compare">13. 结果比较与方法</a>
+      <a href="#export">14. 运行与导出</a>
     </nav>
     <div class="side-note">所有界面截图均为真实浏览器完整滚动页，未裁掉底部参数。点击任意图片可查看原始像素。</div>
   </aside>
 
   <main>
     <header class="hero">
-      <div class="eyebrow">WaveDispX / local user manual / 2026-07-30</div>
+      <div class="eyebrow">WaveDispX / local user manual / 2026-09-17</div>
       <h1>波场正演与频散分析<br>界面操作与完整案例手册</h1>
-      <p>每个案例把同一组参数、输入审核和最终正演结果一一对应。覆盖主动/被动、线阵/二维面阵，并给出可直接载入界面的 TOML。</p>
+      <p>每个案例把同一组参数、输入审核和最终正演结果一一对应。覆盖主动/被动、线阵/二维面阵、规则 DAS 面阵与逐通道真实光缆，并给出可直接载入界面的 TOML/CSV。</p>
       <div class="hero-badges">
-        <span>4 个高质量案例</span><span>1 套文件观测系统</span><span>Shot CSV 选择</span><span>Poisson 事件表</span><span>中文 hover tips</span><span>离线可打开</span>
+        <span>4 个常规完整案例</span><span>3 个 DAS 实算案例</span><span>逐道光缆 CSV</span><span>Shot CSV 选择</span><span>中文 hover tips</span><span>离线可打开</span>
       </div>
     </header>
 
@@ -216,13 +218,16 @@
         <tbody>
           <tr><td>速度—密度模型</td><td>层厚、Vp、Vs、ρ、Qp、Qs</td><td>离散波数法 Green 函数、理论频散</td><td>Vp &gt; Vs、末层为半空间、单位正确</td></tr>
           <tr><td>接收器 Geometry</td><td>线阵、二维面阵或 x_m,y_m CSV</td><td>距离采样、孔径、空间混叠</td><td>台数、孔径、源检零距、径向分箱</td></tr>
-          <tr><td>主动源</td><td>炮点、分量、Ricker 主频、fmax、dt</td><td>炮集与 Rayleigh/Love 成像</td><td>Nyquist、最短周期采样、频带</td></tr>
+          <tr><td>DAS 测量</td><td>统一标距/方位，或逐道中心、端点、标距、方位 CSV</td><td>端点水平位移差→轴向应变/应变率</td><td>端点中点、标距、通道方向、第一标距零点</td></tr>
+          <tr><td>主动源</td><td>炮点、分量、Ricker 主频、fmax、dt、记录时长（0=自动）</td><td>炮集与 Rayleigh/Love 成像</td><td>Nyquist、慢群速度到时、真实 df、频带</td></tr>
           <tr><td>被动源空间分布</td><td>源环、源线或 CSV；源数、种子、方位采样</td><td>有限记录照明与 Green 传递函数</td><td>方位缺口、源—检距离、独立源数</td></tr>
           <tr><td>噪声时间与 PSD</td><td>时长、dt、窗长、PSD、随机种子</td><td>混合接收器记录与 NCF</td><td>独立窗数、相关窗长度、PSD 覆盖</td></tr>
           <tr><td>频散处理</td><td>phase shift / Hankel-FJ、f、c、dc、taper</td><td>频散能量和拾取</td><td>理论曲线是否落在扫描窗内</td></tr>
           <tr><td>高级计算</td><td>workers、分块、径向插值、归一化、补零</td><td>速度、内存和数值误差</td><td>先保留模板值，再做敏感性测试</td></tr>
         </tbody>
       </table>
+      <p class="callout"><strong>时间域还是频率域：</strong>DWM 核在复频率—水平波数域求 Green 函数，不做逐时间步推进；但当前主动频散来自有限炮集 FFT，被动频散来自有限窗混合记录的接收端 NCF，所以时长仍是物理参数。主动 <code>record_duration_s=0</code> 会按模型群速度、最大偏移、处理最低频率和至少约 20 个真实频率单元自动设计；被动 <code>window_s</code> 控制单窗传播/df，<code>duration_s</code> 控制随机统计收敛。<code>zero_padding</code> 只加密显示。</p>
+      <p class="callout"><strong>f-v 范围：</strong>输入审核会在用户裁剪窗之外计算源带内多模态理论曲线，并结合源谱、阵列孔径、径向采样、空间混叠和 DAS 标距给出紫色虚线建议窗。建议只提示，不静默改写输入；显式时长过短属于 required failure。</p>
     </section>
 
     <section id="geometry">
@@ -233,6 +238,7 @@
         <div class="card span-4"><h3>文件输入｜CSV</h3><p>任意二维阵列使用 <code>x_m,y_m</code> 两列。界面提供模板下载；坐标必须有限且不能重复。</p></div>
       </div>
       <p class="callout"><strong>面阵预检：</strong>主动面阵的空间采样用“唯一径向源距的中位间隔”估计；被动面阵用“台站对径向距离箱宽度”估计。频散成像看到的是这些径向采样，而不是笛卡尔最近台距本身。</p>
+      <p class="callout"><strong>DAS 的两种布局：</strong><code>geometry_mode=uniform</code> 在每个 line/grid 中心放置相同方位的平行标距；<code>geometry_mode=channel_file</code> 从 CSV 逐道读取两个真实端点，允许转弯与变标距。后者仍是离散测量段，不是连续光纤有限元。</p>
       <p class="callout warn"><strong>当前边界：</strong>二维/不规则阵列在频散阶段按距离做径向平均，不保留方位各向异性。如果目标是方向性频散，应先按方位扇区分组。</p>
     </section>
 
@@ -385,8 +391,25 @@ Sₛw(f) = A_PSD(f) × Σₙ aₙ exp(-i 2π f τₙ)</pre>
       <p class="callout good"><strong>定量结果：</strong>主动联合图第二条高阶的中位归一化能量约 0.51，约 69% 有效频点高于 0.35；RR 单分量对该阶的支持率约 96%，ZZ 为 0%。被动 1800 s 中，600→1800 s 的 NCF 相对 L2 为 0.163、频散图为 0.223，说明基本阶已稳而高阶仍受物理激发与有限孔径限制。</p>
     </section>
 
+    <section class="case" id="das">
+      <div class="case-head"><div><div class="badges"><span class="badge active">ACTIVE DAS</span><span class="badge passive">PASSIVE DAS</span><span class="badge array">GRID / CHANNEL FILE</span><span class="badge pass">242 TESTS PASS</span></div><h2>12. DAS 面阵与逐通道真实光缆</h2><div class="case-id">active_das_grid_quick + active/passive_das_channel_file_quick</div></div></div>
+      <div class="file-links"><a href="../examples/active_das_grid_quick.toml">主动 DAS 面阵 TOML</a><a href="../examples/active_das_channel_file_quick.toml">主动光缆 TOML</a><a href="../examples/passive_das_channel_file_quick.toml">被动光缆 TOML</a><a href="../examples/das_channels_bent_example.csv">逐道光缆 CSV</a><a href="PROJECT_INTRO_DAS_HANDOFF_CN.md">DAS 交接说明</a></div>
+      <table><tbody>
+        <tr><th>规则面阵</th><td>11×11=121 个中心；每个中心放置 8 m、0° 的平行标距</td><th>真实光缆</th><td>15 道折线；逐道 6–8 m 标距；方向含 0°/45°/90°</td></tr>
+        <tr><th>主动</th><td>真实计算每道两个端点的水平位移 Green，投影作差后除以该道标距</td><th>被动</th><td>DAS 算子先作用于源—通道传递，再生成有限记录，最后做 DAS–DAS NCF</td></tr>
+        <tr><th>测量/成像</th><td colspan="3"><code>strain</code> 或 <code>strain_rate</code>；当前 DAS 只走保幅 phase-shift，不把节点 ZZ 的 FJ/Hankel 静默套用到 DAS</td></tr>
+      </tbody></table>
+      <figure><span class="figure-label">A. 主动 DAS 规则面阵：完整桌面审核页</span><img src="manual_assets/das-active-grid-review-full.png" alt="主动 DAS 规则面阵完整审核页"><figcaption>Geometry 图直接画出 121 个通道中心、每个通道两个端点连接形成的橙色标距，以及阵列外主动源。</figcaption></figure>
+      <figure><span class="figure-label">B. 主动 DAS 规则面阵：最终完整结果</span><img src="../output_python/active_das_grid_quick/summary.png" alt="主动 DAS 面阵最终结果"><figcaption>同页展示 Vp/Vs/ρ、source–receiver–gauge geometry、DAS 炮集、phase-shift 频散及有限标距响应。</figcaption></figure>
+      <figure><span class="figure-label">C. 主动逐道折线光缆：最终完整结果</span><img src="../output_python/active_das_channel_file_quick/summary.png" alt="主动逐道折线光缆最终结果"><figcaption>通道沿折线路径转向，并保留逐道 6–8 m 标距；输出目录另存标准化 <code>das_channels.csv</code>，可直接再次输入。</figcaption></figure>
+      <figure><span class="figure-label">D. 被动逐道光缆：完整桌面审核页</span><img src="manual_assets/das-passive-cable-review-full.png" alt="被动逐道 DAS 光缆完整审核页"><figcaption>48 个背景源、15 个实际光缆通道、噪声 PSD、模型和理论速度窗均在开算前显示；READY 不等于统计收敛。</figcaption></figure>
+      <figure><span class="figure-label">E. 被动逐道光缆：60 s 快速链路结果</span><img src="../output_python/passive_das_channel_file_quick/summary.png" alt="被动逐道 DAS 光缆最终结果"><figcaption>该图验证有限记录混合→内部 DAS–DAS NCF→phase-shift→保存的全链路。15 道、60 s/6 窗产生的频散较宽，只是 smoke test，不作为被动收敛案例。</figcaption></figure>
+      <details><summary>逐道光缆 CSV 两种格式</summary><div><p>文件始终包含 <code>x_m,y_m</code>。可再给 <code>endpoint_minus_x_m, endpoint_minus_y_m, endpoint_plus_x_m, endpoint_plus_y_m</code>；或者给 <code>gauge_length_m,fiber_azimuth_deg</code>。若两套列同时存在，以端点为准；程序检查端点中点与通道中心一致、标距为正且 <code>channel_id</code> 唯一。</p></div></details>
+      <p class="callout warn"><strong>物理边界：</strong>当前仍是一维水平层状介质、地表水平离散测量段和竖直点力。规则二维面阵不代表二维介质；逐道折线不代表连续光纤力学；井中 DAS、地形、三维介质和 DAS 专用 FJ/Hankel 尚未验证。</p>
+    </section>
+
     <section id="compare">
-      <h2>12. 结果比较与方法选择</h2>
+      <h2>13. 结果比较与方法选择</h2>
       <table>
         <thead><tr><th>问题</th><th>结论</th></tr></thead>
         <tbody>
@@ -402,7 +425,7 @@ Sₛw(f) = A_PSD(f) × Σₙ aₙ exp(-i 2π f τₙ)</pre>
     </section>
 
     <section id="export">
-      <h2>13. 运行、复现与导出</h2>
+      <h2>14. 运行、复现与导出</h2>
       <h3>界面运行</h3>
       <ol>
         <li>在“建立算例”上传本手册对应的 TOML，点击“读取 TOML”。</li>
@@ -414,12 +437,15 @@ Sₛw(f) = A_PSD(f) × Σₙ aₙ exp(-i 2π f τₙ)</pre>
       <pre class="command">conda run -n seisloc wavedispx run examples/manual_active_line.toml
 conda run -n seisloc wavedispx run examples/manual_active_array.toml
 conda run -n seisloc wavedispx run examples/manual_passive_line.toml
-conda run -n seisloc wavedispx run examples/manual_passive_array.toml</pre>
-      <details><summary>输出文件说明</summary><div><code>input.toml</code> 为可复现输入；<code>results.h5</code> 保存波形/NCF/频散矩阵；<code>receivers.csv</code> 与 <code>sources.csv</code> 保存本次实际使用的 Geometry；<code>picked_*.csv</code> 为拾取；<code>convergence.csv</code> 为被动时长收敛；Poisson 模型额外输出 <code>noise_events.csv</code>；<code>manifest.json</code> 保存运行时间、内存和质量指标。</div></details>
+conda run -n seisloc wavedispx run examples/manual_passive_array.toml
+PYTHONPATH=python_src conda run -n seisloc wavedispx run examples/active_das_grid_quick.toml
+PYTHONPATH=python_src conda run -n seisloc wavedispx run examples/active_das_channel_file_quick.toml
+PYTHONPATH=python_src conda run -n seisloc wavedispx run examples/passive_das_channel_file_quick.toml</pre>
+      <details><summary>输出文件说明</summary><div><code>input.toml</code> 为可复现输入；<code>results.h5</code> 保存波形/NCF/频散矩阵；<code>receivers.csv</code> 与 <code>sources.csv</code> 保存本次实际使用的 Geometry；DAS 另存包含真实端点、逐道标距和方位的 <code>das_channels.csv</code>；<code>picked_*.csv</code> 为拾取；<code>convergence.csv</code> 为被动时长收敛；Poisson 模型额外输出 <code>noise_events.csv</code>；<code>manifest.json</code> 保存运行时间、内存和质量指标。</div></details>
       <p class="callout"><strong>建议交付给频散项目的最小包：</strong>TOML + receivers.csv + sources.csv + results.h5 + manifest.json。这样对方既能读取原始/NCF 道集，也能核对模型、Geometry、源与处理参数。</p>
     </section>
 
-    <footer>本手册中的四套结果均由本机 <code>seisloc</code> 环境和 C++17/pybind11 离散波数法（DWM）核心实际运行生成。性能数字与当前机器有关；物理参数、随机种子和输出质量指标可由所附 TOML/manifest 复现。</footer>
+    <footer>本手册中的常规四案例与三套 DAS 结果均由本机 <code>seisloc</code> 环境和 C++17/pybind11 离散波数法核心实际运行生成。性能数字与当前机器有关；物理参数、随机种子和输出质量指标可由所附 TOML/CSV/manifest 复现。快速 DAS 案例属于功能验通，不替代长时收敛和独立求解器验证。</footer>
   </main>
 </div>
 

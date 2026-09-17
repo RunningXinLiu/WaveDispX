@@ -62,6 +62,7 @@ def _summary(config) -> dict[str, object]:
         )
     else:
         result.update(
+            wavelet=config.active_source.wavelet,
             dominant_frequency_hz=config.active_source.dominant_frequency_hz,
             source_component=config.active_source.component,
         )

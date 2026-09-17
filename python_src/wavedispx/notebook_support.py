@@ -100,6 +100,7 @@ def prepare_notebook_case(
     receivers = deepcopy(values["receivers"])
     _resolve_optional_file(root, receivers, "coordinates_file")
     mapping["geometry"] = {"receivers": receivers}
+    mapping["das"] = deepcopy(values.get("das", mapping.get("das", {})))
     mapping["processing"] = deepcopy(values["processing"])
 
     if mode == "active":
@@ -173,10 +174,12 @@ _COMMON_REFERENCE = (
     ("receivers.coordinates_file", "CSV", "file 时必填", "表头 x_m,y_m，至少两个不重复有限坐标。"),
     ("receivers.distance_bin_m", "m", "被动 grid/file 必填", "二维台站对转为径向 NCF 道集时的距离箱宽。"),
     ("processing.dispersion_method", "—", "phase_shift/bessel/hankel", "频散成像核；被动默认 phase_shift，主动默认 hankel。"),
+    ("processing.theory_solver", "—", "disba/qedisp", "理论多模态求解器；低速层/mode-kissing 审计可显式用 qedisp。"),
     ("processing.compare_methods", "—", "true/false", "同时输出三种成像核的同网格对照；默认关闭以节省时间。"),
     ("processing.frequency_min/max_hz", "Hz", "0≤fmin<fmax<Nyquist", "频散显示与拾取频带；被动上限不能超过 PSD 上限。"),
     ("processing.velocity_min/max_mps", "m/s", "0<vmin<vmax", "相速度扫描范围，必须覆盖预期模态。"),
     ("processing.velocity_step_mps", "m/s", ">0", "速度网格步长；更小更细但计算和内存增加。"),
+    ("processing.frequency_step_hz", "Hz", "0=自动或>0", "频散图显示/扫描频率步长；不改变真实记录长度决定的 1/T 物理分辨率。"),
     ("processing.distance_taper_fraction", "—", "0–1", "距离域 Tukey taper；减弱有限孔径截断旁瓣。"),
     ("processing.correlation_normalization", "—", "spectral_whitening/one_bit/none", "NCF 归一化；主动通常 none，被动默认 whitening。"),
     ("processing.zero_padding", "倍", ">0", "时间 FFT 补零，只细化频率采样，不提高真实分辨率。"),
@@ -187,14 +190,24 @@ _COMMON_REFERENCE = (
     ("processing.rayleigh_modes/love_modes", "阶", "整数≥1", "独立理论频散计算和叠加的模态数。"),
 )
 
+_DAS_REFERENCE = (
+    ("das.enabled", "—", "true/false", "开启后在每个道中心建立两个标距端点；端点 Green 位移先做轴向差，再进入记录与互相关。"),
+    ("das.geometry_mode", "—", "uniform/channel_file", "uniform 使用统一标距/方位；channel_file 从 receiver CSV 逐道读取端点或标距/方位。"),
+    ("das.gauge_length_m", "m", ">0", "uniform 模式物理标距 Lg；channel_file 模式由 CSV 每行定义。有限标距响应为 sinc(k_t Lg/2)。"),
+    ("das.measurement", "—", "strain/strain_rate", "轴向应变，或按 NumPy rFFT 约定乘 +i2πf 后的应变率。"),
+    ("das.fiber_azimuth_deg", "deg", "有限角度", "uniform 模式相对 +x 轴逆时针；channel_file 模式由 CSV 逐道定义。"),
+)
+
 _ACTIVE_REFERENCE = (
     ("shot_csv / shot_id", "CSV / —", "可选；多炮必须选ID", "从 shot_id,x_m,y_m 文件选择一炮；设置后覆盖手填 x/y。"),
     ("active_source.x_m / y_m", "m", "有限数值", "单炮坐标；与接收器的平面距离进入 Green 响应。"),
     ("active_source.component", "—", "vertical/horizontal/both", "Rayleigh、Love 或同时计算。"),
-    ("active_source.wavelet", "—", "当前为 ricker", "主动震源时间函数。"),
-    ("active_source.dominant_frequency_hz", "Hz", ">0", "Ricker 主频，控制主要能量中心。"),
+    ("active_source.wavelet", "—", "ricker/unit_impulse", "主动震源时间函数；单位脉冲用于理想宽频校准。"),
+    ("active_source.dominant_frequency_hz", "Hz", ">0", "Ricker 主频；单位脉冲时为时窗参考频率。"),
     ("active_source.maximum_frequency_hz", "Hz", "≥主频且<Nyquist", "波场正演频率上限。"),
     ("active_source.dt_s", "s", ">0", "时间采样；Nyquist=1/(2dt)，最短周期建议≥8点。"),
+    ("active_source.record_duration_s", "s", "0=自动或>0", "保存炮集并用于成像的真实时长；0 按群速度、最大炮检距和最低处理频率自动设计。"),
+    ("noise.maximum_lag_s", "s", "0=自动或 0<lag<window", "被动 NCF 保存并成像的最大正时延；0 按群速度与阵列孔径自动设计。"),
 )
 
 _PASSIVE_REFERENCE = (
@@ -224,7 +237,7 @@ _PASSIVE_REFERENCE = (
 def parameter_reference_markdown(mode: Literal["active", "passive"]) -> str:
     """Return a complete Chinese parameter table for display in Jupyter."""
     specific = _ACTIVE_REFERENCE if mode == "active" else _PASSIVE_REFERENCE
-    rows = (*_COMMON_REFERENCE, *specific)
+    rows = (*_COMMON_REFERENCE, *_DAS_REFERENCE, *specific)
     lines = [
         "### 参数详细说明",
         "",

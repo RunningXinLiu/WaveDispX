@@ -1,0 +1,10 @@
+{
+  "contract_version": "1.0.1",
+  "files": {
+    "runtime.example.json": "91771b5720aa955d05abe673fbdcea7eaff38a65ebbb50054bb57ce3a469a092",
+    "CHANGELOG.md": "59cabf5a7a5fa55b72d8b5d38c63fc83c074ddac47efb97a9329bd49c1b410e9",
+    "WORKFLOW_zh.md": "4cffc56197df2d56937b1009caa913d781f29e44b7926a0bae9f140eb3f703e8",
+    "README.md": "f86b188836eaac55d73da2851c736fecc6b8e1e3462b2e98ee1b661064d3471e"
+  },
+  "scope": "Portable documentation only; not solver distribution or validation certificate"
+}

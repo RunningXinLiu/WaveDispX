@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import h5py
+import pytest
 
 from wavedispx.config import load_config
 from wavedispx.processing import (
@@ -11,6 +12,13 @@ from wavedispx.processing import (
     receiver_array_ncf,
     surface_wave_dispersion,
     theoretical_dispersion,
+)
+from wavedispx.processing.ncf import (
+    bin_pair_ncf_branches,
+    linear_array_ncf_branches,
+    receiver_pair_ncf_branches,
+    receiver_array_3c_ncf_branches,
+    receiver_array_ncf_branches,
 )
 
 
@@ -33,6 +41,31 @@ def test_linear_fft_ncf_returns_expected_pair_counts():
     np.testing.assert_allclose(result.distance_m, [2, 4, 6, 8])
     assert result.data.shape == (101, 4)
     assert result.valid_windows == 3
+
+
+def test_linear_ncf_branches_preserve_the_existing_symmetric_result():
+    rng = np.random.default_rng(71)
+    data = rng.normal(size=(500, 6))
+    receiver_x = np.arange(6, dtype=float) * 4.0
+    options = dict(
+        window_s=2.5,
+        overlap=0.0,
+        maximum_lag_s=0.6,
+        normalization="none",
+    )
+
+    expected = linear_array_ncf(data, receiver_x, 0.01, **options)
+    branches = linear_array_ncf_branches(data, receiver_x, 0.01, **options)
+
+    np.testing.assert_allclose(branches.symmetric.data, expected.data, rtol=0, atol=0)
+    np.testing.assert_allclose(
+        branches.symmetric.data,
+        0.5 * (branches.positive.data + branches.negative.data),
+        rtol=0,
+        atol=1e-15,
+    )
+    assert branches.positive.valid_windows == expected.valid_windows
+    assert branches.negative.valid_windows == expected.valid_windows
 
 
 def test_receiver_array_ncf_preserves_exact_line_fast_path():
@@ -84,6 +117,136 @@ def test_receiver_array_ncf_bins_all_irregular_2d_pairs():
     assert int(result.pair_count.sum()) == 6
     assert result.data.shape == (51, 2)
     assert result.valid_windows == 1
+
+
+def test_pair_resolved_scalar_ncf_bins_back_to_existing_array_result():
+    rng = np.random.default_rng(231)
+    data = rng.normal(size=(400, 4))
+    receiver_x = np.array([0.0, 1.0, 0.0, 2.0])
+    receiver_y = np.array([0.0, 0.0, 1.0, 0.0])
+    options = dict(
+        window_s=4.0,
+        overlap=0.0,
+        maximum_lag_s=0.5,
+        normalization="none",
+    )
+    pairs = receiver_pair_ncf_branches(
+        data, receiver_x, receiver_y, 0.01, **options
+    )
+    actual = bin_pair_ncf_branches(pairs, distance_bin_m=1.0)
+    expected = receiver_array_ncf_branches(
+        data,
+        receiver_x,
+        receiver_y,
+        0.01,
+        distance_bin_m=1.0,
+        **options,
+    )
+
+    np.testing.assert_array_equal(pairs.pair_i, [0, 0, 0, 1, 1, 2])
+    np.testing.assert_array_equal(pairs.pair_j, [1, 2, 3, 2, 3, 3])
+    np.testing.assert_allclose(
+        pairs.distance_m,
+        np.hypot(
+            receiver_x[pairs.pair_j] - receiver_x[pairs.pair_i],
+            receiver_y[pairs.pair_j] - receiver_y[pairs.pair_i],
+        ),
+    )
+    for branch_name in ("positive", "negative", "symmetric"):
+        pair_branch = getattr(pairs, branch_name)
+        assert pair_branch.data.shape == (51, 6)
+        np.testing.assert_allclose(
+            getattr(actual, branch_name).data,
+            getattr(expected, branch_name).data,
+            rtol=1e-13,
+            atol=1e-15,
+        )
+    np.testing.assert_array_equal(actual.symmetric.pair_count, [4, 2])
+
+
+def test_unit_weight_pair_bins_match_the_existing_sorted_line_fast_path():
+    rng = np.random.default_rng(232)
+    data = rng.normal(size=(500, 6))
+    receiver_x = np.arange(6, dtype=np.float64) * 4.0
+    options = dict(
+        window_s=2.5,
+        overlap=0.0,
+        maximum_lag_s=0.6,
+        normalization="none",
+    )
+    pairs = receiver_pair_ncf_branches(
+        data, receiver_x, np.zeros(6), 0.01, **options
+    )
+    actual = bin_pair_ncf_branches(pairs, distance_bin_m=4.0)
+    expected = linear_array_ncf_branches(data, receiver_x, 0.01, **options)
+
+    for branch_name in ("positive", "negative", "symmetric"):
+        np.testing.assert_allclose(
+            getattr(actual, branch_name).data,
+            getattr(expected, branch_name).data,
+            rtol=2e-13,
+            atol=2e-15,
+        )
+    np.testing.assert_array_equal(actual.symmetric.pair_count, [5, 4, 3, 2, 1])
+
+
+def test_pair_resolved_ncf_can_be_restricted_to_one_reference_receiver():
+    rng = np.random.default_rng(233)
+    data = rng.normal(size=(400, 5))
+    receiver_x = np.arange(5, dtype=np.float64) * 10.0
+    pairs = receiver_pair_ncf_branches(
+        data,
+        receiver_x,
+        np.zeros(5),
+        0.01,
+        window_s=4.0,
+        overlap=0.0,
+        maximum_lag_s=0.5,
+        normalization="none",
+        reference_receiver_index=2,
+    )
+
+    np.testing.assert_array_equal(pairs.pair_i, [0, 1, 2, 2])
+    np.testing.assert_array_equal(pairs.pair_j, [2, 2, 3, 4])
+    np.testing.assert_allclose(pairs.distance_m, [20.0, 10.0, 10.0, 20.0])
+    assert pairs.symmetric.data.shape == (51, 4)
+
+
+def test_irregular_and_three_component_ncf_expose_all_branches_in_one_result():
+    rng = np.random.default_rng(73)
+    receiver_x = np.array([0.0, 3.0, 0.0, 4.0])
+    receiver_y = np.array([0.0, 0.0, 4.0, 3.0])
+    scalar = rng.normal(size=(400, 4))
+    three_component = rng.normal(size=(400, 4, 3))
+    options = dict(
+        distance_bin_m=1.0,
+        window_s=4.0,
+        overlap=0.0,
+        maximum_lag_s=0.5,
+        normalization="none",
+    )
+
+    expected_scalar = receiver_array_ncf(
+        scalar, receiver_x, receiver_y, 0.01, **options
+    )
+    scalar_branches = receiver_array_ncf_branches(
+        scalar, receiver_x, receiver_y, 0.01, **options
+    )
+    np.testing.assert_allclose(
+        scalar_branches.symmetric.data, expected_scalar.data, rtol=0, atol=0
+    )
+
+    expected_3c = receiver_array_3c_ncf(
+        three_component, receiver_x, receiver_y, 0.01, **options
+    )
+    component_branches = receiver_array_3c_ncf_branches(
+        three_component, receiver_x, receiver_y, 0.01, **options
+    )
+    assert set(component_branches) == {"rr", "tt", "zz"}
+    for name, branches in component_branches.items():
+        np.testing.assert_allclose(
+            branches.symmetric.data, expected_3c[name].data, rtol=0, atol=0
+        )
 
 
 def test_three_component_line_ncf_matches_three_scalar_fast_paths():
@@ -176,6 +339,26 @@ def test_phase_shift_and_picker_recover_known_velocity():
     assert np.median(np.abs(picks.phase_velocity_mps - true_velocity)) <= 2.0
 
 
+def test_dispersion_explicit_frequency_step_controls_output_grid_only():
+    dt = 0.01
+    time = np.arange(400) * dt
+    distance = np.arange(5.0, 55.0, 5.0)
+    data = np.cos(2.0 * np.pi * 8.0 * (time[:, None] - distance[None, :] / 250.0))
+    image = surface_wave_dispersion(
+        data,
+        distance,
+        dt,
+        np.arange(180.0, 321.0, 5.0),
+        frequency_min_hz=5.0,
+        frequency_max_hz=12.0,
+        frequency_step_hz=0.2,
+        zero_padding=1.0,
+    )
+    np.testing.assert_allclose(np.diff(image.frequency_hz), 0.2, atol=1.0e-12)
+    assert image.frequency_hz[0] == pytest.approx(5.0)
+    assert image.frequency_hz[-1] <= 12.0
+
+
 def test_dispersion_averages_duplicate_radial_distances():
     rng = np.random.default_rng(41)
     unique_gather = rng.normal(size=(256, 3))
@@ -207,6 +390,22 @@ def test_theoretical_curve_for_reference_model():
     assert np.all(np.isfinite(fundamental))
     assert 190 < fundamental[-1] < 230
     assert fundamental[0] > fundamental[-1]
+
+
+def test_disba_theory_can_return_group_velocity_for_record_design():
+    config = load_config(ROOT / "examples/passive_two_layer.toml")
+    theory = theoretical_dispersion(
+        config.model,
+        np.linspace(3.0, 18.8, 40),
+        rayleigh_modes=3,
+        love_modes=3,
+        compute_group=True,
+    )
+    assert theory.rayleigh_group_mps is not None
+    assert theory.love_group_mps is not None
+    fundamental = theory.rayleigh_group_mps[:, 0]
+    assert np.all(np.isfinite(fundamental))
+    assert np.all(fundamental > 0.0)
 
 
 def test_ncf_matches_matlab_golden():

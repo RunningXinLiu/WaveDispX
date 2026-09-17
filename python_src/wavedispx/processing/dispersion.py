@@ -72,6 +72,7 @@ def surface_wave_dispersion(
     *,
     frequency_min_hz: float = 0.0,
     frequency_max_hz: float,
+    frequency_step_hz: float | None = None,
     method: Method = "phase_shift",
     component: Literal["vertical", "radial", "transverse"] = "vertical",
     zero_padding: float = 4.0,
@@ -115,6 +116,10 @@ def surface_wave_dispersion(
         raise ValueError("taper fractions must be between zero and one")
     if zero_padding < 1:
         raise ValueError("zero_padding must be >= 1")
+    if frequency_step_hz is not None and (
+        not np.isfinite(frequency_step_hz) or frequency_step_hz <= 0.0
+    ):
+        raise ValueError("frequency_step_hz must be positive and finite")
     if frequency_block_size < 1:
         raise ValueError("frequency_block_size must be >= 1")
     if radial_kernel_lookup_step < 0:
@@ -126,15 +131,42 @@ def surface_wave_dispersion(
     if distance_taper_fraction == 0:
         distance_taper[:] = 1.0
     nfft = _power_of_two_at_least(int(np.ceil(gather.shape[0] * zero_padding)))
+    if frequency_step_hz is not None:
+        # An explicit display grid may require a denser FFT grid before complex
+        # interpolation.  This only samples the finite record more densely; its
+        # physical resolution remains 1 / (N * dt).
+        requested_nfft = int(np.ceil(1.0 / (dt_s * frequency_step_hz)))
+        nfft = max(nfft, _power_of_two_at_least(requested_nfft))
     full_spectrum = np.fft.fft(gather, nfft, axis=0)
     full_frequency = np.arange(nfft // 2 + 1, dtype=np.float64) / (nfft * dt_s)
-    mask = (
-        (full_frequency > 0)
-        & (full_frequency >= frequency_min_hz)
-        & (full_frequency <= min(frequency_max_hz, 0.5 / dt_s))
-    )
-    frequency = full_frequency[mask]
-    spectrum = full_spectrum[np.flatnonzero(mask)]
+    upper_frequency = min(frequency_max_hz, 0.5 / dt_s)
+    if frequency_step_hz is None:
+        mask = (
+            (full_frequency > 0)
+            & (full_frequency >= frequency_min_hz)
+            & (full_frequency <= upper_frequency)
+        )
+        frequency = full_frequency[mask]
+        spectrum = full_spectrum[np.flatnonzero(mask)]
+    else:
+        start_frequency = max(float(frequency_min_hz), float(frequency_step_hz))
+        frequency_count = int(
+            np.floor((upper_frequency - start_frequency) / frequency_step_hz + 1.0e-10)
+        ) + 1
+        if frequency_count <= 0:
+            raise ValueError("the requested frequency grid is empty")
+        frequency = start_frequency + frequency_step_hz * np.arange(
+            frequency_count, dtype=np.float64
+        )
+        positive_spectrum = full_spectrum[: nfft // 2 + 1]
+        spectrum = np.empty((frequency.size, gather.shape[1]), dtype=np.complex128)
+        for receiver_index in range(gather.shape[1]):
+            trace_spectrum = positive_spectrum[:, receiver_index]
+            spectrum[:, receiver_index] = np.interp(
+                frequency, full_frequency, trace_spectrum.real
+            ) + 1j * np.interp(frequency, full_frequency, trace_spectrum.imag)
+    if frequency.size == 0:
+        raise ValueError("the requested frequency grid is empty")
     if spectrum_normalization == "phase":
         spectrum /= np.maximum(np.abs(spectrum), np.finfo(float).eps)
     elif spectrum_normalization != "none":

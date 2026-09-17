@@ -60,7 +60,7 @@ def test_streamlit_dependent_inputs_switch_without_submitting():
     mode = next(item for item in app.selectbox if item.label == "模式")
     app = mode.set_value("active").run()
     number_labels = {item.label for item in app.number_input}
-    assert {"炮点 x (m)", "炮点 y (m)", "Ricker 主频 (Hz)"}.issubset(number_labels)
+    assert {"炮点 x (m)", "炮点 y (m)", "主频 / 参考频率 (Hz)"}.issubset(number_labels)
     radio_labels = {item.label for item in app.radio}
     assert "炮点输入方式" in radio_labels
 
@@ -114,7 +114,15 @@ def test_html_manual_contains_documented_cases_and_all_local_images():
     for case_name in ("active_high_modes_3c", "passive_high_modes_3c"):
         assert case_name in content
         assert (ROOT / "examples" / f"{case_name}.toml").is_file()
+    for case_name in (
+        "active_das_grid_quick",
+        "active_das_channel_file_quick",
+        "passive_das_channel_file_quick",
+    ):
+        assert case_name in content
+        assert (ROOT / "examples" / f"{case_name}.toml").is_file()
+    assert "das_channels_bent_example.csv" in content
     image_sources = re.findall(r'<img src="([^"]+)"', content)
-    assert len(image_sources) == 22
-    assert len(set(image_sources)) == 22
+    assert len(image_sources) == 27
+    assert len(set(image_sources)) == 27
     assert all((HTML_MANUAL.parent / source).is_file() for source in image_sources)

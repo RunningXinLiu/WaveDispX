@@ -29,6 +29,7 @@ venv/
 .ipynb_checkpoints/
 .codegraph/
 .playwright-cli/
+.wavedispx-tools/
 
 # Local credentials and logs
 .env

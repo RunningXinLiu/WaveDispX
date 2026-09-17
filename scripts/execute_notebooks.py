@@ -15,6 +15,7 @@ DEFAULT_NOTEBOOKS = (
     ROOT / "notebooks/01_active_quickstart.ipynb",
     ROOT / "notebooks/02_passive_quickstart.ipynb",
     ROOT / "notebooks/03_methods_and_validation.ipynb",
+    ROOT / "notebooks/04_das_active_passive.ipynb",
 )
 
 

@@ -5,11 +5,13 @@ import tomllib
 import pytest
 
 from wavedispx.app_service import (
+    apply_automatic_parameters,
     CaseInputError,
     CaseSession,
     explain_input_error,
     parse_shot_csv,
     parse_toml_bytes,
+    reset_automatic_parameters,
     stage_uploaded_file,
     toml_dumps,
 )
@@ -31,6 +33,56 @@ def test_toml_round_trip_preserves_valid_case(tmp_path):
     config, invalidated = session.apply_mapping(tomllib.loads(text))
     assert config.mode == "passive"
     assert invalidated == ["forward", "observations", "analysis"]
+
+
+@pytest.mark.parametrize("name", ("active_quick.toml", "passive_quick.toml"))
+def test_automatic_parameters_are_materialized_and_remain_editable(name):
+    mapping = _mapping(name)
+    automatic, diagnostics = apply_automatic_parameters(
+        mapping, base_directory=ROOT
+    )
+    processing = automatic["processing"]
+    assert processing["frequency_step_hz"] > 0.0
+    assert processing["velocity_step_mps"] > 0.0
+    assert processing["frequency_min_hz"] == pytest.approx(
+        diagnostics["recommended_frequency_min_hz"]
+    )
+    if automatic["run"]["mode"] == "active":
+        assert automatic["active_source"]["record_duration_s"] > 0.0
+    else:
+        assert 0.0 < automatic["noise"]["maximum_lag_s"] < automatic["noise"]["window_s"]
+    from wavedispx.config import config_from_mapping
+    from wavedispx.preflight import build_preflight_review
+    assert build_preflight_review(
+        config_from_mapping(automatic, base_directory=ROOT)
+    ).ready
+
+    automatic["processing"]["frequency_step_hz"] *= 2.0
+    assert automatic["processing"]["frequency_step_hz"] != mapping["processing"].get(
+        "frequency_step_hz", 0.0
+    )
+
+
+def test_reset_automatic_parameters_does_not_replace_model_or_geometry():
+    mapping = _mapping("passive_quick.toml")
+    template = deepcopy(mapping)
+    mapping["model"]["layers"][0]["vs_mps"] = 211.0
+    mapping["geometry"]["receivers"]["stop_x_m"] = 210.0
+    mapping["processing"]["frequency_step_hz"] = 0.037
+    mapping["noise"]["maximum_lag_s"] = 1.5
+    restored = reset_automatic_parameters(mapping, template)
+    assert restored["model"]["layers"][0]["vs_mps"] == 211.0
+    assert restored["geometry"]["receivers"]["stop_x_m"] == 210.0
+    assert restored["processing"]["frequency_step_hz"] == 0.0
+    assert restored["noise"]["maximum_lag_s"] == 0.0
+
+
+def test_toml_round_trip_preserves_inline_and_nested_arrays():
+    mapping = _mapping("passive_source_selection_quick.toml")
+    text = toml_dumps(mapping)
+    restored = tomllib.loads(text)
+    assert restored == mapping
+    assert "frequency_bands_hz = [[3.5, 6.5], [6.5, 9.5]]" in text
 
 
 def test_upload_staging_is_content_addressed_and_sanitized(tmp_path):

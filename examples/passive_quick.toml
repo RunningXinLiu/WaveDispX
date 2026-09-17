@@ -31,6 +31,13 @@ stop_x_m = 100.0
 spacing_m = 5.0
 y_m = 0.0
 
+[das]
+enabled = false
+geometry_mode = "uniform"
+gauge_length_m = 10.0
+measurement = "strain_rate"
+fiber_azimuth_deg = 0.0
+
 [ambient_sources]
 component = "vertical"
 layout = "annulus"
@@ -59,9 +66,9 @@ event_rate_hz = 0.4
 correlation_normalization = "spectral_whitening"
 dispersion_method = "phase_shift"
 frequency_min_hz = 3.5
-frequency_max_hz = 9.5
+frequency_max_hz = 10.0
 velocity_min_mps = 150.0
-velocity_max_mps = 500.0
+velocity_max_mps = 580.0
 velocity_step_mps = 2.0
 distance_taper_fraction = 0.5
 zero_padding = 8.0

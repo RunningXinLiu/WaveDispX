@@ -91,10 +91,18 @@ def plot_workflow_forward(workflow: WaveDispXWorkflow):
     if workflow.config.mode == "active":
         order = np.argsort(forward.distance_m)
         figure, axes = plt.subplots(1, 2, figsize=(14, 5), constrained_layout=True)
-        for axis, gather, title in (
-            (axes[0], forward.vertical_vertical[:, order], "Vertical-load vertical gather"),
-            (axes[1], forward.horizontal_tangential[:, order], "Horizontal-load transverse gather"),
-        ):
+        panels = (
+            (
+                (forward.das_record.data[:, order], "DAS finite-gauge shot gather"),
+                (forward.vertical_vertical[:, order], "Node ZZ comparison gather"),
+            )
+            if forward.das_record is not None
+            else (
+                (forward.vertical_vertical[:, order], "Vertical-load vertical gather"),
+                (forward.horizontal_tangential[:, order], "Horizontal-load transverse gather"),
+            )
+        )
+        for axis, (gather, title) in zip(axes, panels):
             scale = np.percentile(np.abs(gather), 99.5)
             axis.imshow(
                 gather,
@@ -111,6 +119,10 @@ def plot_workflow_forward(workflow: WaveDispXWorkflow):
                 vmax=scale,
             )
             axis.set(xlabel="Source-receiver distance (m)", ylabel="Time (s)", title=title)
+        figure.suptitle(
+            f"Active waveform | saved duration {forward.time_s[-1]:.3f} s | "
+            f"dt {workflow.config.active_source.dt_s:g} s"
+        )
         return figure
     figure, axes = plt.subplots(1, 2, figsize=(14, 5), constrained_layout=True)
     mean_axes = tuple(range(1, forward.spectrum.ndim))
@@ -136,7 +148,11 @@ def plot_workflow_forward(workflow: WaveDispXWorkflow):
         title=(
             f"ZZ transfer amplitude at {forward.frequency_hz[frequency_index]:.2f} Hz"
             if forward.spectrum.ndim == 4
-            else f"Transfer amplitude at {forward.frequency_hz[frequency_index]:.2f} Hz"
+            else (
+                f"DAS transfer amplitude at {forward.frequency_hz[frequency_index]:.2f} Hz"
+                if workflow.config.das.enabled
+                else f"Transfer amplitude at {forward.frequency_hz[frequency_index]:.2f} Hz"
+            )
         ),
     )
     figure.suptitle(
@@ -175,7 +191,11 @@ def plot_workflow_observations(workflow: WaveDispXWorkflow):
         title=(
             "All-source mixed Z record preview"
             if three_component
-            else "All-source mixed receiver record preview"
+            else (
+                "All-source mixed DAS record preview"
+                if workflow.config.das.enabled
+                else "All-source mixed receiver record preview"
+            )
         ),
     )
     ncf = observations.ncf.data
@@ -197,7 +217,11 @@ def plot_workflow_observations(workflow: WaveDispXWorkflow):
     axes[1].set(
         xlabel="Interreceiver distance (m)",
         ylabel="Lag time (s)",
-        title=f"ZZ receiver NCF ({observations.independent_window_count} windows)",
+        title=(
+            f"DAS–DAS NCF ({observations.independent_window_count} windows)"
+            if workflow.config.das.enabled
+            else f"ZZ receiver NCF ({observations.independent_window_count} windows)"
+        ),
     )
     if three_component:
         rr = observations.component_ncfs["rr"]
@@ -216,6 +240,11 @@ def plot_workflow_observations(workflow: WaveDispXWorkflow):
             ylabel="Lag time (s)",
             title=f"Pair-rotated RR NCF ({observations.independent_window_count} windows)",
         )
+    figure.suptitle(
+        f"Passive finite record {workflow.config.noise.duration_s:g} s | "
+        f"independent window {workflow.config.noise.window_s:g} s | "
+        f"displayed NCF lag 0–{observations.ncf.lag_time_s[-1]:.3f} s"
+    )
     return figure
 
 
@@ -223,6 +252,26 @@ def plot_workflow_dispersion(workflow: WaveDispXWorkflow):
     analysis = workflow.compute_dispersion()
     if workflow.config.mode == "active":
         figure, axes = plt.subplots(1, 2, figsize=(14, 5), constrained_layout=True)
+        if workflow.config.das.enabled:
+            _image(
+                axes[0],
+                analysis.component_images["das"],
+                analysis.theory.rayleigh_mps,
+                "DAS Rayleigh",
+            )
+            _image(
+                axes[1],
+                analysis.component_images["zz"],
+                analysis.theory.rayleigh_mps,
+                "Node ZZ comparison",
+            )
+            axes[0].plot(
+                analysis.rayleigh_combined_picks.frequency_hz,
+                analysis.rayleigh_combined_picks.phase_velocity_mps,
+                "k-",
+                linewidth=1.5,
+            )
+            return figure
         _image(
             axes[0],
             analysis.rayleigh_combined,
@@ -251,7 +300,12 @@ def plot_workflow_dispersion(workflow: WaveDispXWorkflow):
         axis = axes[2]
     else:
         figure, axis = plt.subplots(figsize=(9, 5), constrained_layout=True)
-        _image(axis, analysis.dispersion, analysis.theory.rayleigh_mps, "Passive Rayleigh")
+        _image(
+            axis,
+            analysis.dispersion,
+            analysis.theory.rayleigh_mps,
+            "Passive DAS Rayleigh" if workflow.config.das.enabled else "Passive Rayleigh",
+        )
     axis.plot(
         analysis.picks.frequency_hz,
         analysis.picks.phase_velocity_mps,

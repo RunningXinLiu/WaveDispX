@@ -35,6 +35,53 @@ SOURCE_EVENT_3C_DTYPE = np.dtype(
 )
 
 
+def add_independent_receiver_noise(
+    record: np.ndarray,
+    config: NoiseConfig,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    """Add independent band-limited receiver noise before correlation.
+
+    The configured fraction is the RMS of each receiver/component noise trace
+    relative to the median non-zero RMS of the mixed signal traces.  A value of
+    zero is an exact no-op.  The noise stream uses a generator independent from
+    the ambient-source realization so changing receiver noise does not change
+    the source sequence.
+    """
+    signal = np.asarray(record, dtype=np.float64)
+    if signal.ndim not in (2, 3):
+        raise ValueError("record must be time-by-receiver or time-by-receiver-by-component")
+    if np.any(~np.isfinite(signal)):
+        raise ValueError("record contains non-finite values")
+    fraction = float(config.receiver_noise_rms_fraction)
+    if fraction == 0.0:
+        return signal
+
+    trace_rms = np.sqrt(np.mean(signal**2, axis=0))
+    positive = trace_rms[np.isfinite(trace_rms) & (trace_rms > 0.0)]
+    if not positive.size:
+        return signal
+    target_rms = fraction * float(np.median(positive))
+
+    white = rng.standard_normal(signal.shape)
+    spectrum = np.fft.rfft(white, axis=0)
+    frequency = np.fft.rfftfreq(signal.shape[0], config.dt_s)
+    inside = (
+        (frequency >= config.minimum_frequency_hz)
+        & (frequency <= config.maximum_frequency_hz)
+    )
+    spectrum[~inside] = 0.0
+    band_limited = np.fft.irfft(spectrum, n=signal.shape[0], axis=0)
+    noise_rms = np.sqrt(np.mean(band_limited**2, axis=0))
+    scale = np.divide(
+        target_rms,
+        noise_rms,
+        out=np.zeros_like(noise_rms),
+        where=noise_rms > 0.0,
+    )
+    return signal + band_limited * scale[None, ...]
+
+
 def _stochastic_source_realization(
     frequency_hz: np.ndarray,
     source_count: int,
@@ -91,6 +138,7 @@ def synthesize_mixed_noise_window_band(
     return_source_coefficients: bool = False,
     return_source_events: bool = False,
     source_block_size: int | None = None,
+    source_activity_weights: np.ndarray | None = None,
 ) -> MixedNoiseWindow:
     """Mix a compact band-limited receiver/source transfer tensor."""
     transfer = np.asarray(transfer_spectrum)
@@ -107,6 +155,17 @@ def synthesize_mixed_noise_window_band(
     coefficients, source_events = _stochastic_source_realization(
         frequency, transfer.shape[2], config, rng
     )
+    if source_activity_weights is not None:
+        activity = np.asarray(source_activity_weights, dtype=np.float64).reshape(-1)
+        if (
+            activity.size != transfer.shape[2]
+            or np.any(~np.isfinite(activity))
+            or np.any(activity < 0)
+        ):
+            raise ValueError(
+                "source_activity_weights must be one finite non-negative value per source"
+            )
+        coefficients *= activity[:, None]
     if source_block_size is None:
         source_block_size = transfer.shape[2]
     if source_block_size < 1:
@@ -147,6 +206,7 @@ def synthesize_mixed_noise_window_3c_band(
     return_source_coefficients: bool = False,
     return_source_events: bool = False,
     source_block_size: int | None = None,
+    source_activity_weights: np.ndarray | None = None,
 ) -> MixedNoiseWindow:
     """Mix physical global X/Y/Z random forces through five local Green terms.
 
@@ -177,6 +237,17 @@ def synthesize_mixed_noise_window_3c_band(
         frequency, 3 * source_count, config, rng
     )
     coefficients = flat_coefficients.reshape(source_count, 3, frequency.size)
+    if source_activity_weights is not None:
+        activity = np.asarray(source_activity_weights, dtype=np.float64).reshape(-1)
+        if (
+            activity.size != source_count
+            or np.any(~np.isfinite(activity))
+            or np.any(activity < 0)
+        ):
+            raise ValueError(
+                "source_activity_weights must be one finite non-negative value per source"
+            )
+        coefficients *= activity[:, None, None]
     if source_block_size is None:
         source_block_size = source_count
     if source_block_size < 1:

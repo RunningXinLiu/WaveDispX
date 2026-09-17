@@ -1,5 +1,9 @@
 # WaveDispX 原生桌面工作台操作手册
 
+当前版本请优先打开 [新版完整操作手册](WaveDispX_USER_MANUAL_CN.html)（2026-09-17）。
+它包含本轮真实完整窗口截图、自动填参/重置说明、可编辑 df/dv 和波形时长/lag、文件示例、
+主动/被动实际结果与验证边界。下文保留详细桌面功能索引，旧截图仅作界面结构参考。
+
 这是一套直接运行源码的 PySide6 桌面界面，不需要浏览器，也不要求封装成 macOS `.app`。界面只组织参数、审核、运行与展示；正演、真实有限记录噪声合成、接收端互相关、频散成像、拾取和理论曲线都调用与 CLI/Notebook 相同的 `CaseSession → WaveDispXWorkflow`。
 
 ## 1. 启动
@@ -50,6 +54,7 @@ conda run -n seisloc python -m wavedispx.desktop \
 | `线阵` | `geometry.receivers.layout="line"` | 输入 x 起终点、道距和固定 y |
 | `二维面阵` | `layout="grid"` | 输入 x/y 起终点与间距；被动还输入径向距离箱 |
 | `接收器 CSV` | `layout="file"` | 读取任意二维 `x_m,y_m` |
+| `DAS 光缆 CSV` | `layout="file"`、`das.geometry_mode="channel_file"` | 读取逐通道中心、端点或标距/方位，并立即校验光缆几何 |
 | `源环/源线` | `ambient_sources` | 被动方位照明或道路噪声带 |
 | `噪声源 CSV` | `ambient_sources.layout="file"` | 明确给出每个背景噪声源位置 |
 | `炮点 CSV` | `active_source.x_m,y_m` | 从多炮表选择本次的一炮 |
@@ -62,6 +67,32 @@ conda run -n seisloc python -m wavedispx.desktop \
 - `noise_sources.csv`：48 个显式被动噪声源；
 - `noise_psd.csv`：外部 PSD；
 - `active_selected_shot.toml` 与 `passive_poisson.toml`：完整配置。
+
+### 3.1 DAS 有两种 Geometry 模式
+
+- `das.geometry_mode="uniform"`：每个接收器中心放置相同标距、相同方位的测量段。它既可用于线阵，也可用于规则二维面阵；二维面阵代表一组平行 DAS 通道，不自动表示一根连续转弯光缆。
+- `das.geometry_mode="channel_file"`：`geometry.receivers.coordinates_file` 直接指向逐通道光缆 CSV。主动和被动使用同一套真实通道中心、端点、切向及标距；被动仍在各 DAS 通道记录之间做互相关。
+
+逐通道 CSV 必须至少包含 `x_m,y_m`，并从以下两种定义中选择一种：
+
+```text
+# 方式 A：直接给真实端点（优先，适合弯折光缆）
+channel_id,x_m,y_m,endpoint_minus_x_m,endpoint_minus_y_m,endpoint_plus_x_m,endpoint_plus_y_m
+
+# 方式 B：给每道标距和轴向方位角（从 +x 逆时针）
+channel_id,x_m,y_m,gauge_length_m,fiber_azimuth_deg
+```
+
+`channel_id` 可省略，但若提供必须唯一；标距必须大于零。方式 A 中，程序检查两个端点中点是否等于 `x_m,y_m`。完整运行后，输出目录会保存标准化的 `das_channels.csv`，其中同时包含真实端点和派生的逐道标距/方位，可直接作为下一次输入。
+
+可直接试用：
+
+- `examples/active_das_grid_quick.toml`：主动源 11×11 规则面阵、121 个平行有限标距通道；
+- `examples/das_channels_bent_example.csv`：15 道折线光缆，逐道标距 6–8 m、方向含 0°/45°/90°；
+- `examples/active_das_channel_file_quick.toml`：主动源真实折线光缆；
+- `examples/passive_das_channel_file_quick.toml`：被动源真实折线光缆快速链路。
+
+桌面工作台可从模板下拉框直接选择这些算例，也可点击顶部 `DAS 光缆 CSV` 导入自己的文件。`channel_file` 模式下，统一标距和统一方位输入不再控制计算；每道值以 CSV 为准。
 
 ## 4. 主动/被动 × 线阵/面阵实测页面
 
@@ -91,6 +122,15 @@ conda run -n seisloc python -m wavedispx.desktop \
 
 正式被动收敛不应停留在 quick 参数。优先换到 `passive_two_layer.toml`，典型为 192–384 个方位均匀源和 600–1800 s 有限记录。源数改善方位照明，记录时长/独立窗数降低有限样本互相关方差，两者不能互相完全替代。
 
+### 4.5 DAS 主动/被动面阵与真实光缆
+
+- 主动规则面阵：选 `主动 DAS 面阵（快速）`，先审核 121 个通道中心及每道两个标距端点，再运行主动炮集和 DAS phase-shift 成像。
+- 主动真实光缆：选 `主动 DAS 光缆文件（快速）` 或点击 `DAS 光缆 CSV`，程序对每道两个端点分别计算水平位移 Green，再投影、作差并除以该道标距。
+- 被动真实光缆：选 `被动 DAS 光缆文件（快速）`。有限标距算子先作用到每个噪声源—通道的传递函数，然后合成有限时长随机记录，最后只在 DAS 通道记录之间做 NCF。
+- 被动规则面阵：仍可使用 `passive_das_grid_quick.toml`；它适合研究二维接收覆盖，但不代表转弯光缆连续体。
+
+当前 DAS 成像固定为 `phase_shift`。节点式 `bessel/hankel` 已保留给常规接收器对照，但不会静默套用到 DAS 输出。规则面阵和光缆文件都仍基于一维水平层状介质、地表水平测量段和竖直点力；尚不包含井中 DAS、地形或连续光纤力学。
+
 ## 5. 分阶段运行与缓存
 
 - **正演 / Green 传递**：主动产生炮集；被动建立每个源到每个接收器的带限 Green 传递。
@@ -98,6 +138,20 @@ conda run -n seisloc python -m wavedispx.desktop \
 - **频散成像与拾取**：从炮集或径向 NCF 道集计算能量谱；理论白线独立计算，不参与能量生成。
 - **一键运行并保存全部**：依次执行上述步骤并写完整结果。
 - **缓存失效**：只改频散/拾取参数时保留正演和 NCF；改模型、源、Geometry 或同名输入文件内容时，下游缓存按内容哈希失效。
+
+DWM 核在复频率—波数域计算，但生产频散仍来自有限炮集或有限窗 NCF。主动参数树中的
+`active_source.record_duration_s=0` 表示按群速度、最大偏移、处理频带和真实频率分辨率自动设计；
+显式值过短会在输入审核中阻止正演。被动 `noise.window_s` 决定单窗传播覆盖和真实 df，
+`noise.maximum_lag_s` 决定实际保存与展示的互相关 lag，`noise.duration_s` 决定独立窗数与统计收敛；
+`processing.frequency_step_hz` 是可编辑的显示/扫描 df，而 `processing.zero_padding` 与更小显示 df
+都不会增加由 `1/T` 决定的真实分辨率。
+
+参数页顶部提供“自动填入 f/v/df/dv”和“恢复模板默认”。前者按当前模型、源谱、Geometry、
+DAS 标距和理论多模态把建议值写成普通可编辑参数；后者只恢复这些范围/步长和记录窗/lag，
+不会覆盖模型、观测系统或源位置。
+
+输入审核理论图中的绿色/橙色区域是用户请求的速度/频率窗，紫色虚线是模型、源谱、孔径、采样和
+DAS 标距共同给出的建议边界。理论曲线会在用户裁剪窗外继续显示，避免窄范围掩盖遗漏模态。
 
 ## 6. 结果页
 

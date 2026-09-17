@@ -15,6 +15,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 
 from wavedispx.app_service import (
+    apply_automatic_parameters,
     CaseInputError,
     CaseSession,
     coordinate_csv_count,
@@ -22,6 +23,7 @@ from wavedispx.app_service import (
     load_template_mapping,
     parse_shot_csv,
     parse_toml_bytes,
+    reset_automatic_parameters,
 )
 from wavedispx.config import ConfigError
 from wavedispx.preflight import plot_preflight_review
@@ -35,9 +37,15 @@ from wavedispx.workflow_plotting import (
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 TEMPLATES = {
     "主动源｜快速检查": PROJECT_ROOT / "examples/active_quick.toml",
+    "DAS｜主动线阵快速检查": PROJECT_ROOT / "examples/active_das_line_quick.toml",
+    "DAS｜主动面阵快速检查": PROJECT_ROOT / "examples/active_das_grid_quick.toml",
+    "DAS｜逐道光缆文件": PROJECT_ROOT / "examples/active_das_channel_file_quick.toml",
     "主动源｜正式两层模型": PROJECT_ROOT / "examples/active_two_layer.toml",
     "主动源｜高阶模态 3C": PROJECT_ROOT / "examples/active_high_modes_3c.toml",
     "被动源｜快速检查": PROJECT_ROOT / "examples/passive_quick.toml",
+    "DAS｜被动线阵快速检查": PROJECT_ROOT / "examples/passive_das_line_quick.toml",
+    "DAS｜被动面阵快速检查": PROJECT_ROOT / "examples/passive_das_grid_quick.toml",
+    "DAS｜被动逐道光缆": PROJECT_ROOT / "examples/passive_das_channel_file_quick.toml",
     "被动源｜正式收敛": PROJECT_ROOT / "examples/passive_two_layer.toml",
     "被动源｜高阶模态物理 3C": PROJECT_ROOT / "examples/passive_high_modes_3c.toml",
     "被动源｜二维面阵": PROJECT_ROOT / "examples/passive_grid_quick.toml",
@@ -67,16 +75,22 @@ HELP = {
     "grid_y_spacing": "二维面阵 y 方向间距，单位 m；与 x 间距共同决定最近邻采样。",
     "distance_bin": "被动二维/不规则阵列把台站对距离归入该宽度的径向箱。过小则每箱对数不足，过大则平滑空间相位。",
     "receiver_file": "上传含 x_m,y_m 表头的 UTF-8 CSV。每行一个接收器，允许任意二维形状，但坐标不能重复。",
+    "das_enabled": "开启后，接收器中心会转换为有限标距 DAS 通道；程序在两个端点计算位移，不是在最终频散图上乘滤波器。",
+    "das_geometry_mode": "uniform 使用统一标距和方位；channel_file 从接收器 CSV 逐道读取两个端点，或逐道读取标距与方位。",
+    "das_gauge": "统一几何的物理标距 Lg，单位 m，与道间距不同。channel_file 模式下由 CSV 每行决定。",
+    "das_measurement": "strain 为轴向应变；strain_rate 为应变的一阶时间导数，频域按 NumPy rFFT 约定乘 +i2πf。",
+    "das_azimuth": "统一几何相对全局 +x 轴逆时针的光纤方位。channel_file 模式下由每行端点或方位决定。",
     "shot_input": "界面输入适合单炮；Shot CSV 可包含 shot_id,x_m,y_m 多行，但当前每个算例只选择并计算其中一炮。",
     "shot_file": "上传 UTF-8 炮点表。x_m,y_m 必填，shot_id 可选；多炮文件载入后需明确选择本次运行的炮号。",
     "shot_select": "当前算例要计算的炮点。选择结果会固化为 [active_source] 的 x_m,y_m，保证输出 TOML 可独立复现。",
     "source_x": "主动炮点 x 坐标，单位 m。所有主动源检距由它与接收器坐标计算。",
     "source_y": "主动炮点 y 坐标，单位 m。二维阵列会按真实平面距离计算 Green 响应。",
     "component": "vertical：Rayleigh/竖直载荷；horizontal：Love/横向载荷；both：同时计算两类分量。",
-    "wavelet": "主动源时间函数。当前稳定实现为 Ricker 子波。",
-    "dominant_frequency": "Ricker 子波主频，单位 Hz，决定主要能量中心；应落在处理频带附近。",
+    "wavelet": "主动源时间函数。Ricker 用于常规炮集；unit_impulse 用于合成宽频系统校准。",
+    "dominant_frequency": "Ricker 子波主频；unit_impulse 时仅作为正演时窗与延迟的参考频率。",
     "forward_max_frequency": "正演最高频率，单位 Hz。必须高于主频且低于时间 Nyquist 频率。",
     "dt": "时间采样间隔，单位 s。Nyquist 频率为 1/(2dt)，最高频率必须低于该值。",
+    "record_duration": "主动炮集保存时长，单位 s。填 0 表示按模型群速度、最大炮检距和处理最低频率自动设计；显式值过短会在预检查中阻止运行。它决定炮集 FFT 的真实频率分辨率，补零不能替代延长记录。",
     "ambient_component": "vertical：仅 Fz→Z 的快速兼容流程；three_component：每个源独立激发全局 Fx/Fy/Fz，经完整五分量 Green 张量传播，输出 RR/TT/ZZ NCF。",
     "ambient_layout": "源环：围绕阵列照明；源线：模拟道路/线性噪声带；CSV：输入任意噪声源位置。",
     "source_count": "同时参与混合的独立噪声源数量。快速检查可用 24；收敛频散通常建议 192–384。",
@@ -92,6 +106,7 @@ HELP = {
     "psd_shape": "ricker：Ricker 型谱；flat_band：带内近似平坦；file：读取 frequency_hz,power CSV。",
     "duration": "有限记录总时长。60 s 适合调试；600 s 通常可用；1800 s 更接近稳定收敛。",
     "window": "独立合成与互相关窗长，必须长于最大台间传播时延；当前各窗独立且 overlap 固定为 0。",
+    "maximum_lag": "被动 NCF 图显示并参与频散计算的最大正时延。0 表示按模型最慢群速度和阵列孔径自动设计；显式值必须小于独立窗长。增大可同时查看较慢面波和较早体波，但会增加缓存与计算量。",
     "psd_min": "噪声 PSD 最低有效频率，单位 Hz；低于它的源能量置零。",
     "psd_dominant": "Ricker 型噪声 PSD 的峰值频率，单位 Hz；flat_band/file 时仅保留为配置参考。",
     "psd_max": "噪声 PSD 最高有效频率，单位 Hz；必须低于时间 Nyquist，处理上限不能超过它。",
@@ -104,6 +119,7 @@ HELP = {
     "compare_methods": "同时计算 phase_shift、Bessel(FJ) 与 Hankel 三张同网格频散图，用于判断旁瓣或假频是否依赖成像方法。计算时间约增加 2–3 倍。",
     "processing_fmin": "频散图最低频率，单位 Hz。过低时阵列孔径不足会产生不可分辨能量。",
     "processing_fmax": "频散图最高频率，单位 Hz；必须满足时间 Nyquist、空间混叠和源谱上限。",
+    "frequency_step": "频散图频率网格 df，单位 Hz。0 表示由真实记录长度和 FFT 补零自动给出；显式值只改变显示/扫描网格，不改变由 1/T 决定的真实频率分辨率。",
     "velocity_min": "相速度扫描下限，单位 m/s；应低于预计基阶最低相速度。",
     "velocity_max": "相速度扫描上限，单位 m/s；应覆盖基阶、高阶及理论曲线。",
     "velocity_step": "相速度扫描步长，单位 m/s。更小可使图更细，但计算量和数组大小增加。",
@@ -357,6 +373,84 @@ def _case_form(st, session: CaseSession) -> None:
                 help=HELP["distance_bin"], key=f"fdb_{revision}"
             )
 
+        das = mapping.get("das", {})
+        st.markdown("#### DAS 光纤与有限标距")
+        c1, c2, c3, c4 = st.columns(4)
+        das_enabled = c1.checkbox(
+            "启用 DAS",
+            value=bool(das.get("enabled", False)),
+            help=HELP["das_enabled"],
+            key=f"das_enabled_{revision}",
+        )
+        geometry_modes = ["uniform", "channel_file"]
+        das_geometry_mode = c2.selectbox(
+            "DAS 几何方式",
+            geometry_modes,
+            index=_index(geometry_modes, das.get("geometry_mode", "uniform")),
+            format_func={
+                "uniform": "统一标距/方位",
+                "channel_file": "逐道光缆 CSV",
+            }.get,
+            help=HELP["das_geometry_mode"],
+            key=f"das_geometry_mode_{revision}",
+            disabled=not das_enabled,
+        )
+        das_gauge = c3.number_input(
+            "标距 Gauge length (m)",
+            min_value=0.001,
+            value=float(das.get("gauge_length_m", 10.0)),
+            help=HELP["das_gauge"],
+            key=f"das_gauge_{revision}",
+            disabled=(not das_enabled or das_geometry_mode == "channel_file"),
+        )
+        das_measurement = c4.selectbox(
+            "DAS 输出量",
+            ["strain", "strain_rate"],
+            index=_index(
+                ["strain", "strain_rate"],
+                das.get("measurement", "strain_rate"),
+                1,
+            ),
+            format_func={"strain": "轴向应变", "strain_rate": "轴向应变率"}.get,
+            help=HELP["das_measurement"],
+            key=f"das_measurement_{revision}",
+            disabled=not das_enabled,
+        )
+        das_azimuth = st.number_input(
+            "光纤方位角 (deg)",
+            value=float(das.get("fiber_azimuth_deg", 0.0)),
+            help=HELP["das_azimuth"],
+            key=f"das_azimuth_{revision}",
+            disabled=(not das_enabled or das_geometry_mode == "channel_file"),
+        )
+        das_values = {
+            "enabled": bool(das_enabled),
+            "geometry_mode": das_geometry_mode,
+            "gauge_length_m": float(das_gauge),
+            "measurement": das_measurement,
+            "fiber_azimuth_deg": float(das_azimuth),
+        }
+        if das_enabled and das_geometry_mode == "channel_file":
+            st.info(
+                "逐道光缆模式复用上面的接收器 CSV：必须选择“文件输入｜CSV”。"
+                "CSV 除 x_m,y_m 外，填写四个 endpoint_* 列，或者填写每道 "
+                "gauge_length_m,fiber_azimuth_deg。"
+            )
+            st.download_button(
+                "下载逐道 DAS 光缆 CSV 模板",
+                (
+                    b"channel_id,x_m,y_m,endpoint_minus_x_m,endpoint_minus_y_m,"
+                    b"endpoint_plus_x_m,endpoint_plus_y_m\n"
+                    b"D001,0.0,0.0,-4.0,0.0,4.0,0.0\n"
+                    b"D002,10.0,2.0,6.0,2.0,14.0,2.0\n"
+                ),
+                file_name="das_channels_template.csv",
+                mime="text/csv",
+                help="端点中点必须等于 x_m,y_m；channel_id 可省略但不得重复。",
+            )
+            if receiver_layout != "file":
+                st.warning("逐道光缆模式必须把 Geometry 输入方式切换为“文件输入｜CSV”。")
+
         active_values = None
         ambient_values = None
         noise_values = None
@@ -438,16 +532,26 @@ def _case_form(st, session: CaseSession) -> None:
             c1, c2, c3, c4 = st.columns(4)
             active_values["wavelet"] = c1.selectbox(
                 "子波",
-                ["ricker"],
-                index=0,
-                disabled=True,
+                ["ricker", "unit_impulse"],
+                index=_index(
+                    ["ricker", "unit_impulse"],
+                    active.get("wavelet", "ricker"),
+                ),
                 help=HELP["wavelet"],
                 key=f"sw_{revision}",
             )
             active_values.update(
-                dominant_frequency_hz=c2.number_input("Ricker 主频 (Hz)", min_value=0.01, value=float(active.get("dominant_frequency_hz", 20.0)), help=HELP["dominant_frequency"], key=f"sfd_{revision}"),
+                dominant_frequency_hz=c2.number_input("主频 / 参考频率 (Hz)", min_value=0.01, value=float(active.get("dominant_frequency_hz", 20.0)), help=HELP["dominant_frequency"], key=f"sfd_{revision}"),
                 maximum_frequency_hz=c3.number_input("正演最高频率 (Hz)", min_value=0.01, value=float(active.get("maximum_frequency_hz", 100.0)), help=HELP["forward_max_frequency"], key=f"sfm_{revision}"),
                 dt_s=c4.number_input("采样间隔 dt (s)", min_value=0.00001, value=float(active.get("dt_s", 0.001)), format="%.5f", help=HELP["dt"], key=f"sdt_{revision}"),
+            )
+            active_values["record_duration_s"] = st.number_input(
+                "主动记录时长 (s；0=自动)",
+                min_value=0.0,
+                value=float(active.get("record_duration_s", 0.0) or 0.0),
+                format="%.3f",
+                help=HELP["record_duration"],
+                key=f"srecord_{revision}",
             )
         else:
             ambient = mapping.get("ambient_sources", {})
@@ -523,6 +627,14 @@ def _case_form(st, session: CaseSession) -> None:
                 "duration_s": c3.number_input("总记录时长 (s)", min_value=0.1, value=float(noise.get("duration_s", 600.0)), help=HELP["duration"], key=f"ndur_{revision}"),
                 "window_s": c4.number_input("独立窗长 (s)", min_value=0.1, value=float(noise.get("window_s", 20.0)), help=HELP["window"], key=f"nwin_{revision}"),
             }
+            noise_values["maximum_lag_s"] = st.number_input(
+                "NCF 最大 lag (s；0=自动)",
+                min_value=0.0,
+                value=float(noise.get("maximum_lag_s", 0.0) or 0.0),
+                format="%.3f",
+                help=HELP["maximum_lag"],
+                key=f"nlag_{revision}",
+            )
             c1, c2, c3, c4 = st.columns(4)
             noise_values.update(
                 minimum_frequency_hz=c1.number_input("PSD 最低频率 (Hz)", min_value=0.0, value=float(noise.get("minimum_frequency_hz", 3.0)), help=HELP["psd_min"], key=f"nf0_{revision}"),
@@ -567,11 +679,12 @@ def _case_form(st, session: CaseSession) -> None:
             frequency_max_hz=c3.number_input("处理最高频率 (Hz)", min_value=0.01, value=float(processing.get("frequency_max_hz", 18.0)), help=HELP["processing_fmax"], key=f"pf1_{revision}"),
             velocity_min_mps=c4.number_input("最低相速度 (m/s)", min_value=1.0, value=float(processing.get("velocity_min_mps", 150.0)), help=HELP["velocity_min"], key=f"pv0_{revision}"),
         )
-        c1, c2, c3 = st.columns(3)
+        c1, c2, c3, c4 = st.columns(4)
         processing_values.update(
             velocity_max_mps=c1.number_input("最高相速度 (m/s)", min_value=1.0, value=float(processing.get("velocity_max_mps", 500.0)), help=HELP["velocity_max"], key=f"pv1_{revision}"),
             velocity_step_mps=c2.number_input("速度步长 (m/s)", min_value=0.1, value=float(processing.get("velocity_step_mps", 2.0)), help=HELP["velocity_step"], key=f"pvs_{revision}"),
-            distance_taper_fraction=c3.slider("距离域 taper", 0.0, 1.0, float(processing.get("distance_taper_fraction", 0.5)), 0.05, help=HELP["distance_taper"], key=f"pt_{revision}"),
+            frequency_step_hz=c3.number_input("频率步长 df (Hz；0=自动)", min_value=0.0, value=float(processing.get("frequency_step_hz", 0.0) or 0.0), format="%.4f", help=HELP["frequency_step"], key=f"pdf_{revision}"),
+            distance_taper_fraction=c4.slider("距离域 taper", 0.0, 1.0, float(processing.get("distance_taper_fraction", 0.5)), 0.05, help=HELP["distance_taper"], key=f"pt_{revision}"),
         )
 
         store_responses = bool(run.get("store_source_responses", False))
@@ -609,14 +722,25 @@ def _case_form(st, session: CaseSession) -> None:
                 key=f"pcm_{revision}",
             )
 
-        submitted = st.button(
+        c1, c2, c3 = st.columns(3)
+        apply_auto = c1.button(
+            "计算并套用自动推荐",
+            width="stretch",
+            help="按当前模型、源谱、Geometry、DAS 标距和理论多模态计算 f/v/df/dv，并填入主动记录时长或被动窗长与最大 lag。填入后仍可逐项修改。",
+        )
+        reset_auto = c2.button(
+            "恢复模板默认",
+            width="stretch",
+            help="只恢复当前模板中的 f/v/df/dv 和主动记录时长或被动窗长/lag，不覆盖模型、Geometry、源位置和其他参数。",
+        )
+        submitted = c3.button(
             "校验并绘制输入",
             type="primary",
             width="stretch",
             help="解析全部参数、绘制模型/geometry/源谱/理论曲线并执行采样、孔径和混叠检查；不运行波场正演。",
         )
 
-    if not submitted:
+    if not (submitted or apply_auto or reset_auto):
         return
     try:
         candidate = deepcopy(mapping)
@@ -636,6 +760,7 @@ def _case_form(st, session: CaseSession) -> None:
         if receiver_layout == "file" and not receiver_values.get("coordinates_file"):
             raise CaseInputError("请选择接收器坐标 CSV")
         candidate["geometry"] = {"receivers": receiver_values}
+        candidate["das"] = das_values
         candidate["processing"] = processing_values
         if selected_mode == "active":
             if shot_input_mode == "file" and shot_upload is None:
@@ -660,12 +785,46 @@ def _case_form(st, session: CaseSession) -> None:
             candidate["ambient_sources"] = ambient_values
             candidate["noise"] = noise_values
             candidate.pop("active_source", None)
+        if apply_auto:
+            candidate, diagnostics = apply_automatic_parameters(
+                candidate, base_directory=session.workspace_directory
+            )
+            st.session_state.last_message = (
+                "已按当前模型与 Geometry 填入自动推荐："
+                f"f={diagnostics['recommended_frequency_min_hz']:.2f}–"
+                f"{diagnostics['recommended_frequency_max_hz']:.2f} Hz，"
+                f"df={diagnostics['recommended_display_frequency_step_hz']:.4g} Hz。"
+            )
+        elif reset_auto:
+            template_path = TEMPLATES.get(
+                st.session_state.get("template_name", ""),
+                TEMPLATES[
+                    "主动源｜快速检查"
+                    if selected_mode == "active"
+                    else "被动源｜快速检查"
+                ],
+            )
+            template_mapping = load_template_mapping(template_path)
+            if template_mapping.get("run", {}).get("mode") != selected_mode:
+                template_mapping = load_template_mapping(
+                    TEMPLATES[
+                        "主动源｜快速检查"
+                        if selected_mode == "active"
+                        else "被动源｜快速检查"
+                    ]
+                )
+            candidate = reset_automatic_parameters(candidate, template_mapping)
+            st.session_state.last_message = "已恢复当前模式模板的自动参数默认值。"
         config, invalidated = session.apply_mapping(candidate)
         review = session.run_stage("review")
         st.session_state.case_mapping = candidate
-        st.session_state.last_message = (
-            f"算例 {config.name} 校验完成；失效阶段：{', '.join(invalidated) or '无'}。"
-        )
+        if submitted:
+            st.session_state.last_message = (
+                f"算例 {config.name} 校验完成；失效阶段：{', '.join(invalidated) or '无'}。"
+            )
+        if apply_auto or reset_auto:
+            st.session_state.case_revision += 1
+            st.rerun()
         st.success(st.session_state.last_message)
         if not review.ready:
             _render_required_failures(

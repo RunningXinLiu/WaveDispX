@@ -39,6 +39,13 @@ stop_x_m = 198.0
 spacing_m = 3.0
 y_m = 0.0
 
+[das]
+enabled = false
+geometry_mode = "uniform"
+gauge_length_m = 10.0
+measurement = "strain_rate"
+fiber_azimuth_deg = 0.0
+
 [ambient_sources]
 # Each physical source emits independent global Fx/Fy/Fz stochastic loads.
 component = "three_component"

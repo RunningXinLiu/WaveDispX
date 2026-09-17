@@ -19,6 +19,7 @@ table{border-collapse:collapse;width:100%}th,td{padding:10px;border-bottom:1px s
 <body>
 <header><h1>WaveDispX Desktop</h1><p>主动 / 被动波场正演、真实有限记录互相关与频散分析 · PySide6 原生工作台</p></header>
 <main>
+<section class="card"><h2>当前手册已更新</h2><p>请使用 <a href="WaveDispX_USER_MANUAL_CN.html">2026-09-17 新版完整操作手册</a>，包含自动填参、重置、可编辑网格和记录窗、最新完整窗口截图。本页保留旧版界面参考。</p></section>
 <section class="card"><h2>启动</h2><p class="lead">无需浏览器，无需打包成 .app；直接在 <code>seisloc</code> 环境运行。</p><pre>cd /Volumes/lx_exFAT/PassiveFW_versionstable
 conda run -n seisloc python -m pip install -e . --no-build-isolation
 conda run -n seisloc wavedispx-desktop</pre><p>源码入口：<code>conda run -n seisloc python -m wavedispx.desktop</code></p><div class="ok">桌面界面没有另一套简化算法。所有按钮均调用与 CLI、Notebook、Streamlit 相同的 <code>CaseSession → WaveDispXWorkflow</code>。</div></section>

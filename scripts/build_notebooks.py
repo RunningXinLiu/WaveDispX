@@ -114,13 +114,14 @@ CASE['active_source'].update({
     'x_m': 0.0, 'y_m': 0.0, 'component': 'both',
     'dominant_frequency_hz': 8.0,
     'maximum_frequency_hz': 20.0, 'dt_s': 0.005,
+    'record_duration_s': 0.0,  # 0=按模型群速度、最大炮检距与 fmin 自动设计
 })
 
 # 频散范围（主动源默认 Hankel/FJ；可改 phase_shift 做交叉验证）
 CASE['processing'].update({
     'dispersion_method': 'hankel',
-    'frequency_min_hz': 3.0, 'frequency_max_hz': 18.0,
-    'velocity_min_mps': 120.0, 'velocity_max_mps': 500.0,
+    'frequency_min_hz': 10.0, 'frequency_max_hz': 18.0,
+    'velocity_min_mps': 140.0, 'velocity_max_mps': 580.0,
     'velocity_step_mps': 2.0,
 })
 """
@@ -262,8 +263,8 @@ CASE['noise'].update({
 CASE['processing'].update({
     'correlation_normalization': 'spectral_whitening',
     'dispersion_method': 'phase_shift',
-    'frequency_min_hz': 3.5, 'frequency_max_hz': 9.5,
-    'velocity_min_mps': 150.0, 'velocity_max_mps': 500.0,
+    'frequency_min_hz': 3.5, 'frequency_max_hz': 10.0,
+    'velocity_min_mps': 150.0, 'velocity_max_mps': 580.0,
     'velocity_step_mps': 2.0, 'distance_taper_fraction': 0.5,
 })
 """
@@ -467,6 +468,218 @@ plt.close(figure)
     )
 
 
+def das_notebook():
+    return notebook(
+        [
+            markdown(
+                r"""
+# WaveDispX DAS：有限标距主动/被动正演
+
+本 Notebook 是 DAS 的可运行入口。一个参数总控 Cell 可选择 `active/passive`、`line/grid/channel_file`，也可把 `INPUT_TOML` 指向完整文件后全盘执行。流程始终是：**模型与 geometry → 标距端点 → 端点 Green 位移 → 应变/应变率 → 炮集或混合噪声记录 → NCF（被动）→ phase-shift 频散 → 理论曲线与保存**。
+
+当前经验证的 v1 范围：水平一维层状模型、地表水平有限标距、统一几何或逐道 CSV 端点、竖直主动/噪声点力、`strain` 或 `strain_rate`、phase-shift 成像。规则面阵表示每个网格点放置同方位的平行标距；`channel_file` 可逐道改变方向与标距，但仍是离散测量段，不是连续光纤有限元模型。
+"""
+            ),
+            markdown("## 1. Setup：强制使用本项目源码与 seisloc 内核"),
+            code(
+                r"""
+from pathlib import Path
+import sys
+
+PROJECT_ROOT = Path.cwd().resolve()
+while not (PROJECT_ROOT / 'pyproject.toml').is_file():
+    if PROJECT_ROOT.parent == PROJECT_ROOT:
+        raise RuntimeError('请从 PassiveFW_versionstable 项目内运行本 Notebook')
+    PROJECT_ROOT = PROJECT_ROOT.parent
+sys.path.insert(0, str(PROJECT_ROOT / 'python_src'))
+
+import h5py
+import matplotlib.pyplot as plt
+from IPython.display import Image, Markdown, display
+from wavedispx.notebook_support import (
+    input_error_markdown,
+    parameter_reference_markdown,
+    prepare_notebook_case,
+    required_failure_markdown,
+)
+from wavedispx.preflight import checks_markdown, plot_preflight_review
+
+print(f'Project: {PROJECT_ROOT}')
+"""
+            ),
+            markdown(
+                r"""
+## 2. 原理与计算次序
+
+每个道中心为 $\mathbf{x}_c$，光纤单位切向为 $\hat{\mathbf t}$，标距为 $L_g$，两个真实计算端点为
+
+$$\mathbf{x}_{\pm}=\mathbf{x}_c\pm\frac{L_g}{2}\hat{\mathbf t}.$$
+
+离散波数法先分别计算端点水平位移，再应用有限标距算子：
+
+$$\epsilon_{tt}(t)=\frac{[\mathbf u(\mathbf{x}_+,t)-\mathbf u(\mathbf{x}_-,t)]\cdot\hat{\mathbf t}}{L_g},\qquad
+\dot\epsilon_{tt}(\omega)=i\omega\epsilon_{tt}(\omega).$$
+
+程序明确使用 NumPy rFFT 的正变换 $\exp(-i\omega t)$，所以时间导数是 $+i\omega$。对沿光纤传播的平面波，有限标距相对点应变的响应为
+
+$$H_g(k_t)=\operatorname{sinc}\!\left(\frac{k_tL_g}{2}\right),$$
+
+第一零点约为 $f=c/L_g$。这是真实空间平均，不是程序旁瓣。被动流程中，DAS 算子在随机源混合之前作用于 Green 传递函数；随后生成有限时长混合记录，最后才在 DAS 道之间做内部互相关。DAS v1 只用直接 phase-shift；没有把节点 ZZ 的 FJ/Hankel 核直接套到 DAS 上。
+"""
+            ),
+            markdown("## 3. 参数总控 Cell（通常只改这里）"),
+            code(
+                r"""
+# ==================== 只修改这个参数总控 Cell ====================
+INPUT_TOML = None  # 例：'examples/passive_das_grid_quick.toml'；非 None 时忽略下面参数
+MODE = 'passive'   # 'active' 或 'passive'
+LAYOUT = 'line'    # 'line'、'grid' 或 'channel_file'
+
+if LAYOUT == 'line':
+    RECEIVERS = {
+        'layout': 'line', 'start_x_m': -100.0 if MODE == 'passive' else 5.0,
+        'stop_x_m': 100.0 if MODE == 'passive' else 80.0,
+        'spacing_m': 5.0, 'y_m': 0.0,
+    }
+elif LAYOUT == 'grid':
+    RECEIVERS = {
+        'layout': 'grid', 'start_x_m': -90.0, 'stop_x_m': 90.0,
+        'spacing_x_m': 10.0, 'start_y_m': -90.0, 'stop_y_m': 90.0,
+        'spacing_y_m': 10.0, 'distance_bin_m': 5.0,
+    }
+else:
+    RECEIVERS = {
+        'layout': 'file',
+        'coordinates_file': 'examples/das_channels_bent_example.csv',
+        **({'distance_bin_m': 5.0} if MODE == 'passive' else {}),
+    }
+
+PARAMETERS = {
+    'input_toml': INPUT_TOML,
+    'template': (
+        (
+            'examples/active_das_channel_file_quick.toml'
+            if LAYOUT == 'channel_file'
+            else f'examples/active_das_{LAYOUT}_quick.toml'
+        ) if MODE == 'active' else (
+            'examples/passive_das_channel_file_quick.toml'
+            if LAYOUT == 'channel_file'
+            else f'examples/passive_das_{LAYOUT}_quick.toml'
+        )
+    ),
+    'run': {
+        'name': f'notebook_{MODE}_das_{LAYOUT}', 'mode': MODE,
+        'output_directory': f'output_python/notebook_{MODE}_das_{LAYOUT}',
+        'workers': 0, 'frequency_block_size': 8, 'source_block_size': 8,
+        'radial_interpolation_step_m': 0.5, 'store_source_responses': False,
+    },
+    'model_layers': [
+        {'thickness_m': 10.0, 'vp_mps': 380.0, 'vs_mps': 220.0,
+         'density_kgm3': 2000.0, 'qp': float('inf'), 'qs': float('inf')},
+        {'thickness_m': float('inf'), 'vp_mps': 760.0, 'vs_mps': 440.0,
+         'density_kgm3': 2000.0, 'qp': float('inf'), 'qs': float('inf')},
+    ],
+    'receivers': RECEIVERS,
+    'das': {
+        'enabled': True,
+        'geometry_mode': 'channel_file' if LAYOUT == 'channel_file' else 'uniform',
+        'gauge_length_m': 8.0,
+        'measurement': 'strain_rate', 'fiber_azimuth_deg': 0.0,
+    },
+    'active_source': {
+        'x_m': 0.0, 'y_m': 0.0, 'component': 'vertical', 'wavelet': 'ricker',
+        'dominant_frequency_hz': 7.0, 'maximum_frequency_hz': 16.0, 'dt_s': 0.005,
+        'record_duration_s': 0.0,
+    },
+    'ambient_sources': {
+        'component': 'vertical', 'layout': 'annulus', 'count': 48, 'seed': 42,
+        'inner_radius_m': 300.0 if LAYOUT == 'grid' else 250.0,
+        'outer_radius_m': 380.0 if LAYOUT == 'grid' else 350.0,
+        'angular_sampling': 'stratified',
+    },
+    'noise': {
+        'temporal_model': 'stationary_gaussian', 'seed': 314159,
+        'duration_s': 60.0, 'dt_s': 0.01, 'window_s': 10.0, 'overlap': 0.0,
+        'psd_shape': 'ricker', 'dominant_frequency_hz': 7.0,
+        'minimum_frequency_hz': 3.0, 'maximum_frequency_hz': 10.0,
+        'source_amplitude': 1.0, 'independent_sources': True, 'event_rate_hz': 0.4,
+    },
+    'processing': {
+        'correlation_normalization': 'none' if MODE == 'active' else 'spectral_whitening',
+        'dispersion_method': 'phase_shift', 'theory_solver': 'disba',
+        'compare_methods': False,
+        'frequency_min_hz': 3.0 if MODE == 'active' else 3.5,
+        'frequency_max_hz': 14.0 if MODE == 'active' else 9.5,
+        'velocity_min_mps': 120.0 if MODE == 'active' else 150.0,
+        'velocity_max_mps': 500.0, 'velocity_step_mps': 2.0,
+        'distance_taper_fraction': 0.2 if MODE == 'active' else 0.5,
+        'zero_padding': 5.0 if MODE == 'active' else 8.0,
+        'radial_kernel_lookup_step': 0.002, 'picker_smoothness': 0.35,
+        'picker_maximum_jump_mps': 30.0, 'picker_minimum_energy': 0.05,
+        'rayleigh_modes': 3, 'love_modes': 3,
+    },
+}
+"""
+            ),
+            markdown("## 4. 构建与开算前审核：先看模型、源、道中心和标距端点"),
+            code(
+                r"""
+try:
+    prepared = prepare_notebook_case(PROJECT_ROOT, MODE, PARAMETERS)
+    workflow = prepared.workflow
+    review = workflow.review_inputs()
+except Exception as error:
+    display(Markdown(input_error_markdown(error)))
+    raise
+
+display(Markdown(parameter_reference_markdown(MODE)))
+display(Markdown(checks_markdown(review)))
+display(Markdown(required_failure_markdown(review)))
+figure = plot_preflight_review(review)
+display(figure)
+plt.close(figure)
+assert review.ready, 'required 检查失败：请按表格修改参数后再运行'
+"""
+            ),
+            markdown(
+                r"""
+## 5. 一键全流程与输出检查
+
+默认执行快速完整算例。正式被动收敛请改用 192–384 个源、600–1800 s，并保留相同标距/观测系统做时长收敛对照。HDF5 的 `/das` 保存测量类型、单位、标距、光纤方位、端点、切向、时间约定和预览/主动完整记录；被动 NCF 在 `/ncf/components/das`。
+"""
+            ),
+            code(
+                r"""
+RUN_ALL_NOW = True
+
+if RUN_ALL_NOW:
+    artifacts = workflow.run_all(save=True)
+    print(f'完成：{artifacts.output_directory}')
+    display(Image(filename=str(artifacts.summary_png)))
+    with h5py.File(artifacts.results_h5, 'r') as handle:
+        print('DAS metadata:', dict(handle['das'].attrs))
+        print('DAS datasets:', sorted(handle['das'].keys()))
+        print('NCF components:', sorted(handle.get('ncf/components', {}).keys()))
+else:
+    print('尚未启动正演。确认输入图后把 RUN_ALL_NOW 改为 True。')
+"""
+            ),
+            markdown(
+                r"""
+## 6. 解释边界
+
+- `gauge_length_m` 不是道间距；允许标距重叠；`channel_file` 时实际标距来自 CSV。
+- 逐道光缆 CSV 可用端点列，或用 `gauge_length_m,fiber_azimuth_deg`；输出始终固化实际端点、切向和逐道标距。
+- 光纤与传播方向接近正交时响应变弱属于方向灵敏度。
+- 被动快速例的 48 源、60 s 只验证流程；不能据此宣称 NCF 已收敛。
+- 当前没有 DAS–DAS 主动互易 EGF 参考，因此被动 HDF5 会明确写 `DAS-DAS reference not yet implemented`，不会拿节点 ZZ 参考冒充。
+- 当前 FJ/Bessel 与 Hankel 的 DAS 径向核不在验证范围，配置会阻止该组合。
+"""
+            ),
+        ]
+    )
+
+
 def index_notebook():
     return notebook(
         [
@@ -479,6 +692,7 @@ def index_notebook():
 1. **[01_active_quickstart.ipynb](01_active_quickstart.ipynb)**：主动源参数、炮集、Hankel/FJ、Rayleigh/Love。
 2. **[02_passive_quickstart.ipynb](02_passive_quickstart.ipynb)**：真实有限时长混合噪声、接收端 NCF、相移频散。
 3. **[03_methods_and_validation.ipynb](03_methods_and_validation.ipynb)**：离散波数法（DWM）、互相关、phase shift、FJ/Hankel、理论曲线与适用边界。
+4. **[04_das_active_passive.ipynb](04_das_active_passive.ipynb)**：有限标距 DAS 的主动/被动、线阵/面阵参数与完整实跑。
 
 日常图形操作、TOML/CSV 上传、线阵/面阵/不规则阵列和参数提示，运行：
 
@@ -511,6 +725,7 @@ def main() -> None:
         "01_active_quickstart.ipynb": active_notebook(),
         "02_passive_quickstart.ipynb": passive_notebook(),
         "03_methods_and_validation.ipynb": methods_notebook(),
+        "04_das_active_passive.ipynb": das_notebook(),
     }
     for name, nb in outputs.items():
         path = NOTEBOOKS / name

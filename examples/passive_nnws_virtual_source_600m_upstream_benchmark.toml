@@ -1,0 +1,102 @@
+[run]
+name = "passive_nnws_virtual_source_600m_upstream_benchmark"
+mode = "passive"
+output_directory = "../output_python/passive_nnws_virtual_source_600m_upstream_benchmark"
+workers = 4
+frequency_block_size = 8
+source_block_size = 8
+radial_interpolation_step_m = 0.5
+store_source_responses = false
+
+[[model.layers]]
+thickness_m = 10.0
+vp_mps = 380.0
+vs_mps = 220.0
+density_kgm3 = 2000.0
+qp = inf
+qs = inf
+
+[[model.layers]]
+thickness_m = inf
+vp_mps = 760.0
+vs_mps = 440.0
+density_kgm3 = 2000.0
+qp = inf
+qs = inf
+
+[geometry.receivers]
+layout = "line"
+start_x_m = -300.0
+stop_x_m = 300.0
+spacing_m = 10.0
+y_m = 0.0
+
+[ambient_sources]
+component = "vertical"
+layout = "annulus"
+count = 24
+seed = 42
+inner_radius_m = 900.0
+outer_radius_m = 1200.0
+angular_sampling = "stratified"
+activity_file = "source_activity_anisotropic_quick.csv"
+
+[noise]
+temporal_model = "stationary_gaussian"
+seed = 314159
+duration_s = 1200.0
+dt_s = 0.01
+window_s = 20.0
+overlap = 0.0
+psd_shape = "ricker"
+dominant_frequency_hz = 7.0
+minimum_frequency_hz = 3.0
+maximum_frequency_hz = 10.0
+source_amplitude = 1.0
+independent_sources = true
+event_rate_hz = 0.4
+
+[source_selection]
+enabled = true
+method = "oracle_axis"
+objective = "isotropic_egf"
+frequency_bands_hz = [[3.5, 6.5], [6.5, 9.5]]
+stationary_phase_half_angle_deg = 20.0
+hard_min_endfire_fraction = 0.8
+hard_min_bidirectional_balance = 0.8
+hard_min_azimuth_entropy = 0.8
+random_seed = 271828
+
+[nnws]
+enabled = true
+epochs = 200
+learning_rate = 0.001
+snr_weight = 0.8
+symmetry_weight = 0.2
+std_weight = 0.01
+std_mode = "upstream_sample"
+seed = 0
+random_control_seed = 271828
+device = "cpu"
+minimum_effective_windows = 10.0
+minimum_pair_coverage = 1.0
+maximum_cache_mb = 256.0
+pair_scope = "reference_receiver"
+reference_receiver_index = 0
+
+[processing]
+correlation_normalization = "spectral_whitening"
+dispersion_method = "phase_shift"
+frequency_min_hz = 3.5
+frequency_max_hz = 9.5
+velocity_min_mps = 150.0
+velocity_max_mps = 500.0
+velocity_step_mps = 2.0
+distance_taper_fraction = 0.5
+zero_padding = 8.0
+radial_kernel_lookup_step = 0.002
+picker_smoothness = 0.35
+picker_maximum_jump_mps = 30.0
+picker_minimum_energy = 0.05
+rayleigh_modes = 3
+love_modes = 3

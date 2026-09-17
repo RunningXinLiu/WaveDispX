@@ -31,6 +31,13 @@ stop_x_m = 300.0
 spacing_m = 5.0
 y_m = 0.0
 
+[das]
+enabled = false
+geometry_mode = "uniform"
+gauge_length_m = 10.0
+measurement = "strain_rate"
+fiber_azimuth_deg = 0.0
+
 [ambient_sources]
 component = "vertical"                # 当前稳定被动流程：竖直随机力 / Rayleigh 波
 layout = "annulus"                 # annulus / road / line / file
@@ -58,10 +65,10 @@ event_rate_hz = 0.4                   # poisson_ricker 时每源平均事件率
 [processing]
 correlation_normalization = "spectral_whitening"
 dispersion_method = "phase_shift"
-frequency_min_hz = 5.0
+frequency_min_hz = 3.0
 frequency_max_hz = 18.8
-velocity_min_mps = 150.0
-velocity_max_mps = 500.0
+velocity_min_mps = 140.0
+velocity_max_mps = 580.0
 velocity_step_mps = 2.0
 distance_taper_fraction = 0.5
 zero_padding = 8.0

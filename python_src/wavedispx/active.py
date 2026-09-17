@@ -9,11 +9,18 @@ import numpy as np
 
 from .config import (
     ActiveSourceConfig,
+    DASConfig,
     ModelConfig,
+    ProcessingConfig,
     ReceiverFileConfig,
     ReceiverGridConfig,
     ReceiverLineConfig,
     RunConfig,
+)
+from .das import (
+    DASRecord,
+    apply_finite_gauge_operator,
+    build_configured_das_geometry,
 )
 from .forward import compute_full_fk_green, synthesize_full_receivers
 from .geometry import receiver_positions
@@ -31,6 +38,7 @@ from .quality import (
     pick_error_metrics,
     theoretical_mode_support_metrics,
 )
+from .survey_design import recommended_active_record_duration
 
 
 @dataclass(frozen=True)
@@ -40,6 +48,7 @@ class ActiveShotGather:
     receiver_y_m: np.ndarray
     distance_m: np.ndarray
     components: np.ndarray
+    das_record: DASRecord | None = None
 
     @property
     def horizontal_radial(self) -> np.ndarray:
@@ -84,13 +93,42 @@ def ricker_wavelet(time_s: np.ndarray, dominant_frequency_hz: float) -> np.ndarr
     return (1.0 - 2.0 * argument**2) * np.exp(-argument**2)
 
 
-def _linear_convolve_wavelet(
-    wavefield: np.ndarray, dt_s: float, dominant_frequency_hz: float
+def active_source_wavelet(
+    time_s: np.ndarray,
+    wavelet: str,
+    dominant_frequency_hz: float,
 ) -> np.ndarray:
+    """Return the configured discrete source time function.
+
+    ``unit_impulse`` is an ideal synthetic calibration source. Its discrete
+    Fourier amplitude is flat, so it can test the model, receiver sampling,
+    and dispersion imager without a Ricker spectrum hiding either band edge.
+    """
+    time = np.asarray(time_s, dtype=np.float64)
+    if wavelet == "ricker":
+        return ricker_wavelet(time, dominant_frequency_hz)
+    if wavelet == "unit_impulse":
+        result = np.zeros_like(time)
+        if result.size:
+            result[0] = 1.0
+        return result
+    raise ValueError(f"unsupported active-source wavelet: {wavelet}")
+
+
+def _linear_convolve_wavelet(
+    wavefield: np.ndarray,
+    dt_s: float,
+    wavelet_name: str,
+    dominant_frequency_hz: float,
+) -> np.ndarray:
+    if wavelet_name == "unit_impulse":
+        return wavefield.copy()
     sample_count = wavefield.shape[0]
     nfft = 1 << (2 * sample_count - 2).bit_length()
     time = np.arange(sample_count, dtype=np.float64) * dt_s
-    wavelet = ricker_wavelet(time, dominant_frequency_hz)
+    wavelet = active_source_wavelet(
+        time, wavelet_name, dominant_frequency_hz
+    )
     wavelet_spectrum = np.fft.fft(wavelet, nfft).reshape(-1, 1, 1)
     result = np.fft.ifft(
         np.fft.fft(wavefield, nfft, axis=0) * wavelet_spectrum, axis=0
@@ -103,6 +141,8 @@ def simulate_active_shot(
     source: ActiveSourceConfig,
     receivers: ReceiverLineConfig | ReceiverGridConfig | ReceiverFileConfig,
     *,
+    das: DASConfig | None = None,
+    processing: ProcessingConfig | None = None,
     workers: int = 0,
     distance_block_size: int = 128,
 ) -> ActiveShotGather:
@@ -110,39 +150,103 @@ def simulate_active_shot(
     distance = np.hypot(receiver_x - source.x_m, receiver_y - source.y_m)
     if np.any(distance == 0):
         raise ValueError("point-load response is undefined at zero source-receiver distance")
+    das_geometry = None
+    endpoint_distance = np.empty(0, dtype=np.float64)
+    if das is not None and das.enabled:
+        if source.component != "vertical":
+            raise ValueError("active DAS v1 requires a vertical point-force source")
+        das_geometry = build_configured_das_geometry(
+            receiver_x,
+            receiver_y,
+            geometry_mode=das.geometry_mode,
+            gauge_length_m=das.gauge_length_m,
+            fiber_azimuth_deg=das.fiber_azimuth_deg,
+            receiver_coordinates_file=getattr(
+                receivers, "coordinates_file", None
+            ),
+        )
+        endpoint_xy = das_geometry.endpoint_xy_m
+        endpoint_distance = np.hypot(
+            endpoint_xy[:, 0] - source.x_m, endpoint_xy[:, 1] - source.y_m
+        )
+        if np.any(endpoint_distance == 0):
+            raise ValueError(
+                "point-load response is undefined when an active source lies on a DAS endpoint"
+            )
+    maximum_distance = float(
+        max(distance.max(), endpoint_distance.max(initial=0.0))
+    )
     peak_delay = 2.0 / source.dominant_frequency_hz
     green_delay = 2.0 * peak_delay
-    total_duration = (
-        2.0 * distance.max() / min(layer.vs_mps for layer in model.layers) / 0.862
-        + peak_delay
-        + green_delay
+    if processing is None:
+        # Preserve the original low-level API/MATLAB regression contract.
+        # Production runners always pass ProcessingConfig and therefore use
+        # the model-aware group-arrival design below.
+        recommended_duration = (
+            2.0
+            * maximum_distance
+            / min(layer.vs_mps for layer in model.layers)
+            / 0.862
+            + peak_delay
+        )
+    else:
+        recommended_duration, _, _ = recommended_active_record_duration(
+            model,
+            source,
+            maximum_distance,
+            frequency_min_hz=processing.frequency_min_hz,
+            frequency_max_hz=processing.frequency_max_hz,
+            rayleigh_modes=processing.rayleigh_modes,
+            love_modes=(
+                processing.love_modes
+                if source.component in {"horizontal", "both"}
+                else 0
+            ),
+        )
+    output_duration = (
+        recommended_duration
+        if source.record_duration_s is None
+        else source.record_duration_s
     )
+    if output_duration + source.dt_s < recommended_duration:
+        raise ValueError(
+            "active_source.record_duration_s is shorter than the model-aware "
+            f"group-arrival requirement; use at least {recommended_duration:.3f} s "
+            "or set it to 0/omit it for automatic design"
+        )
+    total_duration = output_duration + green_delay
     sample_count = int(np.ceil(total_duration / source.dt_s))
     if sample_count % 2:
-        sample_count -= 1
+        sample_count += 1 if processing is not None else -1
     fk_green = compute_full_fk_green(
         model,
         sample_count=sample_count,
         dt_s=source.dt_s,
-        maximum_distance_m=float(distance.max()),
+        maximum_distance_m=maximum_distance,
         delay_s=green_delay,
         maximum_frequency_hz=source.maximum_frequency_hz,
         workers=workers,
     )
-    receiver_green = synthesize_full_receivers(
+    synthesis_distance = (
+        np.concatenate((distance, endpoint_distance))
+        if endpoint_distance.size
+        else distance
+    )
+    all_green = synthesize_full_receivers(
         fk_green,
-        distance,
+        synthesis_distance,
         sample_count=sample_count,
         dt_s=source.dt_s,
         distance_block_size=distance_block_size,
     )
+    receiver_count = distance.size
     fields = np.stack(
         (
-            receiver_green.horizontal_radial,
-            receiver_green.horizontal_tangential,
-            receiver_green.horizontal_vertical,
-            receiver_green.vertical_radial,
-            receiver_green.vertical_vertical,
+            all_green.horizontal_radial[:, :receiver_count],
+            all_green.horizontal_tangential[:, :receiver_count],
+            all_green.horizontal_vertical[:, :receiver_count],
+            all_green.vertical_radial[:, :receiver_count],
+            all_green.vertical_vertical[:, :receiver_count],
         ),
         axis=2,
     )
@@ -151,12 +255,46 @@ def simulate_active_shot(
     elif source.component == "horizontal":
         fields[:, :, 3:] = 0.0
     convolved = _linear_convolve_wavelet(
-        fields, source.dt_s, source.dominant_frequency_hz
+        fields,
+        source.dt_s,
+        source.wavelet,
+        source.dominant_frequency_hz,
     )
     delay_samples = int(green_delay / source.dt_s)
     output = convolved[delay_samples:]
     time = np.arange(output.shape[0], dtype=np.float64) * source.dt_s
-    return ActiveShotGather(time, receiver_x, receiver_y, distance, output)
+    das_record = None
+    if das_geometry is not None and das is not None:
+        endpoint_radial = all_green.vertical_radial[:, receiver_count:]
+        endpoint_xy = das_geometry.endpoint_xy_m
+        endpoint_azimuth = np.arctan2(
+            endpoint_xy[:, 1] - source.y_m,
+            endpoint_xy[:, 0] - source.x_m,
+        )
+        endpoint_displacement = np.stack(
+            (
+                endpoint_radial * np.cos(endpoint_azimuth)[None, :],
+                endpoint_radial * np.sin(endpoint_azimuth)[None, :],
+            ),
+            axis=2,
+        )
+        endpoint_convolved = _linear_convolve_wavelet(
+            endpoint_displacement,
+            source.dt_s,
+            source.wavelet,
+            source.dominant_frequency_hz,
+        )[delay_samples:]
+        channel_count = das_geometry.channel_count
+        das_record = apply_finite_gauge_operator(
+            endpoint_convolved[:, :channel_count],
+            endpoint_convolved[:, channel_count:],
+            das_geometry,
+            dt_s=source.dt_s,
+            measurement=das.measurement,
+        )
+    return ActiveShotGather(
+        time, receiver_x, receiver_y, distance, output, das_record
+    )
 
 
 def analyze_active_shot(config: RunConfig, shot: ActiveShotGather) -> ActiveAnalysis:
@@ -177,6 +315,7 @@ def analyze_active_shot(config: RunConfig, shot: ActiveShotGather) -> ActiveAnal
     common = dict(
         frequency_min_hz=processing.frequency_min_hz,
         frequency_max_hz=processing.frequency_max_hz,
+        frequency_step_hz=processing.frequency_step_hz,
         zero_padding=processing.zero_padding,
         distance_taper_fraction=processing.distance_taper_fraction,
         frequency_block_size=config.frequency_block_size,
@@ -190,6 +329,10 @@ def analyze_active_shot(config: RunConfig, shot: ActiveShotGather) -> ActiveAnal
         "rz": (shot.vertical_radial, "radial"),
         "zz": (shot.vertical_vertical, "vertical"),
     }
+    if config.das.enabled:
+        if shot.das_record is None:
+            raise ValueError("DAS is enabled but the active shot has no DAS record")
+        component_data["das"] = (shot.das_record.data, "vertical")
 
     def image_component(name: str, method: str) -> DispersionImage:
         data, component = component_data[name]
@@ -207,9 +350,11 @@ def analyze_active_shot(config: RunConfig, shot: ActiveShotGather) -> ActiveAnal
         name: image_component(name, processing.dispersion_method)
         for name in component_data
     }
-    rayleigh = component_images["zz"]
+    rayleigh = component_images["das"] if config.das.enabled else component_images["zz"]
     love = component_images["tt"]
-    if config.active_source.component == "vertical":
+    if config.das.enabled:
+        rayleigh_names = ("das",)
+    elif config.active_source.component == "vertical":
         rayleigh_names = ("zz", "rz")
     elif config.active_source.component == "horizontal":
         rayleigh_names = ("rr", "zr")
@@ -256,6 +401,7 @@ def analyze_active_shot(config: RunConfig, shot: ActiveShotGather) -> ActiveAnal
         rayleigh.frequency_hz,
         rayleigh_modes=processing.rayleigh_modes,
         love_modes=processing.love_modes,
+        backend=processing.theory_solver,
     )
     quality = {
         "rayleigh_image": dispersion_quality_metrics(

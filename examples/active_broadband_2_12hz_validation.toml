@@ -1,0 +1,60 @@
+[run]
+name = "active_broadband_2_12hz_validation"
+mode = "active"
+output_directory = "../output_python/active_broadband_2_12hz_validation"
+workers = 4
+frequency_block_size = 8
+source_block_size = 1
+radial_interpolation_step_m = 0.5
+store_source_responses = false
+
+[[model.layers]]
+thickness_m = 20.0
+vp_mps = 380.0
+vs_mps = 220.0
+density_kgm3 = 1900.0
+qp = inf
+qs = inf
+
+[[model.layers]]
+thickness_m = inf
+vp_mps = 760.0
+vs_mps = 440.0
+density_kgm3 = 2150.0
+qp = inf
+qs = inf
+
+[geometry.receivers]
+layout = "line"
+start_x_m = -600.0
+stop_x_m = 600.0
+spacing_m = 5.0
+y_m = 0.0
+
+[active_source]
+x_m = -605.0
+y_m = 0.0
+component = "vertical"
+wavelet = "unit_impulse"
+dominant_frequency_hz = 6.25
+maximum_frequency_hz = 15.0
+dt_s = 0.005
+
+[processing]
+correlation_normalization = "none"
+dispersion_method = "phase_shift"
+theory_solver = "qedisp"
+compare_methods = true
+frequency_min_hz = 2.0
+frequency_max_hz = 12.0
+velocity_min_mps = 150.0
+velocity_max_mps = 500.0
+velocity_step_mps = 2.0
+distance_taper_fraction = 0.15
+zero_padding = 8.0
+radial_kernel_lookup_step = 0.002
+picker_smoothness = 0.35
+picker_maximum_jump_mps = 30.0
+picker_minimum_energy = 0.05
+rayleigh_modes = 3
+love_modes = 1

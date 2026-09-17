@@ -262,10 +262,11 @@ class ActiveSourceConfig:
     x_m: float
     y_m: float
     component: Literal["vertical", "horizontal", "both"]
-    wavelet: Literal["ricker"]
+    wavelet: Literal["ricker", "unit_impulse"]
     dominant_frequency_hz: float
     maximum_frequency_hz: float
     dt_s: float
+    record_duration_s: float | None = None
 
     @classmethod
     def from_root(cls, data: dict[str, Any]) -> "ActiveSourceConfig":
@@ -274,8 +275,10 @@ class ActiveSourceConfig:
         if component not in {"vertical", "horizontal", "both"}:
             raise ConfigError("active_source.component must be vertical, horizontal, or both")
         wavelet = str(source.get("wavelet", "ricker")).lower()
-        if wavelet != "ricker":
-            raise ConfigError("active_source.wavelet currently supports only 'ricker'")
+        if wavelet not in {"ricker", "unit_impulse"}:
+            raise ConfigError(
+                "active_source.wavelet must be 'ricker' or 'unit_impulse'"
+            )
         x = float(source.get("x_m", 0.0))
         y = float(source.get("y_m", 0.0))
         if not math.isfinite(x) or not math.isfinite(y):
@@ -283,11 +286,28 @@ class ActiveSourceConfig:
         dominant = _positive(source.get("dominant_frequency_hz"), "active_source.dominant_frequency_hz")
         maximum = _positive(source.get("maximum_frequency_hz"), "active_source.maximum_frequency_hz")
         dt = _positive(source.get("dt_s"), "active_source.dt_s")
+        raw_record_duration = source.get("record_duration_s", 0.0)
+        record_duration = _positive(
+            raw_record_duration,
+            "active_source.record_duration_s",
+            allow_zero=True,
+        )
+        if record_duration == 0.0:
+            record_duration = None
         if maximum < dominant:
             raise ConfigError("active_source.maximum_frequency_hz must be >= dominant_frequency_hz")
         if maximum >= 0.5 / dt:
             raise ConfigError("active_source.maximum_frequency_hz must be below the temporal Nyquist")
-        return cls(x, y, component, wavelet, dominant, maximum, dt)
+        return cls(
+            x,
+            y,
+            component,
+            wavelet,
+            dominant,
+            maximum,
+            dt,
+            record_duration,
+        )
 
 
 @dataclass(frozen=True)
@@ -303,6 +323,7 @@ class AmbientSourceConfig:
     x_max_m: float | None = None
     y_m: float | None = None
     coordinates_file: Path | None = None
+    activity_file: Path | None = None
 
     @classmethod
     def from_root(cls, data: dict[str, Any], base_dir: Path) -> "AmbientSourceConfig":
@@ -345,6 +366,14 @@ class AmbientSourceConfig:
             if not path.is_file():
                 raise ConfigError(f"source coordinate file does not exist: {path}")
             kwargs["coordinates_file"] = path
+        raw_activity_path = source.get("activity_file")
+        if raw_activity_path:
+            activity_path = (base_dir / str(raw_activity_path)).resolve()
+            if not activity_path.is_file():
+                raise ConfigError(
+                    f"source activity file does not exist: {activity_path}"
+                )
+            kwargs["activity_file"] = activity_path
         return cls(layout, count, seed, angular, component, **kwargs)
 
 
@@ -364,6 +393,9 @@ class NoiseConfig:
     independent_sources: bool
     event_rate_hz: float
     psd_file: Path | None = None
+    receiver_noise_rms_fraction: float = 0.0
+    receiver_noise_seed: int = 271828
+    maximum_lag_s: float | None = None
 
     @classmethod
     def from_root(cls, data: dict[str, Any], base_dir: Path) -> "NoiseConfig":
@@ -400,6 +432,26 @@ class NoiseConfig:
         event_rate = _positive(
             noise.get("event_rate_hz", 0.4), "noise.event_rate_hz", allow_zero=False
         )
+        receiver_noise_fraction = _positive(
+            noise.get("receiver_noise_rms_fraction", 0.0),
+            "noise.receiver_noise_rms_fraction",
+            allow_zero=True,
+        )
+        receiver_noise_seed = _integer(
+            noise.get("receiver_noise_seed", seed + 104729),
+            "noise.receiver_noise_seed",
+            minimum=0,
+        )
+        raw_maximum_lag = noise.get("maximum_lag_s", 0.0)
+        maximum_lag = _positive(
+            raw_maximum_lag,
+            "noise.maximum_lag_s",
+            allow_zero=True,
+        )
+        if maximum_lag == 0.0:
+            maximum_lag = None
+        elif maximum_lag >= window:
+            raise ConfigError("noise.maximum_lag_s must be smaller than noise.window_s")
         psd_file = None
         if psd_shape == "file":
             raw_path = noise.get("psd_file")
@@ -408,19 +460,456 @@ class NoiseConfig:
             psd_file = (base_dir / str(raw_path)).resolve()
             if not psd_file.is_file():
                 raise ConfigError(f"PSD file does not exist: {psd_file}")
-        return cls(temporal, seed, duration, dt, window, overlap, psd_shape, dominant,
-                   fmin, fmax, amplitude, independent, event_rate, psd_file)
+        return cls(
+            temporal,
+            seed,
+            duration,
+            dt,
+            window,
+            overlap,
+            psd_shape,
+            dominant,
+            fmin,
+            fmax,
+            amplitude,
+            independent,
+            event_rate,
+            psd_file,
+            receiver_noise_fraction,
+            receiver_noise_seed,
+            maximum_lag,
+        )
+
+
+@dataclass(frozen=True)
+class DASConfig:
+    """Finite-gauge DAS measurement settings; disabled for legacy cases."""
+
+    enabled: bool
+    geometry_mode: Literal["uniform", "channel_file"]
+    gauge_length_m: float
+    measurement: Literal["strain", "strain_rate"]
+    fiber_azimuth_deg: float
+
+    @classmethod
+    def from_root(cls, data: dict[str, Any]) -> "DASConfig":
+        values = _table(data, "das", required=False)
+        enabled = values.get("enabled", False)
+        if not isinstance(enabled, bool):
+            raise ConfigError("das.enabled must be true or false")
+        geometry_mode = str(values.get("geometry_mode", "uniform")).lower()
+        if geometry_mode not in {"uniform", "channel_file"}:
+            raise ConfigError(
+                "das.geometry_mode must be 'uniform' or 'channel_file'"
+            )
+        gauge_length = _positive(
+            values.get("gauge_length_m", 10.0), "das.gauge_length_m"
+        )
+        measurement = str(values.get("measurement", "strain_rate")).lower()
+        if measurement not in {"strain", "strain_rate"}:
+            raise ConfigError("das.measurement must be 'strain' or 'strain_rate'")
+        azimuth = float(values.get("fiber_azimuth_deg", 0.0))
+        if not math.isfinite(azimuth):
+            raise ConfigError("das.fiber_azimuth_deg must be finite")
+        return cls(  # type: ignore[arg-type]
+            enabled, geometry_mode, gauge_length, measurement, azimuth
+        )
+
+
+@dataclass(frozen=True)
+class SourceSelectionConfig:
+    enabled: bool
+    method: Literal["oracle_axis"]
+    objective: Literal["stationary_phase", "isotropic_egf"]
+    frequency_bands_hz: tuple[tuple[float, float], ...]
+    stationary_phase_half_angle_deg: float
+    hard_min_endfire_fraction: float
+    hard_min_bidirectional_balance: float
+    hard_min_azimuth_entropy: float
+    random_seed: int
+
+    @classmethod
+    def from_root(
+        cls,
+        data: dict[str, Any],
+        noise: NoiseConfig | None,
+        processing: "ProcessingConfig",
+    ) -> "SourceSelectionConfig":
+        selection = _table(data, "source_selection", required=False)
+        enabled = selection.get("enabled", False)
+        if not isinstance(enabled, bool):
+            raise ConfigError("source_selection.enabled must be true or false")
+        method = str(selection.get("method", "oracle_axis")).lower()
+        if method != "oracle_axis":
+            raise ConfigError("source_selection.method currently supports only oracle_axis")
+        objective = str(
+            selection.get("objective", "stationary_phase")
+        ).lower()
+        if objective not in {"stationary_phase", "isotropic_egf"}:
+            raise ConfigError(
+                "source_selection.objective must be stationary_phase or isotropic_egf"
+            )
+        raw_bands = selection.get(
+            "frequency_bands_hz",
+            [[processing.frequency_min_hz, processing.frequency_max_hz]],
+        )
+        if not isinstance(raw_bands, list) or not raw_bands:
+            raise ConfigError("source_selection.frequency_bands_hz must be a non-empty array")
+        bands: list[tuple[float, float]] = []
+        for index, raw_band in enumerate(raw_bands):
+            if not isinstance(raw_band, list) or len(raw_band) != 2:
+                raise ConfigError(
+                    f"source_selection.frequency_bands_hz[{index}] must contain [min, max]"
+                )
+            lower = _positive(
+                raw_band[0],
+                f"source_selection.frequency_bands_hz[{index}][0]",
+                allow_zero=True,
+            )
+            upper = _positive(
+                raw_band[1], f"source_selection.frequency_bands_hz[{index}][1]"
+            )
+            if upper <= lower:
+                raise ConfigError("source-selection band maximum must exceed minimum")
+            if noise is not None and (enabled or "frequency_bands_hz" in selection) and (
+                lower < noise.minimum_frequency_hz
+                or upper > noise.maximum_frequency_hz
+            ):
+                raise ConfigError("source-selection bands must lie inside the noise band")
+            bands.append((lower, upper))
+        half_angle = _positive(
+            selection.get("stationary_phase_half_angle_deg", 20.0),
+            "source_selection.stationary_phase_half_angle_deg",
+        )
+        if half_angle > 90.0:
+            raise ConfigError("source_selection.stationary_phase_half_angle_deg must be <= 90")
+        endfire = float(selection.get("hard_min_endfire_fraction", 0.6))
+        balance = float(selection.get("hard_min_bidirectional_balance", 0.3))
+        entropy = float(selection.get("hard_min_azimuth_entropy", 0.7))
+        if (
+            not 0 <= endfire <= 1
+            or not 0 <= balance <= 1
+            or not 0 <= entropy <= 1
+        ):
+            raise ConfigError("source-selection hard thresholds must lie between 0 and 1")
+        random_seed = _integer(
+            selection.get("random_seed", 271828),
+            "source_selection.random_seed",
+            minimum=0,
+        )
+        return cls(
+            enabled,
+            "oracle_axis",
+            objective,
+            tuple(bands),
+            half_angle,
+            endfire,
+            balance,
+            entropy,
+            random_seed,
+        )
+
+
+@dataclass(frozen=True)
+class NNWSResearchConfig:
+    """Optional pair-resolved NNWS research workflow; disabled by default."""
+
+    enabled: bool
+    epochs: int
+    learning_rate: float
+    snr_weight: float
+    symmetry_weight: float
+    std_weight: float
+    std_mode: Literal["upstream_sample", "population_eps", "disabled"]
+    seed: int
+    random_control_seed: int
+    device: Literal["auto", "cpu", "cuda", "mps"]
+    minimum_effective_windows: float
+    minimum_pair_coverage: float
+    maximum_cache_mb: float
+    pair_scope: Literal["all", "reference_receiver"]
+    reference_receiver_index: int
+
+    @classmethod
+    def from_root(cls, data: dict[str, Any]) -> "NNWSResearchConfig":
+        values = _table(data, "nnws", required=False)
+        enabled = values.get("enabled", False)
+        if not isinstance(enabled, bool):
+            raise ConfigError("nnws.enabled must be true or false")
+        epochs = _integer(values.get("epochs", 200), "nnws.epochs")
+        learning_rate = _positive(
+            values.get("learning_rate", 1e-3), "nnws.learning_rate"
+        )
+        loss_weights = []
+        for key, default in (
+            ("snr_weight", 0.8),
+            ("symmetry_weight", 0.2),
+            ("std_weight", 0.01),
+        ):
+            number = float(values.get(key, default))
+            if not math.isfinite(number) or number < 0:
+                raise ConfigError(f"nnws.{key} must be finite and >= 0")
+            loss_weights.append(number)
+        if loss_weights[0] + loss_weights[1] <= 0:
+            raise ConfigError("nnws requires a positive SNR or symmetry loss weight")
+        std_mode = str(values.get("std_mode", "upstream_sample")).lower()
+        if std_mode not in {"upstream_sample", "population_eps", "disabled"}:
+            raise ConfigError(
+                "nnws.std_mode must be upstream_sample, population_eps, or disabled"
+            )
+        seed = _integer(values.get("seed", 0), "nnws.seed", minimum=0)
+        random_control_seed = _integer(
+            values.get("random_control_seed", 271828),
+            "nnws.random_control_seed",
+            minimum=0,
+        )
+        device = str(values.get("device", "auto")).lower()
+        if device not in {"auto", "cpu", "cuda", "mps"}:
+            raise ConfigError("nnws.device must be auto, cpu, cuda, or mps")
+        minimum_effective_windows = _positive(
+            values.get("minimum_effective_windows", 2.0),
+            "nnws.minimum_effective_windows",
+        )
+        minimum_pair_coverage = float(values.get("minimum_pair_coverage", 1.0))
+        if not math.isfinite(minimum_pair_coverage) or not (
+            0 < minimum_pair_coverage <= 1
+        ):
+            raise ConfigError("nnws.minimum_pair_coverage must lie in (0, 1]")
+        maximum_cache_mb = _positive(
+            values.get("maximum_cache_mb", 512.0), "nnws.maximum_cache_mb"
+        )
+        pair_scope = str(values.get("pair_scope", "all")).lower()
+        if pair_scope not in {"all", "reference_receiver"}:
+            raise ConfigError("nnws.pair_scope must be all or reference_receiver")
+        reference_receiver_index = _integer(
+            values.get("reference_receiver_index", 0),
+            "nnws.reference_receiver_index",
+            minimum=0,
+        )
+        return cls(
+            enabled=enabled,
+            epochs=epochs,
+            learning_rate=learning_rate,
+            snr_weight=loss_weights[0],
+            symmetry_weight=loss_weights[1],
+            std_weight=loss_weights[2],
+            std_mode=std_mode,  # type: ignore[arg-type]
+            seed=seed,
+            random_control_seed=random_control_seed,
+            device=device,  # type: ignore[arg-type]
+            minimum_effective_windows=minimum_effective_windows,
+            minimum_pair_coverage=minimum_pair_coverage,
+            maximum_cache_mb=maximum_cache_mb,
+            pair_scope=pair_scope,  # type: ignore[arg-type]
+            reference_receiver_index=reference_receiver_index,
+        )
+
+
+@dataclass(frozen=True)
+class NNWSV2ResearchConfig:
+    """Independent experimental shared-weight, cross-fitted NNWS-v2."""
+
+    enabled: bool
+    folds: int
+    epochs: int
+    learning_rate: float
+    arrival_weight: float
+    precursor_weight: float
+    symmetry_weight: float
+    effective_count_weight: float
+    temporal_smoothness_weight: float
+    minimum_weight: float
+    minimum_effective_fraction: float
+    seed: int
+    random_control_seed: int
+    device: Literal["auto", "cpu", "cuda", "mps"]
+    pair_scope: Literal["all", "reference_receiver"]
+    reference_receiver_index: int
+    pair_ftan_receiver_index: int | None
+    maximum_cache_mb: float
+
+    @classmethod
+    def from_root(cls, data: dict[str, Any]) -> "NNWSV2ResearchConfig":
+        values = _table(data, "nnws_v2", required=False)
+        enabled = values.get("enabled", False)
+        if not isinstance(enabled, bool):
+            raise ConfigError("nnws_v2.enabled must be true or false")
+        folds = _integer(values.get("folds", 5), "nnws_v2.folds", minimum=2)
+        epochs = _integer(values.get("epochs", 200), "nnws_v2.epochs")
+        learning_rate = _positive(
+            values.get("learning_rate", 1e-3), "nnws_v2.learning_rate"
+        )
+        loss_values = []
+        for key, default in (
+            ("arrival_weight", 0.55),
+            ("precursor_weight", 0.20),
+            ("symmetry_weight", 0.05),
+            ("effective_count_weight", 0.20),
+            ("temporal_smoothness_weight", 0.02),
+        ):
+            number = float(values.get(key, default))
+            if not math.isfinite(number) or number < 0:
+                raise ConfigError(f"nnws_v2.{key} must be finite and >= 0")
+            loss_values.append(number)
+        if sum(loss_values[:4]) <= 0:
+            raise ConfigError("nnws_v2 requires a positive physical or Neff loss")
+        minimum_weight = float(values.get("minimum_weight", 0.05))
+        if not math.isfinite(minimum_weight) or not 0 <= minimum_weight < 1:
+            raise ConfigError("nnws_v2.minimum_weight must lie in [0, 1)")
+        minimum_effective_fraction = float(
+            values.get("minimum_effective_fraction", 0.5)
+        )
+        if not math.isfinite(minimum_effective_fraction) or not (
+            0 < minimum_effective_fraction <= 1
+        ):
+            raise ConfigError(
+                "nnws_v2.minimum_effective_fraction must lie in (0, 1]"
+            )
+        seed = _integer(values.get("seed", 0), "nnws_v2.seed", minimum=0)
+        random_control_seed = _integer(
+            values.get("random_control_seed", 271828),
+            "nnws_v2.random_control_seed",
+            minimum=0,
+        )
+        device = str(values.get("device", "auto")).lower()
+        if device not in {"auto", "cpu", "cuda", "mps"}:
+            raise ConfigError("nnws_v2.device must be auto, cpu, cuda, or mps")
+        pair_scope = str(values.get("pair_scope", "reference_receiver")).lower()
+        if pair_scope not in {"all", "reference_receiver"}:
+            raise ConfigError("nnws_v2.pair_scope must be all or reference_receiver")
+        reference_receiver_index = _integer(
+            values.get("reference_receiver_index", 0),
+            "nnws_v2.reference_receiver_index",
+            minimum=0,
+        )
+        raw_pair_ftan_receiver_index = values.get("pair_ftan_receiver_index")
+        pair_ftan_receiver_index = (
+            None
+            if raw_pair_ftan_receiver_index is None
+            else _integer(
+                raw_pair_ftan_receiver_index,
+                "nnws_v2.pair_ftan_receiver_index",
+                minimum=0,
+            )
+        )
+        maximum_cache_mb = _positive(
+            values.get("maximum_cache_mb", 512.0), "nnws_v2.maximum_cache_mb"
+        )
+        return cls(
+            enabled=enabled,
+            folds=folds,
+            epochs=epochs,
+            learning_rate=learning_rate,
+            arrival_weight=loss_values[0],
+            precursor_weight=loss_values[1],
+            symmetry_weight=loss_values[2],
+            effective_count_weight=loss_values[3],
+            temporal_smoothness_weight=loss_values[4],
+            minimum_weight=minimum_weight,
+            minimum_effective_fraction=minimum_effective_fraction,
+            seed=seed,
+            random_control_seed=random_control_seed,
+            device=device,  # type: ignore[arg-type]
+            pair_scope=pair_scope,  # type: ignore[arg-type]
+            reference_receiver_index=reference_receiver_index,
+            pair_ftan_receiver_index=pair_ftan_receiver_index,
+            maximum_cache_mb=maximum_cache_mb,
+        )
+
+
+@dataclass(frozen=True)
+class PairSPZResearchConfig:
+    """Known-source, pair/frequency stationary-phase upper-bound experiment."""
+
+    enabled: bool
+    phase_tolerance_rad: float
+    off_spz_weight: float
+    bilateral_balance_weight: float
+    effective_count_weight: float
+    minimum_weight: float
+    minimum_effective_fraction: float
+    maximum_iterations: int
+    random_seed: int
+    pair_scope: Literal["all", "reference_receiver"]
+    reference_receiver_index: int
+
+    @classmethod
+    def from_root(cls, data: dict[str, Any]) -> "PairSPZResearchConfig":
+        values = _table(data, "pair_spz", required=False)
+        enabled = values.get("enabled", False)
+        if not isinstance(enabled, bool):
+            raise ConfigError("pair_spz.enabled must be true or false")
+        phase_tolerance_rad = _positive(
+            values.get("phase_tolerance_rad", math.pi / 2.0),
+            "pair_spz.phase_tolerance_rad",
+        )
+        loss_values = []
+        for key, default in (
+            ("off_spz_weight", 0.55),
+            ("bilateral_balance_weight", 0.30),
+            ("effective_count_weight", 0.15),
+        ):
+            number = float(values.get(key, default))
+            if not math.isfinite(number) or number < 0:
+                raise ConfigError(f"pair_spz.{key} must be finite and >= 0")
+            loss_values.append(number)
+        if sum(loss_values) <= 0:
+            raise ConfigError("pair_spz requires at least one positive loss weight")
+        minimum_weight = float(values.get("minimum_weight", 0.05))
+        if not math.isfinite(minimum_weight) or not 0 <= minimum_weight < 1:
+            raise ConfigError("pair_spz.minimum_weight must lie in [0, 1)")
+        minimum_effective_fraction = float(
+            values.get("minimum_effective_fraction", 0.5)
+        )
+        if not math.isfinite(minimum_effective_fraction) or not (
+            0 < minimum_effective_fraction <= 1
+        ):
+            raise ConfigError(
+                "pair_spz.minimum_effective_fraction must lie in (0, 1]"
+            )
+        maximum_iterations = _integer(
+            values.get("maximum_iterations", 500),
+            "pair_spz.maximum_iterations",
+        )
+        random_seed = _integer(
+            values.get("random_seed", 161803),
+            "pair_spz.random_seed",
+            minimum=0,
+        )
+        pair_scope = str(values.get("pair_scope", "reference_receiver")).lower()
+        if pair_scope not in {"all", "reference_receiver"}:
+            raise ConfigError("pair_spz.pair_scope must be all or reference_receiver")
+        reference_receiver_index = _integer(
+            values.get("reference_receiver_index", 0),
+            "pair_spz.reference_receiver_index",
+            minimum=0,
+        )
+        return cls(
+            enabled=enabled,
+            phase_tolerance_rad=phase_tolerance_rad,
+            off_spz_weight=loss_values[0],
+            bilateral_balance_weight=loss_values[1],
+            effective_count_weight=loss_values[2],
+            minimum_weight=minimum_weight,
+            minimum_effective_fraction=minimum_effective_fraction,
+            maximum_iterations=maximum_iterations,
+            random_seed=random_seed,
+            pair_scope=pair_scope,  # type: ignore[arg-type]
+            reference_receiver_index=reference_receiver_index,
+        )
 
 
 @dataclass(frozen=True)
 class ProcessingConfig:
     correlation_normalization: Literal["spectral_whitening", "one_bit", "none"]
     dispersion_method: Literal["phase_shift", "bessel", "hankel"]
+    theory_solver: Literal["disba", "qedisp"]
     frequency_min_hz: float
     frequency_max_hz: float
     velocity_min_mps: float
     velocity_max_mps: float
     velocity_step_mps: float
+    frequency_step_hz: float | None
     distance_taper_fraction: float
     zero_padding: float
     radial_kernel_lookup_step: float
@@ -440,11 +929,22 @@ class ProcessingConfig:
         method = str(processing.get("dispersion_method", "phase_shift")).lower()
         if method not in {"phase_shift", "bessel", "hankel"}:
             raise ConfigError("processing.dispersion_method must be phase_shift, bessel, or hankel")
+        theory_solver = str(processing.get("theory_solver", "disba")).lower()
+        if theory_solver not in {"disba", "qedisp"}:
+            raise ConfigError("processing.theory_solver must be disba or qedisp")
         fmin = _positive(processing.get("frequency_min_hz"), "processing.frequency_min_hz", allow_zero=True)
         fmax = _positive(processing.get("frequency_max_hz"), "processing.frequency_max_hz")
         vmin = _positive(processing.get("velocity_min_mps"), "processing.velocity_min_mps")
         vmax = _positive(processing.get("velocity_max_mps"), "processing.velocity_max_mps")
         vstep = _positive(processing.get("velocity_step_mps"), "processing.velocity_step_mps")
+        raw_frequency_step = processing.get("frequency_step_hz", 0.0)
+        frequency_step = _positive(
+            raw_frequency_step,
+            "processing.frequency_step_hz",
+            allow_zero=True,
+        )
+        if frequency_step == 0.0:
+            frequency_step = None
         taper = float(processing.get("distance_taper_fraction", 0.5))
         zero_padding = _positive(
             processing.get("zero_padding", 8.0), "processing.zero_padding"
@@ -475,7 +975,8 @@ class ProcessingConfig:
         compare_methods = processing.get("compare_methods", False)
         if not isinstance(compare_methods, bool):
             raise ConfigError("processing.compare_methods must be true or false")
-        return cls(normalization, method, fmin, fmax, vmin, vmax, vstep,
+        return cls(normalization, method, theory_solver, fmin, fmax, vmin, vmax, vstep,
+                   frequency_step,
                    taper, zero_padding, radial_kernel_lookup_step,
                    picker_smoothness, picker_jump,
                    picker_energy, rayleigh, love, compare_methods)
@@ -493,7 +994,12 @@ class RunConfig:
     store_source_responses: bool
     model: ModelConfig
     receivers: ReceiverLineConfig | ReceiverGridConfig | ReceiverFileConfig
+    das: DASConfig
     processing: ProcessingConfig
+    source_selection: SourceSelectionConfig
+    nnws: NNWSResearchConfig
+    nnws_v2: NNWSV2ResearchConfig
+    pair_spz: PairSPZResearchConfig
     active_source: ActiveSourceConfig | None = None
     ambient_sources: AmbientSourceConfig | None = None
     noise: NoiseConfig | None = None
@@ -507,6 +1013,8 @@ class RunConfig:
         ambient = result.get("ambient_sources")
         if isinstance(ambient, dict) and ambient.get("coordinates_file") is not None:
             ambient["coordinates_file"] = str(ambient["coordinates_file"])
+        if isinstance(ambient, dict) and ambient.get("activity_file") is not None:
+            ambient["activity_file"] = str(ambient["activity_file"])
         noise = result.get("noise")
         if isinstance(noise, dict) and noise.get("psd_file") is not None:
             noise["psd_file"] = str(noise["psd_file"])
@@ -550,10 +1058,15 @@ def config_from_mapping(
 
     model = ModelConfig.from_root(data)
     receivers = ReceiverLineConfig.from_root(data, base_dir)
+    das = DASConfig.from_root(data)
     processing = ProcessingConfig.from_root(data)
     active = ActiveSourceConfig.from_root(data) if mode == "active" else None
     ambient = AmbientSourceConfig.from_root(data, base_dir) if mode == "passive" else None
     noise = NoiseConfig.from_root(data, base_dir) if mode == "passive" else None
+    source_selection = SourceSelectionConfig.from_root(data, noise, processing)
+    nnws = NNWSResearchConfig.from_root(data)
+    nnws_v2 = NNWSV2ResearchConfig.from_root(data)
+    pair_spz = PairSPZResearchConfig.from_root(data)
 
     sample_dt = active.dt_s if active else noise.dt_s  # type: ignore[union-attr]
     if processing.frequency_max_hz >= 0.5 / sample_dt:
@@ -562,6 +1075,10 @@ def config_from_mapping(
         raise ConfigError("processing.frequency_max_hz must not exceed noise.maximum_frequency_hz")
 
     if mode == "passive":
+        if source_selection.enabled and not isinstance(receivers, ReceiverLineConfig):
+            raise ConfigError(
+                "source_selection.method='oracle_axis' currently requires line receivers"
+            )
         if not isinstance(receivers, ReceiverLineConfig) and receivers.distance_bin_m is None:
             raise ConfigError(
                 "passive receiver layout='grid'/'file' requires "
@@ -575,9 +1092,145 @@ def config_from_mapping(
                 "run.radial_interpolation_step_m is too coarse; use <= "
                 f"{maximum_recommended_step:.3f} m (5% of minimum wavelength)"
             )
-    return RunConfig(name, mode, output, workers, frequency_block, source_block,
-                     radial_step, store_responses, model, receivers, processing, active,
-                     ambient, noise, resolved_config_path)
+        if nnws.enabled and ambient.component != "vertical":  # type: ignore[union-attr]
+            raise ConfigError("pair-resolved NNWS currently supports vertical ambient sources")
+        if nnws_v2.enabled and ambient.component != "vertical":  # type: ignore[union-attr]
+            raise ConfigError("NNWS-v2 currently supports vertical ambient sources")
+        if pair_spz.enabled and ambient.component != "vertical":  # type: ignore[union-attr]
+            raise ConfigError("pair-SPZ currently supports vertical ambient sources")
+        if (
+            nnws.enabled
+            and nnws.pair_scope == "reference_receiver"
+            and nnws.reference_receiver_index >= receivers.count
+        ):
+            raise ConfigError(
+                "nnws.reference_receiver_index must identify an existing receiver"
+            )
+        if (
+            nnws_v2.enabled
+            and nnws_v2.pair_scope == "reference_receiver"
+            and nnws_v2.reference_receiver_index >= receivers.count
+        ):
+            raise ConfigError(
+                "nnws_v2.reference_receiver_index must identify an existing receiver"
+            )
+        if nnws_v2.pair_ftan_receiver_index is not None:
+            if not nnws_v2.enabled or nnws_v2.pair_scope != "reference_receiver":
+                raise ConfigError(
+                    "nnws_v2.pair_ftan_receiver_index requires enabled "
+                    "reference_receiver scope"
+                )
+            if nnws_v2.pair_ftan_receiver_index >= receivers.count:
+                raise ConfigError(
+                    "nnws_v2.pair_ftan_receiver_index must identify an existing receiver"
+                )
+            if (
+                nnws_v2.pair_ftan_receiver_index
+                == nnws_v2.reference_receiver_index
+            ):
+                raise ConfigError(
+                    "nnws_v2.pair_ftan_receiver_index must differ from the reference receiver"
+                )
+        if (
+            pair_spz.enabled
+            and pair_spz.pair_scope == "reference_receiver"
+            and pair_spz.reference_receiver_index >= receivers.count
+        ):
+            raise ConfigError(
+                "pair_spz.reference_receiver_index must identify an existing receiver"
+            )
+        if (
+            nnws.enabled
+            and nnws_v2.enabled
+            and (
+                nnws.pair_scope != nnws_v2.pair_scope
+                or nnws.reference_receiver_index
+                != nnws_v2.reference_receiver_index
+            )
+        ):
+            raise ConfigError(
+                "nnws and nnws_v2 must use the same pair scope when both are enabled"
+            )
+        if pair_spz.enabled and nnws_v2.enabled and (
+            pair_spz.pair_scope != nnws_v2.pair_scope
+            or pair_spz.reference_receiver_index
+            != nnws_v2.reference_receiver_index
+        ):
+            raise ConfigError(
+                "pair_spz and nnws_v2 must use the same pair scope when combined"
+            )
+    elif nnws.enabled or nnws_v2.enabled or pair_spz.enabled:
+        raise ConfigError("NNWS/SPZ research methods are available only in passive mode")
+    if das.enabled:
+        if das.geometry_mode == "channel_file" and not isinstance(
+            receivers, ReceiverFileConfig
+        ):
+            raise ConfigError(
+                "das.geometry_mode='channel_file' requires "
+                "geometry.receivers.layout='file'; the receiver CSV must include "
+                "x_m,y_m plus endpoint_* columns or per-channel "
+                "gauge_length_m,fiber_azimuth_deg"
+            )
+        if das.geometry_mode == "channel_file":
+            from .das import load_das_geometry_csv
+
+            try:
+                load_das_geometry_csv(receivers.coordinates_file)  # type: ignore[union-attr]
+            except (OSError, ValueError) as exc:
+                raise ConfigError(f"invalid DAS channel CSV: {exc}") from exc
+        if processing.dispersion_method != "phase_shift":
+            raise ConfigError(
+                "DAS v1 requires processing.dispersion_method='phase_shift'; "
+                "FJ/Bessel and Hankel DAS kernels are not yet validated"
+            )
+        if processing.compare_methods:
+            raise ConfigError(
+                "DAS v1 requires processing.compare_methods=false because only "
+                "the phase-shift imaging path is validated"
+            )
+        if mode == "active" and active.component != "vertical":  # type: ignore[union-attr]
+            raise ConfigError(
+                "active DAS v1 requires active_source.component='vertical'; "
+                "horizontal source azimuth is not defined by the current input schema"
+            )
+        if mode == "passive" and (
+            source_selection.enabled
+            or nnws.enabled
+            or nnws_v2.enabled
+            or pair_spz.enabled
+        ):
+            raise ConfigError(
+                "DAS v1 does not yet support source_selection/NNWS/pair-SPZ; "
+                "disable those experimental component-specific workflows"
+            )
+        if mode == "passive" and ambient.component != "vertical":  # type: ignore[union-attr]
+            raise ConfigError(
+                "passive DAS v1 currently requires ambient_sources.component='vertical'; "
+                "three-component stochastic source forces will be added after the "
+                "vertical-force DAS-DAS reference is validated"
+            )
+    return RunConfig(
+        name=name,
+        mode=mode,
+        output_directory=output,
+        workers=workers,
+        frequency_block_size=frequency_block,
+        source_block_size=source_block,
+        radial_interpolation_step_m=radial_step,
+        store_source_responses=store_responses,
+        model=model,
+        receivers=receivers,
+        das=das,
+        processing=processing,
+        source_selection=source_selection,
+        nnws=nnws,
+        nnws_v2=nnws_v2,
+        pair_spz=pair_spz,
+        active_source=active,
+        ambient_sources=ambient,
+        noise=noise,
+        config_path=resolved_config_path,
+    )
 
 
 def load_config(path: str | Path) -> RunConfig:

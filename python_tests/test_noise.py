@@ -5,6 +5,7 @@ import numpy as np
 
 from wavedispx.config import load_config
 from wavedispx.noise import (
+    add_independent_receiver_noise,
     source_spectral_amplitude,
     stochastic_source_coefficients,
     synthesize_mixed_noise_window,
@@ -14,6 +15,47 @@ from wavedispx.noise import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_receiver_noise_is_reproducible_band_limited_and_has_requested_rms():
+    config = load_config(ROOT / "examples/passive_quick.toml").noise
+    noisy_config = replace(config, receiver_noise_rms_fraction=0.25)
+    sample_count = round(noisy_config.window_s / noisy_config.dt_s)
+    time = np.arange(sample_count) * noisy_config.dt_s
+    record = np.stack(
+        [
+            np.sin(2.0 * np.pi * noisy_config.dominant_frequency_hz * time),
+            0.5 * np.sin(2.0 * np.pi * noisy_config.dominant_frequency_hz * time),
+        ],
+        axis=1,
+    )
+    first = add_independent_receiver_noise(
+        record, noisy_config, np.random.default_rng(91)
+    )
+    second = add_independent_receiver_noise(
+        record, noisy_config, np.random.default_rng(91)
+    )
+    np.testing.assert_array_equal(first, second)
+
+    added = first - record
+    signal_rms = np.sqrt(np.mean(record**2, axis=0))
+    expected = 0.25 * np.median(signal_rms)
+    np.testing.assert_allclose(
+        np.sqrt(np.mean(added**2, axis=0)), expected, rtol=1e-12, atol=1e-12
+    )
+    frequency = np.fft.rfftfreq(sample_count, noisy_config.dt_s)
+    spectrum = np.abs(np.fft.rfft(added, axis=0))
+    outside = (frequency < noisy_config.minimum_frequency_hz) | (
+        frequency > noisy_config.maximum_frequency_hz
+    )
+    assert np.max(spectrum[outside], initial=0.0) < 1e-10
+
+
+def test_zero_receiver_noise_is_an_exact_no_op():
+    config = load_config(ROOT / "examples/passive_quick.toml").noise
+    record = np.arange(24, dtype=float).reshape(8, 3)
+    output = add_independent_receiver_noise(record, config, np.random.default_rng(2))
+    np.testing.assert_array_equal(output, record)
 
 
 def test_ricker_psd_is_banded_and_peaks_near_dominant_frequency():
@@ -123,6 +165,41 @@ def test_band_limited_mixing_matches_full_grid_mixing():
         full_transfer[selected], frequency[selected], small, np.random.default_rng(5)
     )
     np.testing.assert_allclose(band.record, full.record, rtol=1e-12, atol=1e-12)
+
+
+def test_source_activity_weights_modulate_the_exact_mixed_realization():
+    config = load_config(ROOT / "examples/passive_quick.toml").noise
+    sample_count = round(config.window_s / config.dt_s)
+    full_frequency = np.fft.rfftfreq(sample_count, config.dt_s)
+    selected = (
+        (full_frequency >= config.minimum_frequency_hz)
+        & (full_frequency <= config.maximum_frequency_hz)
+    )
+    frequency = full_frequency[selected]
+    transfer = np.ones((frequency.size, 2, 3), dtype=np.complex128)
+    weights = np.array([1.0, 0.0, 0.25])
+    baseline = synthesize_mixed_noise_window_band(
+        transfer,
+        frequency,
+        config,
+        np.random.default_rng(81),
+        return_source_coefficients=True,
+    )
+    modulated = synthesize_mixed_noise_window_band(
+        transfer,
+        frequency,
+        config,
+        np.random.default_rng(81),
+        return_source_coefficients=True,
+        source_activity_weights=weights,
+    )
+    np.testing.assert_allclose(
+        modulated.source_coefficients,
+        baseline.source_coefficients * weights[:, None],
+        rtol=0,
+        atol=0,
+    )
+    assert not np.array_equal(modulated.record, baseline.record)
 
 
 def test_three_component_mixer_rotates_full_green_tensor_consistently():

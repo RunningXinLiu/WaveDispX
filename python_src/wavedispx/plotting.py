@@ -8,13 +8,40 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
 import numpy as np
 
 from .active import ActiveShotGather
 from .config import RunConfig
+from .das import normalized_gauge_response
 from .geometry import Geometry
 from .processing import DispersionImage, DispersionPicks, TheoreticalDispersion
 from .noise import source_spectral_amplitude
+
+
+def _plot_das_geometry(axis, geometry) -> None:
+    if geometry is None:
+        return
+    segments = np.stack(
+        (geometry.endpoint_minus_xy_m, geometry.endpoint_plus_xy_m), axis=1
+    )
+    collection = LineCollection(
+        segments,
+        colors="tab:orange",
+        linewidths=1.2,
+        alpha=0.8,
+        label=f"DAS gauges ({geometry.gauge_label})",
+    )
+    axis.add_collection(collection)
+    stride = max(1, geometry.channel_count // 80)
+    endpoint = geometry.endpoint_xy_m[::stride]
+    axis.scatter(
+        endpoint[:, 0],
+        endpoint[:, 1],
+        s=5,
+        c="tab:orange",
+        alpha=0.7,
+    )
 
 
 def _layer_steps(config: RunConfig, values: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -99,11 +126,18 @@ def plot_active_summary(
     axes[0, 2].scatter(
         geometry.source_x_m, geometry.source_y_m, marker="*", s=150, c="red", label="Source"
     )
+    _plot_das_geometry(
+        axes[0, 2], shot.das_record.geometry if shot.das_record is not None else None
+    )
     axes[0, 2].set(xlabel="x (m)", ylabel="y (m)", title="Active source–receiver geometry")
     axes[0, 2].legend()
     axes[0, 2].grid(alpha=0.25)
     distance_order = np.argsort(shot.distance_m)
-    gather = shot.vertical_vertical[:, distance_order]
+    gather = (
+        shot.das_record.data[:, distance_order]
+        if shot.das_record is not None
+        else shot.vertical_vertical[:, distance_order]
+    )
     sorted_distance = shot.distance_m[distance_order]
     scale = np.percentile(np.abs(gather), 99.5)
     axes[1, 0].imshow(
@@ -115,11 +149,19 @@ def plot_active_summary(
         vmin=-scale,
         vmax=scale,
     )
-    axes[1, 0].set(xlabel="Offset (m)", ylabel="Time (s)", title="Vertical shot gather")
+    axes[1, 0].set(
+        xlabel="Offset (m)",
+        ylabel="Time (s)",
+        title=(
+            f"DAS {shot.das_record.measurement} shot gather"
+            if shot.das_record is not None
+            else "Vertical shot gather"
+        ),
+    )
     plotted_rayleigh = rayleigh_combined or rayleigh
     plotted_rayleigh_picks = rayleigh_combined_picks or rayleigh_picks
     rayleigh_title = (
-        "Combined Rayleigh dispersion (RR/ZR/RZ/ZZ)"
+        ("DAS Rayleigh dispersion" if shot.das_record is not None else "Combined Rayleigh dispersion (RR/ZR/RZ/ZZ)")
         if rayleigh_combined is not None
         else "Rayleigh dispersion (ZZ)"
     )
@@ -130,7 +172,44 @@ def plot_active_summary(
         plotted_rayleigh_picks,
         rayleigh_title,
     )
-    _plot_dispersion(axes[1, 2], love, theory.love_mps, love_picks, "Love dispersion")
+    if shot.das_record is not None:
+        for mode in range(theory.rayleigh_mps.shape[1]):
+            velocity = theory.rayleigh_mps[:, mode]
+            valid = np.isfinite(velocity) & (velocity > 0)
+            response = np.full(velocity.shape, np.nan)
+            gauge_lengths = (
+                shot.das_record.geometry.gauge_length_by_channel_m
+            )
+            channel_response = np.abs(
+                normalized_gauge_response(
+                    (
+                        2.0
+                        * np.pi
+                        * theory.frequency_hz[valid, None]
+                        / velocity[valid, None]
+                    ),
+                    gauge_lengths[None, :],
+                )
+            )
+            response[valid] = np.median(channel_response, axis=1)
+            axes[1, 2].plot(
+                theory.frequency_hz,
+                response,
+                linewidth=1.8 if mode == 0 else 1.0,
+                label=f"Rayleigh mode {mode} (channel median)",
+            )
+        axes[1, 2].set(
+            xlabel="Frequency (Hz)",
+            ylabel="|sinc(kL/2)|",
+            title="Finite-gauge sensitivity along fibre",
+            ylim=(0, 1.05),
+        )
+        axes[1, 2].grid(alpha=0.25)
+        axes[1, 2].legend()
+    else:
+        _plot_dispersion(
+            axes[1, 2], love, theory.love_mps, love_picks, "Love dispersion"
+        )
     figure.suptitle(f"WaveDispX active | {config.name}", fontsize=15)
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -219,6 +298,7 @@ def plot_passive_summary(
     axes[0, 2].scatter(
         geometry.receiver_x_m, geometry.receiver_y_m, marker="v", s=18, label="Receivers"
     )
+    _plot_das_geometry(axes[0, 2], simulation.transfer.das_geometry)
     axes[0, 2].set(
         xlabel="x (m)", ylabel="y (m)", title="Passive source–receiver geometry"
     )
@@ -245,7 +325,9 @@ def plot_passive_summary(
         xlabel="Interstation distance (m)",
         ylabel="Lag time (s)",
         title=(
-            "Mixed-record symmetric ZZ NCF"
+            "Mixed-record symmetric DAS-DAS NCF"
+            if config.das.enabled
+            else "Mixed-record symmetric ZZ NCF"
             if config.ambient_sources.component == "three_component"
             else "Mixed-record symmetric NCF"
         ),
@@ -256,7 +338,9 @@ def plot_passive_summary(
         simulation.theory.rayleigh_mps,
         simulation.picks,
         (
-            "Passive combined Rayleigh dispersion (ZZ/RR)"
+            "Passive DAS Rayleigh dispersion"
+            if config.das.enabled
+            else "Passive combined Rayleigh dispersion (ZZ/RR)"
             if config.ambient_sources.component == "three_component"
             else "Passive Rayleigh dispersion"
         ),

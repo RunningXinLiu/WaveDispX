@@ -12,13 +12,16 @@ import matplotlib
 if "IPython" not in sys.modules:
     matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
 import numpy as np
 
-from .active import ricker_wavelet
+from .active import active_source_wavelet
 from .config import ReceiverLineConfig, RunConfig
+from .das import DASGeometry, build_configured_das_geometry
 from .geometry import Geometry, build_geometry, receiver_positions, save_geometry_csv
 from .noise import source_spectral_amplitude, stochastic_source_coefficients
 from .processing import TheoreticalDispersion, theoretical_dispersion
+from .survey_design import design_survey_window
 
 
 @dataclass(frozen=True)
@@ -36,6 +39,7 @@ class PreflightCheck:
 class PreflightReview:
     config: RunConfig
     geometry: Geometry
+    das_geometry: DASGeometry | None
     theory: TheoreticalDispersion
     source_time_s: np.ndarray
     source_waveform: np.ndarray
@@ -83,7 +87,9 @@ def _source_preview(config: RunConfig) -> tuple[np.ndarray, ...]:
         source = config.active_source
         duration = 6.0 / source.dominant_frequency_hz
         time_s = np.arange(int(np.ceil(duration / source.dt_s)) + 1) * source.dt_s
-        waveform = ricker_wavelet(time_s, source.dominant_frequency_hz)
+        waveform = active_source_wavelet(
+            time_s, source.wavelet, source.dominant_frequency_hz
+        )
         frequency = np.fft.rfftfreq(time_s.size, source.dt_s)
         power = np.abs(np.fft.rfft(waveform)) ** 2
     else:
@@ -116,17 +122,6 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
     """Build all preflight inputs without running the wavefield solver."""
     geometry = _geometry(config)
     processing = config.processing
-    theory_frequency = np.linspace(
-        max(processing.frequency_min_hz, 0.05),
-        processing.frequency_max_hz,
-        240,
-    )
-    theory = theoretical_dispersion(
-        config.model,
-        theory_frequency,
-        rayleigh_modes=processing.rayleigh_modes,
-        love_modes=processing.love_modes,
-    )
     time_s, waveform, spectrum_frequency, source_power = _source_preview(config)
     receiver_pair_distance = np.hypot(
         geometry.receiver_x_m[:, None] - geometry.receiver_x_m[None, :],
@@ -162,14 +157,72 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
             np.fill_diagonal(nearest, np.inf)
             effective_spacing = float(np.max(np.min(nearest, axis=1)))
         spatial_sampling_basis = "median unique source-receiver radial gap"
+    das_geometry = None
+    maximum_gauge = None
+    maximum_design_distance = float(source_receiver_distance.max())
+    if config.das.enabled:
+        das_geometry = build_configured_das_geometry(
+            geometry.receiver_x_m,
+            geometry.receiver_y_m,
+            geometry_mode=config.das.geometry_mode,
+            gauge_length_m=config.das.gauge_length_m,
+            fiber_azimuth_deg=config.das.fiber_azimuth_deg,
+            receiver_coordinates_file=getattr(
+                config.receivers, "coordinates_file", None
+            ),
+        )
+        endpoint_xy = das_geometry.endpoint_xy_m
+        endpoint_source_distance = np.hypot(
+            endpoint_xy[:, 0, None] - geometry.source_x_m[None, :],
+            endpoint_xy[:, 1, None] - geometry.source_y_m[None, :],
+        )
+        maximum_design_distance = max(
+            maximum_design_distance, float(endpoint_source_distance.max())
+        )
+        maximum_gauge = float(
+            np.max(das_geometry.gauge_length_by_channel_m)
+        )
+    design = design_survey_window(
+        config,
+        receiver_aperture_m=receiver_aperture,
+        effective_spacing_m=effective_spacing,
+        maximum_source_receiver_distance_m=maximum_design_distance,
+        maximum_gauge_length_m=maximum_gauge,
+    )
+    theory = (
+        design.theory
+        if processing.theory_solver == "disba"
+        else theoretical_dispersion(
+            config.model,
+            design.frequency_hz,
+            rayleigh_modes=processing.rayleigh_modes,
+            love_modes=processing.love_modes,
+            backend=processing.theory_solver,
+        )
+    )
     all_theory = theory.rayleigh_mps
     if config.mode == "active" and config.active_source.component in {"horizontal", "both"}:
         all_theory = np.column_stack((all_theory, theory.love_mps))
-    finite_velocity = all_theory[np.isfinite(all_theory)]
+    requested_frequency = (
+        (theory.frequency_hz >= processing.frequency_min_hz)
+        & (theory.frequency_hz <= processing.frequency_max_hz)
+    )
+    finite_velocity = all_theory[requested_frequency]
+    finite_velocity = finite_velocity[np.isfinite(finite_velocity)]
     minimum_phase_velocity = float(
         finite_velocity.min(initial=min(layer.vs_mps for layer in config.model.layers))
     )
-    fundamental_at_fmin = theory.rayleigh_mps[0, 0]
+    fundamental = theory.rayleigh_mps[:, 0]
+    finite_fundamental = np.isfinite(fundamental)
+    fundamental_at_fmin = (
+        np.interp(
+            processing.frequency_min_hz,
+            theory.frequency_hz[finite_fundamental],
+            fundamental[finite_fundamental],
+        )
+        if np.any(finite_fundamental)
+        else np.nan
+    )
     if not np.isfinite(fundamental_at_fmin):
         fundamental_at_fmin = max(layer.vs_mps for layer in config.model.layers)
     wavelength_count = float(
@@ -186,6 +239,59 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
         else config.noise.maximum_frequency_hz
     )
     samples_per_shortest_period = float(1.0 / (dt_s * source_maximum_hz))
+    frequency_range_covered = (
+        processing.frequency_min_hz
+        <= design.recommended_frequency_min_hz + 1.0e-9
+        and processing.frequency_max_hz
+        >= design.recommended_frequency_max_hz - 1.0e-9
+    )
+    velocity_range_covered = (
+        processing.velocity_min_mps
+        <= design.recommended_velocity_min_mps + 1.0e-9
+        and processing.velocity_max_mps
+        >= design.recommended_velocity_max_mps - 1.0e-9
+    )
+    if config.mode == "active":
+        actual_record_duration_s = (
+            design.recommended_active_record_duration_s
+            if config.active_source.record_duration_s is None
+            else config.active_source.record_duration_s
+        )
+        observation_window_s = actual_record_duration_s
+        internal_period_s = actual_record_duration_s + (
+            4.0 / config.active_source.dominant_frequency_hz
+        )
+    else:
+        actual_record_duration_s = config.noise.duration_s
+        observation_window_s = config.noise.window_s
+        reference_frequency = max(
+            config.noise.minimum_frequency_hz,
+            0.25 * config.noise.dominant_frequency_hz,
+        )
+        internal_period_s = (
+            design.recommended_passive_green_duration_s
+            + 4.0 / reference_frequency
+        )
+    # The output-image resolution is controlled by the saved active gather or
+    # one passive correlation window.  The DWM complex-frequency grid has its
+    # own (usually different) synthetic period and must not be reported as the
+    # observation's physical frequency resolution.
+    physical_frequency_step_hz = 1.0 / observation_window_s
+    observation_sample_count = max(2, int(np.ceil(observation_window_s / dt_s)))
+    padded_sample_count = 1 << max(
+        0,
+        (int(np.ceil(observation_sample_count * processing.zero_padding)) - 1).bit_length(),
+    )
+    automatic_display_frequency_step_hz = 1.0 / (padded_sample_count * dt_s)
+    display_frequency_step_hz = (
+        automatic_display_frequency_step_hz
+        if processing.frequency_step_hz is None
+        else processing.frequency_step_hz
+    )
+    dwm_frequency_step_hz = 1.0 / internal_period_s
+    maximum_recommended_df_hz = (
+        processing.frequency_max_hz - processing.frequency_min_hz
+    ) / 20.0
     checks = [
         PreflightCheck(
             "Temporal Nyquist",
@@ -242,6 +348,51 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
             ),
             "移动与接收器重合的源或炮点；源—接收器最小距离必须大于 0 m。",
         ),
+        PreflightCheck(
+            "Processing frequency coverage",
+            f"{processing.frequency_min_hz:.2f}–{processing.frequency_max_hz:.2f} Hz",
+            (
+                f"cover model/source suggestion "
+                f"{design.recommended_frequency_min_hz:.2f}–"
+                f"{design.recommended_frequency_max_hz:.2f} Hz"
+            ),
+            frequency_range_covered,
+            parameter_path="processing.frequency_min_hz / frequency_max_hz",
+            guidance=(
+                "根据源谱、理论多模态、孔径和空间采样扩大或移动处理频带；"
+                "若有意只研究子频带，可保留设置并在结果中声明裁剪。"
+            ),
+        ),
+        PreflightCheck(
+            "Velocity scan coverage",
+            f"{processing.velocity_min_mps:.1f}–{processing.velocity_max_mps:.1f} m/s",
+            (
+                f"cover theory + margin suggestion "
+                f"{design.recommended_velocity_min_mps:.1f}–"
+                f"{design.recommended_velocity_max_mps:.1f} m/s"
+            ),
+            velocity_range_covered,
+            parameter_path="processing.velocity_min_mps / velocity_max_mps",
+            guidance=(
+                "扩大速度扫描窗，使理论分支上下仍有背景能量边界；"
+                "不要只围着基阶理论线裁图。"
+            ),
+        ),
+        PreflightCheck(
+            "Physical frequency resolution",
+            f"df≈{physical_frequency_step_hz:.4f} Hz",
+            f"<= {maximum_recommended_df_hz:.4f} Hz (>=20 bins across band)",
+            physical_frequency_step_hz <= maximum_recommended_df_hz,
+            parameter_path=(
+                "active_source.record_duration_s"
+                if config.mode == "active"
+                else "noise.window_s"
+            ),
+            guidance=(
+                "增大真实记录/独立窗长以减小物理 df；processing.zero_padding "
+                "只能加密显示采样，不能提高真实频率分辨率。"
+            ),
+        ),
     ]
     diagnostics: dict[str, float | int | str] = {
         "mode": config.mode,
@@ -255,10 +406,156 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
         "temporal_nyquist_hz": temporal_nyquist_hz,
         "spatial_alias_estimate_hz": spatial_alias_hz,
         "aperture_wavelengths_at_fmin": wavelength_count,
+        "forward_solver_domain": "frequency-wavenumber DWM with optional time synthesis",
+        "range_design_theory_solver": design.theory.solver,
+        "useful_source_frequency_min_hz": design.useful_source_min_hz,
+        "useful_source_frequency_max_hz": design.useful_source_max_hz,
+        "recommended_frequency_min_hz": design.recommended_frequency_min_hz,
+        "recommended_frequency_max_hz": design.recommended_frequency_max_hz,
+        "recommended_velocity_min_mps": design.recommended_velocity_min_mps,
+        "recommended_velocity_max_mps": design.recommended_velocity_max_mps,
+        "minimum_theoretical_group_velocity_mps": design.minimum_group_velocity_mps,
+        "maximum_theoretical_group_velocity_mps": design.maximum_group_velocity_mps,
+        "physical_frequency_step_hz": physical_frequency_step_hz,
+        "display_frequency_step_hz": display_frequency_step_hz,
+        "recommended_display_frequency_step_hz": (
+            design.recommended_frequency_step_hz
+        ),
+        "observation_fft_period_s": observation_window_s,
+        "dwm_synthetic_period_s": internal_period_s,
+        "dwm_frequency_step_hz": dwm_frequency_step_hz,
+        "dwm_complex_frequency_shift_radps": 2.0 * np.pi * dwm_frequency_step_hz,
+        "record_duration_s": actual_record_duration_s,
+        "recommended_velocity_step_mps": design.recommended_velocity_step_mps,
     }
+    if config.mode == "active":
+        recommended_record = design.recommended_active_record_duration_s
+        checks.append(
+            PreflightCheck(
+                "Active record duration",
+                f"{actual_record_duration_s:.3f} s",
+                f">= model/group-arrival design {recommended_record:.3f} s",
+                actual_record_duration_s + dt_s >= recommended_record,
+                "required",
+                "active_source.record_duration_s",
+                (
+                    f"把主动记录时长设为至少 {recommended_record:.3f} s；"
+                    "设为 0 或省略时由模型、群速度、最大偏移和最低处理频率自动设计。"
+                ),
+            )
+        )
+        diagnostics.update(
+            recommended_active_record_duration_s=recommended_record,
+            active_record_duration_mode=(
+                "automatic"
+                if config.active_source.record_duration_s is None
+                else "explicit"
+            ),
+        )
+    else:
+        actual_maximum_lag_s = (
+            design.recommended_passive_maximum_lag_s
+            if config.noise.maximum_lag_s is None
+            else config.noise.maximum_lag_s
+        )
+        checks.append(
+            PreflightCheck(
+                "Passive NCF maximum lag",
+                f"{actual_maximum_lag_s:.3f} s",
+                (
+                    f">= group-arrival suggestion "
+                    f"{design.recommended_passive_maximum_lag_s:.3f} s and < window"
+                ),
+                (
+                    actual_maximum_lag_s + dt_s
+                    >= design.recommended_passive_maximum_lag_s
+                    and actual_maximum_lag_s < config.noise.window_s
+                ),
+                "required",
+                "noise.maximum_lag_s / noise.window_s",
+                (
+                    "增大 maximum_lag_s 以包含最慢面波到时，同时保持它小于 window_s；"
+                    "设为 0 或省略时由模型群速度和阵列孔径自动设计。"
+                ),
+            )
+        )
+        diagnostics.update(
+            passive_total_record_duration_s=config.noise.duration_s,
+            passive_independent_window_s=config.noise.window_s,
+            recommended_passive_green_duration_s=(
+                design.recommended_passive_green_duration_s
+            ),
+            recommended_passive_window_s=design.recommended_passive_window_s,
+            passive_maximum_lag_s=actual_maximum_lag_s,
+            recommended_passive_maximum_lag_s=(
+                design.recommended_passive_maximum_lag_s
+            ),
+            passive_maximum_lag_mode=(
+                "automatic" if config.noise.maximum_lag_s is None else "explicit"
+            ),
+        )
+    if config.das.enabled:
+        assert das_geometry is not None
+        endpoint_xy = das_geometry.endpoint_xy_m
+        endpoint_source_distance = np.hypot(
+            endpoint_xy[:, 0, None] - geometry.source_x_m[None, :],
+            endpoint_xy[:, 1, None] - geometry.source_y_m[None, :],
+        )
+        maximum_gauge = float(np.max(das_geometry.gauge_length_by_channel_m))
+        minimum_gauge = float(np.min(das_geometry.gauge_length_by_channel_m))
+        first_zero_min_hz = minimum_phase_velocity / maximum_gauge
+        checks.extend(
+            (
+                PreflightCheck(
+                    "DAS endpoint-source distance",
+                    f"{endpoint_source_distance.min():.2f} m",
+                    "> 0 m",
+                    bool(endpoint_source_distance.min() > 0),
+                    "required",
+                    (
+                        "geometry.receivers.coordinates_file / source coordinates"
+                        if config.das.geometry_mode == "channel_file"
+                        else "das.gauge_length_m / das.fiber_azimuth_deg / source coordinates"
+                    ),
+                    "移动源、道中心或修改标距/光纤方位，避免点源恰好落在任一标距端点。",
+                ),
+                PreflightCheck(
+                    "DAS first finite-gauge zero",
+                    f"from {first_zero_min_hz:.2f} Hz over the velocity scan",
+                    "processing band preferably below the first zero",
+                    processing.frequency_max_hz < first_zero_min_hz,
+                    parameter_path=(
+                        "geometry.receivers.coordinates_file / processing.frequency_max_hz"
+                        if config.das.geometry_mode == "channel_file"
+                        else "das.gauge_length_m / processing.frequency_max_hz"
+                    ),
+                    guidance=(
+                        "标距的 sinc 响应会在 f=c/Lg 附近出现物理零点；若目标频带穿过该区，"
+                        "减小 gauge_length_m 或把该零点作为 DAS 灵敏度缺口解释。"
+                    ),
+                ),
+            )
+        )
+        diagnostics.update(
+            das_measurement=config.das.measurement,
+            das_geometry_mode=config.das.geometry_mode,
+            das_gauge_length_min_m=minimum_gauge,
+            das_gauge_length_max_m=maximum_gauge,
+            das_fiber_azimuth_min_deg=float(
+                np.min(das_geometry.fiber_azimuth_by_channel_deg)
+            ),
+            das_fiber_azimuth_max_deg=float(
+                np.max(das_geometry.fiber_azimuth_by_channel_deg)
+            ),
+            das_minimum_endpoint_source_distance_m=float(
+                endpoint_source_distance.min()
+            ),
+            das_first_gauge_zero_minimum_hz=first_zero_min_hz,
+        )
     if config.mode == "passive":
         minimum_vs = min(layer.vs_mps for layer in config.model.layers)
-        required_lag_s = 1.3 * receiver_aperture / (0.9 * minimum_vs)
+        required_lag_s = receiver_aperture / design.minimum_group_velocity_mps
+        recommended_window_s = design.recommended_passive_window_s
         maximum_gap = _maximum_azimuth_gap_deg(geometry)
         radial_step_limit = minimum_vs / (20.0 * config.noise.maximum_frequency_hz)
         checks.extend(
@@ -266,11 +563,17 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
                 PreflightCheck(
                     "Correlation window",
                     f"{config.noise.window_s:.2f} s",
-                    f"> required lag {required_lag_s:.2f} s",
-                    config.noise.window_s > required_lag_s,
+                    (
+                        f">= group-arrival/Green design "
+                        f"{recommended_window_s:.2f} s"
+                    ),
+                    config.noise.window_s >= recommended_window_s,
                     "required",
                     "noise.window_s",
-                    f"把独立窗长增大到大于 {required_lag_s:.2f} s，并保证不超过总记录时长。",
+                    (
+                        f"把独立窗长增大到至少 {recommended_window_s:.2f} s；"
+                        "它同时覆盖最远噪声源 Green 尾部和最慢群速度的台间传播。"
+                    ),
                 ),
                 PreflightCheck(
                     "Ambient source count",
@@ -299,11 +602,26 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
                     "run.radial_interpolation_step_m",
                     f"把“径向 Green 插值”减小到不超过 {radial_step_limit:.3f} m。",
                 ),
+                PreflightCheck(
+                    "Independent noise windows",
+                    str(int(round(config.noise.duration_s / config.noise.window_s))),
+                    ">= 30 for a useful convergence check; 60+ preferred",
+                    config.noise.duration_s / config.noise.window_s >= 30.0,
+                    parameter_path="noise.duration_s / noise.window_s",
+                    guidance=(
+                        "增加总记录时长以增加独立窗数；总时长改善统计收敛，"
+                        "不能替代单窗对最慢传播和 Green 尾部的覆盖。"
+                    ),
+                ),
             )
         )
         diagnostics.update(
             ambient_source_component=config.ambient_sources.component,
             required_maximum_lag_s=required_lag_s,
+            recommended_passive_green_duration_s=(
+                design.recommended_passive_green_duration_s
+            ),
+            recommended_passive_window_s=recommended_window_s,
             maximum_source_azimuth_gap_deg=maximum_gap,
             radial_interpolation_limit_m=radial_step_limit,
             independent_window_count=int(round(config.noise.duration_s / config.noise.window_s)),
@@ -311,6 +629,7 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
     return PreflightReview(
         config,
         geometry,
+        das_geometry,
         theory,
         time_s,
         waveform,
@@ -389,6 +708,26 @@ def plot_preflight_review(review: PreflightReview):
         s=20,
         label=f"Receivers (n={geometry.receiver_x_m.size})",
     )
+    if review.das_geometry is not None:
+        das_geometry = review.das_geometry
+        segments = np.stack(
+            (das_geometry.endpoint_minus_xy_m, das_geometry.endpoint_plus_xy_m),
+            axis=1,
+        )
+        axes[0, 2].add_collection(
+            LineCollection(
+                segments,
+                colors="tab:orange",
+                linewidths=1.2,
+                alpha=0.8,
+                label=f"DAS gauges ({das_geometry.gauge_label})",
+            )
+        )
+        stride = max(1, das_geometry.channel_count // 80)
+        endpoint = das_geometry.endpoint_xy_m[::stride]
+        axes[0, 2].scatter(
+            endpoint[:, 0], endpoint[:, 1], s=5, c="tab:orange", alpha=0.7
+        )
     axes[0, 2].set(xlabel="x (m)", ylabel="y (m)", title="Source-receiver geometry")
     axes[0, 2].legend()
     axes[0, 2].grid(alpha=0.25)
@@ -473,14 +812,96 @@ def plot_preflight_review(review: PreflightReview):
         alpha=0.08,
         label="Velocity scan",
     )
+    axes[1, 2].axvspan(
+        config.processing.frequency_min_hz,
+        config.processing.frequency_max_hz,
+        color="tab:orange",
+        alpha=0.06,
+        label="Frequency scan",
+    )
+    axes[1, 2].axhline(
+        config.processing.velocity_min_mps,
+        color="tab:green",
+        linewidth=0.8,
+    )
+    axes[1, 2].axhline(
+        config.processing.velocity_max_mps,
+        color="tab:green",
+        linewidth=0.8,
+    )
+    axes[1, 2].axvline(
+        config.processing.frequency_min_hz,
+        color="tab:orange",
+        linewidth=0.8,
+    )
+    axes[1, 2].axvline(
+        config.processing.frequency_max_hz,
+        color="tab:orange",
+        linewidth=0.8,
+    )
+    recommended_fmin = float(
+        review.diagnostics["recommended_frequency_min_hz"]
+    )
+    recommended_fmax = float(
+        review.diagnostics["recommended_frequency_max_hz"]
+    )
+    recommended_vmin = float(
+        review.diagnostics["recommended_velocity_min_mps"]
+    )
+    recommended_vmax = float(
+        review.diagnostics["recommended_velocity_max_mps"]
+    )
+    axes[1, 2].axvline(
+        recommended_fmin,
+        color="tab:purple",
+        linestyle="--",
+        linewidth=1.1,
+        label="Model/source/array suggestion",
+    )
+    axes[1, 2].axvline(
+        recommended_fmax,
+        color="tab:purple",
+        linestyle="--",
+        linewidth=1.1,
+    )
+    axes[1, 2].axhline(
+        recommended_vmin,
+        color="tab:purple",
+        linestyle="--",
+        linewidth=1.1,
+    )
+    axes[1, 2].axhline(
+        recommended_vmax,
+        color="tab:purple",
+        linestyle="--",
+        linewidth=1.1,
+    )
     axes[1, 2].set(
         xlabel="Frequency (Hz)",
         ylabel="Phase velocity (m/s)",
-        title="Theory within requested processing window",
+        title="Model-aware theory and requested f-v window",
     )
+    finite_theory = review.theory.rayleigh_mps[
+        np.isfinite(review.theory.rayleigh_mps)
+    ]
+    display_velocity_min = config.processing.velocity_min_mps
+    display_velocity_max = config.processing.velocity_max_mps
+    if finite_theory.size:
+        display_velocity_min = min(
+            display_velocity_min, 0.9 * float(np.min(finite_theory))
+        )
+        display_velocity_max = max(
+            display_velocity_max, 1.1 * float(np.max(finite_theory))
+        )
+    display_velocity_min = min(display_velocity_min, 0.95 * recommended_vmin)
+    display_velocity_max = max(display_velocity_max, 1.05 * recommended_vmax)
     axes[1, 2].set_ylim(
-        config.processing.velocity_min_mps,
-        config.processing.velocity_max_mps,
+        display_velocity_min,
+        display_velocity_max,
+    )
+    axes[1, 2].set_xlim(
+        float(review.theory.frequency_hz[0]),
+        float(review.theory.frequency_hz[-1]),
     )
     axes[1, 2].legend()
     axes[1, 2].grid(alpha=0.25)

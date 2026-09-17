@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WaveDispX 操作手册 · 2026-09-17</title><link rel="icon" href="data:,">
+<style>
+*{box-sizing:border-box}body{margin:0;color:#20334b;background:#f3f6fa;font:16px/1.8 system-ui,-apple-system,"PingFang SC",sans-serif}header{background:#152b45;color:white;padding:45px max(24px,calc((100% - 1180px)/2))}h1{font-size:38px;margin:0}header p{color:#c7d9ec}main{max-width:1180px;margin:auto;padding:22px}section{background:white;margin:22px 0;padding:28px;border:1px solid #dbe5ef;border-radius:12px}h2{margin-top:0;color:#133d69}h3{margin-top:28px}a{color:#176cc2}nav{display:flex;flex-wrap:wrap;gap:16px}table{border-collapse:collapse;width:100%;font-size:15px}td,th{border-bottom:1px solid #dce5ee;text-align:left;vertical-align:top;padding:10px}th{background:#edf4fc}code,pre{font-family:Menlo,monospace;font-size:13px}code{overflow-wrap:anywhere}pre{background:#13263d;color:#dceafb;padding:16px;overflow:auto;border-radius:8px}figure{margin:20px 0}img{width:100%;height:auto;border:1px solid #dce5ee;border-radius:8px}figcaption{font-size:14px;color:#61718a}.note{border-left:4px solid #3683c8;padding:12px 18px;background:#eef6ff}.warn{background:#fff6df;border-left:4px solid #d8a12e;padding:12px 18px}.scroll{overflow:auto}@media(max-width:650px){section{padding:15px}h1{font-size:28px}}@media print{body{background:white}section{break-inside:avoid;border:0}nav{display:none}}
+</style></head><body>
+<header><h1>WaveDispX 操作手册</h1><p>模型 → 观测系统 → 源 → 自动建议与手动调整 → 正演 → 波形 / 互相关 → 频散 → 保存</p><p>更新：2026-09-17 · 桌面 PySide6 / 网页 / Notebook 共用计算内核</p></header>
+<main><section><nav><a href="#start">启动</a><a href="#inputs">集中输入</a><a href="#auto">自动参数</a><a href="#geometry">Geometry 与文件</a><a href="#noise">噪声与时间</a><a href="#run">审核和运行</a><a href="#cases">结果示例</a><a href="#das">DAS</a><a href="#save">保存复现</a><a href="#errors">报错</a><a href="#limits">验证范围</a></nav>
+<p class="note">本页是当前操作入口。截图均保留完整窗口或完整图幅，点击可查看原尺寸。图像采用仓库相对路径，可随仓库复制。参数的完整字段字典见 <a href="INPUT_PARAMETERS_CN.md">输入参数说明</a>；算法移交见 <a href="FORWARD_HANDOFF_CN.md">正演接口手册</a>。</p></section>
+
+<section id="start"><h2>1. 从哪里开始</h2><p>进入项目根目录后启动。以下命令强制使用当前目录源码，避免本机另一个 editable 安装指向其他工作区。</p>
+<pre>PYTHONPATH=python_src conda run -n seisloc python -m wavedispx.desktop
+# 网页入口
+PYTHONPATH=python_src conda run -n seisloc wavedispx-ui
+# 命令行全流程
+PYTHONPATH=python_src conda run -n seisloc wavedispx run examples/active_quick.toml</pre>
+<p>在其他机器上，先按 README 安装项目及所需可选依赖；桌面需要 PySide6，网页需要 Streamlit，Notebook 需要 Jupyter 相关依赖。不要把包安装到 base。启动不需要打包成 .app。</p>
+<p>第一次使用：选择“主动源｜快速检查”或“被动源｜快速检查”，载入模板；先确认模型与坐标，再点击自动填参、输入审核，最后运行全部。快速模板用于检查流程，不代表噪声已经收敛。</p>
+<p>Notebook：<a href="../notebooks/01_active_quickstart.ipynb">主动</a>、<a href="../notebooks/02_passive_quickstart.ipynb">被动</a>、<a href="../notebooks/03_methods_and_validation.ipynb">公式与原理</a>、<a href="../notebooks/04_das_active_passive.ipynb">DAS</a>。集中编辑 PARAMETERS Cell，逐 Cell 执行；也可指定 INPUT_TOML，并在最后 Cell 设置 RUN_ALL_NOW。</p></section>
+
+<section id="inputs"><h2>2. 参数在哪里改</h2><figure><a href="manual_assets/current-desktop-parameters.png"><img src="manual_assets/current-desktop-parameters.png" alt="当前桌面完整参数窗口"></a><figcaption>当前桌面：两行工具栏，参数树、完整 TOML、搜索框和底部中文帮助卡。</figcaption></figure>
+<ol><li>双击参数树的“当前值”；枚举用下拉框，数值可直接输入。</li><li>悬停参数查看说明；单击后，底部帮助卡持续显示单位、约束、推荐起点和调整影响。</li><li>可用搜索框查找“频率”“记录时长”“lag”“标距”或字段英文。</li><li>编辑完整 TOML 后，点击“TOML → 应用到参数树”；直接改文本尚未提交时不会改变运行配置。</li><li>修改参数后重新审核；通过 required 检查后再运行。</li></ol>
+<table><tr><th>参数组</th><th>需要确认</th></tr><tr><td>model.layers</td><td>每层厚度 m、Vp/Vs m/s、密度 kg/m³、Qp/Qs；最后一层 thickness_m=inf；Vp&gt;Vs&gt;0。</td></tr><tr><td>geometry.receivers</td><td>line / grid / file；与震源使用同一坐标系和米制单位。</td></tr><tr><td>active_source</td><td>炮点、载荷分量、子波、主频、最高频率、dt、记录时长。</td></tr><tr><td>ambient_sources + noise</td><td>源位置与数量、空间种子、时间模型、PSD、时间种子、总时长、独立窗长、最大 lag。</td></tr><tr><td>processing</td><td>成像方法、f/v 范围、df/dv、归一化、距离 taper、理论模态及拾取参数。</td></tr><tr><td>run</td><td>独立输出目录、CPU workers、分块大小、径向插值精度。</td></tr></table></section>
+
+<section id="auto"><h2>3. 自动建议是可编辑的起点</h2><p>桌面按钮“自动填入 f/v/df/dv”（网页“计算并套用自动推荐”）按当前模型、源谱、阵列孔径/采样和 DAS 标距计算建议，并把数值填入普通输入框。可继续修改任何字段；运行不会再次用建议值覆盖你的手动输入。</p>
+<p>“恢复模板默认”只恢复所选模板的频散范围/步长与记录窗/lag。它不重新计算当前模型的建议；模型或 Geometry 已改变时，请使用“自动填入”。“载入模板”则完整替换算例输入。两种重置用途不同。</p>
+<table><tr><th>字段</th><th>含义 / 允许值</th><th>调整后影响</th></tr>
+<tr><td>frequency_min_hz / frequency_max_hz</td><td>能量图频带，须有源谱和采样支持；实际使用正频率。</td><td>改变频带还可能改变自动设计的正演时长，需要重算受影响上游。</td></tr>
+<tr><td>frequency_step_hz（df）</td><td>0 或省略：由记录长度与 FFT 补零给出；正数：显式输出频率步长。</td><td>补零 FFT 复谱在指定轴上插值。更密网格不增加物理分辨率。</td></tr>
+<tr><td>velocity_min_mps / velocity_max_mps</td><td>相速度扫描范围 m/s，应覆盖目标模态及周围能量。</td><td>过窄会裁掉高速分支；理论线不是能量图生成依据。</td></tr>
+<tr><td>velocity_step_mps（dv）</td><td>正数，m/s；越小网格越细。</td><td>增加成像成本；不突破阵列孔径决定的速度分辨能力。</td></tr>
+<tr><td>active_source.record_duration_s</td><td>0 或省略为自动，正数为指定实际保存记录周期。</td><td>改变主动正演与成像。若 dt=0.005 s、周期=3.5 s，最后样点为3.495 s。</td></tr>
+<tr><td>noise.maximum_lag_s</td><td>0 或省略为自动；显式值必须小于 window_s。</td><td>改变实际保留的 NCF lag 范围及后续成像，不能当成纯绘图裁剪。</td></tr></table>
+<p class="warn">显示 df、独立噪声窗的 1/window_s、裁剪 NCF lag 的频谱宽化，以及 DWM 内部周期的频点间隔是不同量。延长噪声总时长主要降低统计波动；减小显示 df 不能替代延长有效记录。自动建议属于模型感知估计，不是所有模型的已验证最优值。</p>
+<p>Notebook 中可显式调用 <code>apply_automatic_parameters(mapping, base_directory=...)</code>，返回新的参数字典和诊断；原字典不被修改。</p></section>
+
+<section id="geometry"><h2>4. 线阵、面阵和文件输入</h2><table><tr><th>布局</th><th>输入</th><th>处理方式</th></tr><tr><td>line</td><td>start_x_m、stop_x_m、spacing_m、y_m；跨度须为道距整数倍。</td><td>主动按真实炮检距；被动按台间距组织 NCF。</td></tr><tr><td>grid（二维面阵）</td><td>x/y 起止位置和 spacing_x_m / spacing_y_m。</td><td>主动使用实际二维径向炮检距；被动需 distance_bin_m，按台站对距离分箱。不是二维非均匀介质求解。</td></tr><tr><td>file</td><td>UTF-8 CSV，x_m,y_m；位置有限且不能重复。</td><td>不规则二维坐标；被动仍需正的 distance_bin_m。</td></tr></table>
+<p>接收器示例（每行一个接收点）：</p><pre>x_m,y_m
+5,0
+10,0
+15,0
+20,0</pre><p>炮点示例（当前单算例只明确选择一炮）：</p><pre>shot_id,x_m,y_m
+S001,0,0
+S002,-20,0</pre>
+<p>可直接使用仓库 <a href="../examples/observation_system/receivers.csv">receiver 文件</a>、<a href="../examples/observation_system/shots.csv">shot 文件</a> 和 <a href="../examples/observation_system/active_selected_shot.toml">完整主动配置</a>。桌面 CSV 按钮读取本地文件；网页使用上传控件。TOML 内相对文件路径以该 TOML 所在目录解析。</p>
+<p>源与接收器重合会报错。更长阵列改善低频孔径，更小道距改善高频采样；仅增大接收器数量不能保证所有频率都可分辨。</p></section>
+
+<section id="noise"><h2>5. 被动噪声源怎么设置</h2><p>空间分布在 ambient_sources：annulus 为环带，line/road 为线状源，file 读取 <a href="../examples/observation_system/noise_sources.csv">噪声源位置 CSV</a>。count 是源数量；空间 seed 控制位置抽样，angular_sampling=stratified 使方位分层抽样。噪声源位置与接收器位置是两张不同的表。</p>
+<table><tr><th>参数</th><th>含义</th></tr><tr><td>temporal_model=stationary_gaussian</td><td>每个源、每个独立窗生成独立随机频谱，乘 PSD，经 Green 传播后在接收端混合；连续过程没有单次激发时刻表。</td></tr><tr><td>temporal_model=poisson_ricker</td><td>每源每窗事件数服从 Poisson(event_rate_hz × window_s)，窗内时刻均匀抽样；输出 noise_events.csv 记录实际激发时刻和权重。</td></tr><tr><td>psd_shape</td><td>ricker、flat_band 或 file；外部文件列为 frequency_hz,power，频率递增、功率非负。</td></tr><tr><td>noise.seed / independent_sources</td><td>时间随机种子独立于空间种子；常规真实噪声流程 independent_sources=true。</td></tr><tr><td>duration_s</td><td>总统计记录长度；例如60 s / 10 s为6个独立窗。不是单次主动传播时长。</td></tr><tr><td>window_s / overlap</td><td>独立合成和互相关窗；须足够容纳传播和 lag。当前 overlap 必须为0。</td></tr><tr><td>maximum_lag_s</td><td>保存/展示的正 lag 上限；画出的对称 NCF 已折合因果和非因果支，不是单独的完整负 lag 图。</td></tr><tr><td>ambient_sources.activity_file（高级）</td><td>CSV 列 window_index,source_index,amplitude_multiplier；索引从0开始。提供文件后，未列出的窗—源项为0，每窗至少一个活动源。</td></tr></table>
+<p>源数和源方位控制照明；总记录长度和独立窗数控制统计方差。不能仅凭旁瓣较多就判定源太少。应固定模型/Geometry/随机种子，分别测试源数、时长、孔径及成像核。示例 PSD：<a href="../examples/observation_system/noise_psd.csv">noise_psd.csv</a>；Poisson 完整示例：<a href="../examples/observation_system/passive_poisson.toml">passive_poisson.toml</a>。</p></section>
+
+<section id="run"><h2>6. 先审核，再运行</h2><p>点击“审核模型与 Geometry”（网页“校验并绘制输入”）。检查 Vp/Vs/ρ、源—接收器位置、子波/PSD、理论模态、源频带、空间/时间采样和记录时长。required 失败会阻止运行；recommended 警告需要按研究目标判断。</p>
+<figure><a href="manual_assets/current-active-review.png"><img src="manual_assets/current-active-review.png" alt="主动源完整审核窗口"></a><figcaption>本轮主动验收：自动建议后手动记录周期3.5 s、显示df=0.05 Hz。</figcaption></figure>
+<figure><a href="manual_assets/current-passive-review.png"><img src="manual_assets/current-passive-review.png" alt="被动源完整审核窗口"></a><figcaption>本轮被动验收：60 s总记录、10 s独立窗，手动lag=2.5 s、显示df=0.1 Hz。</figcaption></figure>
+<ol><li><strong>正演 / Green：</strong>主动生成炮集；被动建立噪声源到接收器的传递响应。</li><li><strong>波形 / NCF：</strong>被动混合全部源的有限记录，随后只用接收器波形做互相关。</li><li><strong>频散与拾取：</strong>选择 phase_shift、bessel 或 hankel，叠加独立理论曲线和自动拾取；compare_methods=true 可在同网格对照三者。</li><li><strong>保存：</strong>写 HDF5、CSV、TOML、manifest 和结果图。也可一键执行全部。</li></ol>
+<p>只改显示df/dv或拾取通常可复用波形；改模型、源、Geometry、真实记录时长、输入文件内容或影响自动时长的频带/理论模态，会作废受影响上游。以界面的“失效阶段”提示为准。</p>
+<p>当前 DWM 在复频率—波数域求解，再合成波形。主动频散来自有限炮集，被动频散来自有限噪声记录的 NCF；它们有真实记录窗限制。波形可含体波、面波、近场和尾波；本界面没有自动完成物理分离。</p></section>
+
+<section id="cases"><h2>7. 看实际波形和完整结果</h2><figure><a href="manual_assets/current-active-results.png"><img src="manual_assets/current-active-results.png" alt="当前主动结果浏览完整窗口"></a><figcaption>结果浏览页可切换汇总图、分量图和方法对照，并打开输出目录。</figcaption></figure>
+<figure><a href="manual_assets/current-active-summary.png"><img src="manual_assets/current-active-summary.png" alt="主动线阵模型Geometry波形频散完整结果"></a><figcaption>本轮主动线阵运行。记录周期3.5 s；实际时间轴最后一采样点3.495 s。模型、密度、Geometry、波形和频散同图展示。</figcaption></figure>
+<figure><a href="manual_assets/current-passive-summary.png"><img src="manual_assets/current-passive-summary.png" alt="被动线阵模型Geometry互相关频散完整结果"></a><figcaption>本轮被动线阵运行，24源、60 s，lag=2.5 s。这是短记录流程测试，残余噪声和旁瓣不代表正式收敛。</figcaption></figure>
+<table><tr><th>目标</th><th>起始配置</th><th>需要检查</th></tr><tr><td>主动线阵</td><td><a href="../examples/active_quick.toml">active_quick.toml</a></td><td>炮检距、波形完整性和体波/面波到时。</td></tr><tr><td>主动面阵</td><td><a href="../examples/manual_active_array.toml">manual_active_array.toml</a></td><td>实际径向检距分布；阵列x/y间距不等同径向采样。</td></tr><tr><td>被动线阵</td><td><a href="../examples/passive_quick.toml">passive_quick.toml</a></td><td>方位照明、独立窗数、NCF lag和统计收敛。</td></tr><tr><td>被动面阵</td><td><a href="../examples/passive_grid_quick.toml">passive_grid_quick.toml</a></td><td>每个距离箱的台站对数量、分箱宽度和有效孔径。</td></tr></table>
+<h3>面阵布局参考</h3><figure><a href="manual_assets/manual_active_array-preflight.png"><img src="manual_assets/manual_active_array-preflight.png" alt="主动二维面阵布局参考"></a><figcaption>既有主动面阵示例图；仅说明布局与输入审查，不把旧图当作本轮新参数重算结果。</figcaption></figure><figure><a href="manual_assets/manual_passive_array-preflight.png"><img src="manual_assets/manual_passive_array-preflight.png" alt="被动二维面阵源和接收器参考"></a><figcaption>既有被动面阵示例，阵列与周边源分别展示。当前模板的具体数值以TOML为准。</figcaption></figure></section>
+
+<section id="das"><h2>8. DAS：标距和道间距分别设置</h2><p>开启 das.enabled。uniform 用统一 gauge_length_m 与 fiber_azimuth_deg；channel_file 从接收器CSV逐道读取两个端点，或逐道标距与方位。标距定义有限空间差分/平均，道间距定义采样，二者不能互换。measurement 选择 strain 或 strain_rate。</p><p>算子为 ε=(u₊−u₋)·t / Lg，应变率再对时间求导。实际计算标距两端位移；二维通道中心布局允许面阵，但不意味着模拟连续光纤力学。</p>
+<p>输入示例：<a href="../examples/das_channels_bent_example.csv">折线逐道光缆</a>；模板 <a href="../examples/active_das_channel_file_quick.toml">主动光缆</a>、<a href="../examples/passive_das_channel_file_quick.toml">被动光缆</a>、<a href="../examples/active_das_grid_quick.toml">主动面阵</a>、<a href="../examples/passive_das_grid_quick.toml">被动面阵</a>。</p>
+<p class="warn">当前DAS路径要求竖直源和phase_shift；DAS专用FJ/Hankel核、井中光缆、地形和连续弯曲光纤力学尚未验证。字段虽可编辑，不受支持的组合会明确报错。</p></section>
+
+<section id="save"><h2>9. 保存、重开与交接</h2><table><tr><th>文件</th><th>用途</th></tr><tr><td>input.toml + 引用CSV</td><td>可移交完整输入。移动目录时保留相对引用文件。</td></tr><tr><td>resolved_config.json</td><td>解析后的完整配置，含默认值。</td></tr><tr><td>results.h5</td><td>实际时间/lag/f/v轴、波形、NCF、频散、理论及元数据。下游使用实际轴，不只用min/max重建。</td></tr><tr><td>model.csv / receivers.csv / sources.csv</td><td>本次实际模型、接收器与源坐标。</td></tr><tr><td>summary.png、分量/方法图</td><td>人工QC；选择不同核不应仅凭图更“干净”。</td></tr><tr><td>picked_*.csv</td><td>自动拾取结果；可能跳模态或旁瓣，需要人工检查。</td></tr><tr><td>manifest.json / convergence.csv</td><td>输出索引、运行时间和被动时长对照。</td></tr></table><p>每次实验使用不同输出目录，保存会更新同目录同名产物。同步GitHub包含代码、配置、文档和精选截图；大体积output_python数值结果默认不入Git。需要移交完整数值结果时单独复制算例目录。</p></section>
+
+<section id="errors"><h2>10. 常见问题怎么改</h2><table><tr><th>提示 / 现象</th><th>处理</th></tr><tr><td>maximum_lag_s 必须小于 window_s</td><td>增加独立窗长或减小lag，并检查最慢面波到时是否仍完整。</td></tr><tr><td>主动记录过短</td><td>把record_duration_s设为0自动，或使用审核建议以上的时长。</td></tr><tr><td>处理频率超过PSD/Nyquist</td><td>降低处理上限；若确实需要高频，则同步修改源带宽、dt、道距并重新审核。</td></tr><tr><td>Spatial alias required失败</td><td>减小道距/径向箱宽或降低成像最高频率；不要仅靠减小df。</td></tr><tr><td>file 布局缺少坐标文件</td><td>选择对应receiver/source CSV；被动二维接收器还需distance_bin_m。</td></tr><tr><td>频散仍有旁瓣 / 高阶很弱</td><td>检查源谱、模态耦合、分量、阵列孔径与采样、真实波形窗和成像核；高阶理论线存在不保证能量强。</td></tr><tr><td>总时长增加但频率分辨率没有提高</td><td>被动总时长增加的是独立窗数；检查window_s、保留lag和真实波形窗。</td></tr><tr><td>修改参数但图仍是旧结果</td><td>提交参数并重新审核，运行受影响阶段；完整TOML编辑后还需应用到参数树。</td></tr></table></section>
+
+<section id="limits"><h2>11. 本次收尾的验收范围</h2><p>2026-09-17：完整自动测试251项通过。网页通过computer use实际执行主动与被动的自动填参、手动覆盖、重置及完整运行保存；HDF5核对主动周期3.5 s、df=0.05 Hz，被动lag=2.5 s、df=0.1 Hz。桌面通过Qt测试与完整窗口截图检查；computer use未识别本机Conda Python窗口，未声称完成原生人工点击验收。</p><p>本次可收尾的是软件操作与输入输出流程。短记录被动收敛、复杂模型精度、DAS互相关等价性和跨求解器全范围一致性仍按具体算例验证。实验性NNWS/SPZ/窗口筛选模块的可运行状态不等于已证明方法有效。详见<a href="forward_workflow/EVIDENCE_REGISTER.md">本地证据登记</a>和<a href="forward_workflow/WORKFLOW_zh.md">正演变更契约</a>。</p></section>
+</main></body></html>

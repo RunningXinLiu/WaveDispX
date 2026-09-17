@@ -30,8 +30,14 @@ def test_formal_examples_pass_preflight(example, receiver_count, source_count):
     assert review.geometry.receiver_x_m.size == receiver_count
     assert review.geometry.source_x_m.size == source_count
     assert np.isclose(review.source_power.max(), 1.0)
-    assert all(check.passed for check in review.checks)
+    assert all(
+        check.passed for check in review.checks if check.level == "required"
+    )
     assert "Temporal Nyquist" in checks_markdown(review)
+    assert review.diagnostics["minimum_theoretical_group_velocity_mps"] > 0.0
+    assert review.diagnostics["recommended_frequency_max_hz"] > review.diagnostics[
+        "recommended_frequency_min_hz"
+    ]
 
 
 def test_passive_preflight_saves_review_without_forward_modelling(tmp_path):
@@ -97,6 +103,47 @@ def test_required_preflight_failure_names_parameter_and_correction(tmp_path):
     markdown = checks_markdown(review)
     assert "Parameter" in markdown
     assert "How to fix" in markdown
+
+
+def test_preflight_exposes_model_aware_range_outside_requested_crop():
+    review = build_preflight_review(load_config(ROOT / "examples/active_quick.toml"))
+    assert review.theory.frequency_hz[0] < review.config.processing.frequency_min_hz
+    assert review.theory.frequency_hz[-1] > review.config.processing.frequency_max_hz
+    assert any(
+        check.name == "Processing frequency coverage" for check in review.checks
+    )
+    assert any(check.name == "Velocity scan coverage" for check in review.checks)
+    assert "physical_frequency_step_hz" in review.diagnostics
+
+
+def test_explicit_short_active_record_is_a_required_failure(tmp_path):
+    text = (ROOT / "examples/active_quick.toml").read_text()
+    text = text.replace(
+        "record_duration_s = 0.0             # 0 = model/group-velocity automatic design",
+        "record_duration_s = 0.5",
+    )
+    path = tmp_path / "short_active_record.toml"
+    path.write_text(text)
+    review = build_preflight_review(load_config(path))
+    failure = next(
+        check for check in review.checks if check.name == "Active record duration"
+    )
+    assert not failure.passed
+    assert failure.level == "required"
+    assert not review.ready
+
+
+def test_short_passive_window_is_checked_against_group_and_green_time(tmp_path):
+    text = (ROOT / "examples/passive_quick.toml").read_text()
+    text = text.replace("window_s = 10.0", "window_s = 2.0")
+    path = tmp_path / "short_passive_window.toml"
+    path.write_text(text)
+    review = build_preflight_review(load_config(path))
+    failure = next(
+        check for check in review.checks if check.name == "Correlation window"
+    )
+    assert not failure.passed
+    assert failure.level == "required"
 
 
 @pytest.mark.parametrize(

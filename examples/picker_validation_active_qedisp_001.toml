@@ -1,0 +1,68 @@
+[run]
+name = "picker_validation_active_qedisp_001"
+mode = "active"
+output_directory = "../output_python/picker_validation_active_qedisp_001"
+workers = 0
+frequency_block_size = 16
+source_block_size = 1
+radial_interpolation_step_m = 0.5
+store_source_responses = false
+
+[[model.layers]]
+thickness_m = 5.0
+vp_mps = 340.0
+vs_mps = 180.0
+density_kgm3 = 1850.0
+qp = inf
+qs = inf
+
+[[model.layers]]
+thickness_m = 15.0
+vp_mps = 560.0
+vs_mps = 300.0
+density_kgm3 = 2000.0
+qp = inf
+qs = inf
+
+[[model.layers]]
+thickness_m = inf
+vp_mps = 1050.0
+vs_mps = 600.0
+density_kgm3 = 2200.0
+qp = inf
+qs = inf
+
+[geometry.receivers]
+layout = "line"
+start_x_m = -198.0
+stop_x_m = 198.0
+spacing_m = 3.0
+y_m = 0.0
+
+[active_source]
+x_m = -200.0
+y_m = 0.0
+component = "both"
+wavelet = "ricker"
+dominant_frequency_hz = 12.0
+maximum_frequency_hz = 45.0
+dt_s = 0.002
+
+[processing]
+correlation_normalization = "none"
+dispersion_method = "phase_shift"
+theory_solver = "qedisp"
+compare_methods = true
+frequency_min_hz = 3.5
+frequency_max_hz = 23.5
+velocity_min_mps = 130.0
+velocity_max_mps = 650.0
+velocity_step_mps = 2.0
+distance_taper_fraction = 0.0
+zero_padding = 8.0
+radial_kernel_lookup_step = 0.002
+picker_smoothness = 0.35
+picker_maximum_jump_mps = 30.0
+picker_minimum_energy = 0.05
+rayleigh_modes = 4
+love_modes = 4

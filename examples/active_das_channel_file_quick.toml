@@ -1,0 +1,65 @@
+[run]
+name = "active_das_channel_file_quick"
+mode = "active"
+output_directory = "../output_python/active_das_channel_file_quick"
+workers = 4
+frequency_block_size = 8
+source_block_size = 1
+radial_interpolation_step_m = 0.5
+store_source_responses = false
+
+[[model.layers]]
+thickness_m = 10.0
+vp_mps = 380.0
+vs_mps = 220.0
+density_kgm3 = 2000.0
+qp = inf
+qs = inf
+
+[[model.layers]]
+thickness_m = inf
+vp_mps = 760.0
+vs_mps = 440.0
+density_kgm3 = 2000.0
+qp = inf
+qs = inf
+
+[geometry.receivers]
+layout = "file"
+coordinates_file = "das_channels_bent_example.csv"
+
+[das]
+enabled = true
+geometry_mode = "channel_file"
+gauge_length_m = 8.0 # channel_file 模式下仅作界面默认值，不参与正演
+measurement = "strain_rate"
+fiber_azimuth_deg = 0.0 # channel_file 模式下仅作界面默认值，不参与正演
+
+[active_source]
+x_m = -20.0
+y_m = -30.0
+component = "vertical"
+wavelet = "ricker"
+dominant_frequency_hz = 7.0
+maximum_frequency_hz = 16.0
+dt_s = 0.005
+record_duration_s = 0.0             # 0 = model/group-velocity automatic design
+
+[processing]
+correlation_normalization = "none"
+dispersion_method = "phase_shift"
+theory_solver = "disba"
+compare_methods = false
+frequency_min_hz = 3.0
+frequency_max_hz = 14.0
+velocity_min_mps = 120.0
+velocity_max_mps = 500.0
+velocity_step_mps = 2.0
+distance_taper_fraction = 0.2
+zero_padding = 5.0
+radial_kernel_lookup_step = 0.002
+picker_smoothness = 0.3
+picker_maximum_jump_mps = 30.0
+picker_minimum_energy = 0.05
+rayleigh_modes = 3
+love_modes = 3
