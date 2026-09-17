@@ -46,13 +46,13 @@ TEMPLATES = {
     "DAS｜被动线阵快速检查": PROJECT_ROOT / "examples/passive_das_line_quick.toml",
     "DAS｜被动面阵快速检查": PROJECT_ROOT / "examples/passive_das_grid_quick.toml",
     "DAS｜被动逐道光缆": PROJECT_ROOT / "examples/passive_das_channel_file_quick.toml",
-    "被动源｜正式收敛": PROJECT_ROOT / "examples/passive_two_layer.toml",
+    "被动源｜长记录示例": PROJECT_ROOT / "examples/passive_two_layer.toml",
     "被动源｜高阶模态物理 3C": PROJECT_ROOT / "examples/passive_high_modes_3c.toml",
     "被动源｜二维面阵": PROJECT_ROOT / "examples/passive_grid_quick.toml",
 }
 
 HELP = {
-    "template": "载入一套完整且已验证的起始参数。快速模板用于几分钟内检查流程，正式模板用于收敛计算。",
+    "template": "载入完整起始参数。快速模板只检查流程；长记录示例使用384源和1800秒，需要自行做倍时长等收敛检查，不代表所有模型已验证。",
     "case_name": "算例标识，会写入图题、manifest 和默认输出目录。建议只用简短英文、数字和下划线。",
     "mode": "active：计算主动炮集及 Rayleigh/Love；passive：先合成有限时长混合噪声，再在接收端计算 NCF。",
     "output": "HDF5、CSV、汇总图、manifest 和可移交 input.toml 的保存目录。允许绝对路径或相对路径。",
@@ -104,7 +104,7 @@ HELP = {
     "source_file": "上传含 x_m,y_m 表头的噪声源 CSV。源数由文件行数自动读取。",
     "temporal_model": "stationary_gaussian：平稳随机频谱，推荐环境噪声；poisson_ricker：随机时刻的间歇脉冲事件。",
     "psd_shape": "ricker：Ricker 型谱；flat_band：带内近似平坦；file：读取 frequency_hz,power CSV。",
-    "duration": "有限记录总时长。60 s 适合调试；600 s 通常可用；1800 s 更接近稳定收敛。",
+    "duration": "有限记录总时长。60 s 仅供调试。自动按钮采用至少60独立窗且600 s的候选（有activity_file时不扩展）；需固定源场、种子和单窗，用T/2T对照检查，不能保证某个秒数收敛。总时长不等于NCF lag，也不决定单窗频率分辨率。",
     "window": "独立合成与互相关窗长，必须长于最大台间传播时延；当前各窗独立且 overlap 固定为 0。",
     "maximum_lag": "被动 NCF 图显示并参与频散计算的最大正时延。0 表示按模型最慢群速度和阵列孔径自动设计；显式值必须小于独立窗长。增大可同时查看较慢面波和较早体波，但会增加缓存与计算量。",
     "psd_min": "噪声 PSD 最低有效频率，单位 Hz；低于它的源能量置零。",
@@ -149,11 +149,11 @@ def _ensure_state(st) -> CaseSession:
     if "case_session" not in st.session_state:
         st.session_state.case_session = _new_session()
         st.session_state.case_mapping = load_template_mapping(
-            TEMPLATES["被动源｜快速检查"]
+            TEMPLATES["被动源｜长记录示例"]
         )
-        st.session_state.template_name = "被动源｜快速检查"
+        st.session_state.template_name = "被动源｜长记录示例"
         st.session_state.case_revision = 0
-        st.session_state.last_message = "已载入被动源快速模板；尚未开始正演。"
+        st.session_state.last_message = "已载入被动长记录示例（384源、1800 s）；尚未开始正演。快速模板只用于调试，长记录也须检查收敛。"
     return st.session_state.case_session
 
 
@@ -726,12 +726,12 @@ def _case_form(st, session: CaseSession) -> None:
         apply_auto = c1.button(
             "计算并套用自动推荐",
             width="stretch",
-            help="按当前模型、源谱、Geometry、DAS 标距和理论多模态计算 f/v/df/dv，并填入主动记录时长或被动窗长与最大 lag。填入后仍可逐项修改。",
+            help="填入源支持频带、f/v/df/dv、主动记录时长或被动窗长/lag/总时长。被动至少60窗且600秒是候选，不保证收敛；有activity_file时不扩展总时长。源数和位置不变。孔径不足和DAS零点保留为警告。全部可手改。",
         )
         reset_auto = c2.button(
             "恢复模板默认",
             width="stretch",
-            help="只恢复当前模板中的 f/v/df/dv 和主动记录时长或被动窗长/lag，不覆盖模型、Geometry、源位置和其他参数。",
+            help="只恢复当前模板中的 f/v/df/dv 和主动记录时长或被动总时长/窗长/lag，不覆盖模型、Geometry、源位置和其他参数。",
         )
         submitted = c3.button(
             "校验并绘制输入",
@@ -794,6 +794,7 @@ def _case_form(st, session: CaseSession) -> None:
                 f"f={diagnostics['recommended_frequency_min_hz']:.2f}–"
                 f"{diagnostics['recommended_frequency_max_hz']:.2f} Hz，"
                 f"df={diagnostics['recommended_display_frequency_step_hz']:.4g} Hz。"
+                + (f"被动总时长 {candidate['noise']['duration_s']:.1f} s，窗长 {candidate['noise']['window_s']:.2f} s；候选参数，需倍时长检查；源数和位置不变。" if selected_mode == "passive" else "")
             )
         elif reset_auto:
             template_path = TEMPLATES.get(

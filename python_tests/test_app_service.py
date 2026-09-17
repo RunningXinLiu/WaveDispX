@@ -51,6 +51,9 @@ def test_automatic_parameters_are_materialized_and_remain_editable(name):
         assert automatic["active_source"]["record_duration_s"] > 0.0
     else:
         assert 0.0 < automatic["noise"]["maximum_lag_s"] < automatic["noise"]["window_s"]
+        assert automatic["noise"]["duration_s"] >= 600.0
+        assert automatic["noise"]["duration_s"] / automatic["noise"]["window_s"] >= 60
+        assert automatic["ambient_sources"] == mapping["ambient_sources"]
     from wavedispx.config import config_from_mapping
     from wavedispx.preflight import build_preflight_review
     assert build_preflight_review(
@@ -70,11 +73,25 @@ def test_reset_automatic_parameters_does_not_replace_model_or_geometry():
     mapping["geometry"]["receivers"]["stop_x_m"] = 210.0
     mapping["processing"]["frequency_step_hz"] = 0.037
     mapping["noise"]["maximum_lag_s"] = 1.5
+    mapping["noise"]["duration_s"] = 1200.0
     restored = reset_automatic_parameters(mapping, template)
     assert restored["model"]["layers"][0]["vs_mps"] == 211.0
     assert restored["geometry"]["receivers"]["stop_x_m"] == 210.0
     assert restored["processing"]["frequency_step_hz"] == 0.0
     assert restored["noise"]["maximum_lag_s"] == 0.0
+    assert restored["noise"]["duration_s"] == template["noise"]["duration_s"]
+
+
+def test_short_aperture_does_not_hide_source_supported_low_frequencies():
+    automatic, diagnostics = apply_automatic_parameters(_mapping("active_quick.toml"), base_directory=ROOT)
+    assert automatic["processing"]["frequency_min_hz"] < 5.0
+    assert automatic["processing"]["frequency_max_hz"] > 17.0
+
+
+def test_sampling_recommendation_rounds_down():
+    from wavedispx.survey_design import _nice_step
+    for bound in (0.018, 0.03, 0.09, 0.3, 0.8, 1.9, 3.0, 9.0):
+        assert 0 < _nice_step(bound) <= bound
 
 
 def test_toml_round_trip_preserves_inline_and_nested_arrays():

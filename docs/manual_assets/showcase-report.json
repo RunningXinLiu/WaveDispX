@@ -1,0 +1,503 @@
+{
+  "active_auto": {
+    "processing": {
+      "correlation_normalization": "none",
+      "dispersion_method": "hankel",
+      "frequency_min_hz": 4.06263,
+      "frequency_max_hz": 44.106054,
+      "velocity_min_mps": 140.0,
+      "velocity_max_mps": 580.0,
+      "velocity_step_mps": 0.5,
+      "distance_taper_fraction": 0.0,
+      "zero_padding": 5.0,
+      "radial_kernel_lookup_step": 0.002,
+      "picker_smoothness": 0.3,
+      "picker_maximum_jump_mps": 25.0,
+      "picker_minimum_energy": 0.05,
+      "rayleigh_modes": 4,
+      "love_modes": 4,
+      "frequency_step_hz": 0.1
+    },
+    "timing": {
+      "x_m": 0.0,
+      "y_m": 0.0,
+      "component": "both",
+      "wavelet": "ricker",
+      "dominant_frequency_hz": 20.0,
+      "maximum_frequency_hz": 100.0,
+      "dt_s": 0.001,
+      "record_duration_s": 2.301
+    },
+    "quality": {
+      "rayleigh_image": {
+        "valid_frequency_count": 401,
+        "median_valid_theory_modes": 3.0,
+        "dominant_ridge_fraction": 0.9750623441396509,
+        "median_ridge_concentration": 0.5001954801822656,
+        "median_half_power_width_mps": 10.5,
+        "p90_half_power_width_mps": 62.0,
+        "p10_dominance_margin": 0.4628234514516457,
+        "ambiguous_frequency_fraction": 0.06733167082294264,
+        "clean_ridge_pass": true
+      },
+      "rayleigh_picks": {
+        "pick_count": 399,
+        "mae_mps": 11.24206238009198,
+        "rmse_mps": 31.37002659423205,
+        "maximum_absolute_error_mps": 122.62039868037414
+      },
+      "rayleigh_combined_image": {
+        "valid_frequency_count": 401,
+        "median_valid_theory_modes": 3.0,
+        "dominant_ridge_fraction": 1.0,
+        "median_ridge_concentration": 0.3730866227096848,
+        "median_half_power_width_mps": 10.5,
+        "p90_half_power_width_mps": 64.5,
+        "p10_dominance_margin": 0.2767264914136309,
+        "ambiguous_frequency_fraction": 0.0773067331670823,
+        "clean_ridge_pass": true
+      },
+      "rayleigh_combined_picks": {
+        "pick_count": 401,
+        "mae_mps": 11.242854996479865,
+        "rmse_mps": 31.084602049515574,
+        "maximum_absolute_error_mps": 121.62039868037414
+      },
+      "love_image": {
+        "valid_frequency_count": 401,
+        "median_valid_theory_modes": 2.0,
+        "dominant_ridge_fraction": 1.0,
+        "median_ridge_concentration": 0.5043244678929867,
+        "median_half_power_width_mps": 22.0,
+        "p90_half_power_width_mps": 58.0,
+        "p10_dominance_margin": 0.44116434188707676,
+        "ambiguous_frequency_fraction": 0.07231920199501247,
+        "clean_ridge_pass": true
+      },
+      "love_picks": {
+        "pick_count": 401,
+        "mae_mps": 5.113944422368949,
+        "rmse_mps": 16.567549016979786,
+        "maximum_absolute_error_mps": 101.71141430537159
+      },
+      "rayleigh_combined_mode_support": {
+        "mode_0_valid_frequency_count": 401,
+        "mode_0_median_energy": 1.0,
+        "mode_0_fraction_ge_0p35": 1.0,
+        "mode_1_valid_frequency_count": 361,
+        "mode_1_median_energy": 0.22388361233246684,
+        "mode_1_fraction_ge_0p35": 0.11357340720221606,
+        "mode_2_valid_frequency_count": 299,
+        "mode_2_median_energy": 0.1810149587271333,
+        "mode_2_fraction_ge_0p35": 0.27759197324414714,
+        "mode_3_valid_frequency_count": 171,
+        "mode_3_median_energy": 0.555699871199862,
+        "mode_3_fraction_ge_0p35": 0.7543859649122807
+      },
+      "rayleigh_hankel_mode_support": {
+        "mode_0_valid_frequency_count": 401,
+        "mode_0_median_energy": 1.0,
+        "mode_0_fraction_ge_0p35": 1.0,
+        "mode_1_valid_frequency_count": 361,
+        "mode_1_median_energy": 0.22388361233246684,
+        "mode_1_fraction_ge_0p35": 0.11357340720221606,
+        "mode_2_valid_frequency_count": 299,
+        "mode_2_median_energy": 0.1810149587271333,
+        "mode_2_fraction_ge_0p35": 0.27759197324414714,
+        "mode_3_valid_frequency_count": 171,
+        "mode_3_median_energy": 0.555699871199862,
+        "mode_3_fraction_ge_0p35": 0.7543859649122807
+      }
+    },
+    "results_sha256": "d32477fccdeb52ca7c23f9f10e29c205d68fbb9824aabd508f7959c68f5ac0c5",
+    "input_sha256": "9db2acb7195e12f53984ba5ac360f0cf0d4216581b85dad3f6bd9f8eb76d27b6"
+  },
+  "passive_60": {
+    "processing": {
+      "correlation_normalization": "spectral_whitening",
+      "dispersion_method": "phase_shift",
+      "frequency_min_hz": 3.0,
+      "frequency_max_hz": 18.8,
+      "velocity_min_mps": 140.0,
+      "velocity_max_mps": 580.0,
+      "velocity_step_mps": 0.2,
+      "distance_taper_fraction": 0.5,
+      "zero_padding": 8.0,
+      "radial_kernel_lookup_step": 0.002,
+      "picker_smoothness": 0.35,
+      "picker_maximum_jump_mps": 30.0,
+      "picker_minimum_energy": 0.05,
+      "rayleigh_modes": 4,
+      "love_modes": 4,
+      "frequency_step_hz": 0.01
+    },
+    "timing": {
+      "temporal_model": "stationary_gaussian",
+      "seed": 314159,
+      "duration_s": 60,
+      "dt_s": 0.005,
+      "window_s": 20.0,
+      "overlap": 0.0,
+      "psd_shape": "ricker",
+      "dominant_frequency_hz": 12.0,
+      "minimum_frequency_hz": 3.0,
+      "maximum_frequency_hz": 18.8,
+      "source_amplitude": 1.0,
+      "independent_sources": true,
+      "event_rate_hz": 0.4,
+      "maximum_lag_s": 5.455
+    },
+    "quality": {
+      "image": {
+        "valid_frequency_count": 1581,
+        "median_valid_theory_modes": 2.0,
+        "dominant_ridge_fraction": 0.9405439595192916,
+        "median_ridge_concentration": 0.25212410491857057,
+        "median_half_power_width_mps": 14.59999999999917,
+        "p90_half_power_width_mps": 80.59999999999542,
+        "p10_dominance_margin": 0.1549774258507477,
+        "ambiguous_frequency_fraction": 0.1473750790638836,
+        "clean_ridge_pass": true
+      },
+      "picks": {
+        "pick_count": 1581,
+        "mae_mps": 2.9405984526855438,
+        "rmse_mps": 6.104707502179942,
+        "maximum_absolute_error_mps": 27.053211180353912
+      },
+      "zz_image": {
+        "valid_frequency_count": 1581,
+        "median_valid_theory_modes": 2.0,
+        "dominant_ridge_fraction": 0.9405439595192916,
+        "median_ridge_concentration": 0.25212410491857057,
+        "median_half_power_width_mps": 14.59999999999917,
+        "p90_half_power_width_mps": 80.59999999999542,
+        "p10_dominance_margin": 0.1549774258507477,
+        "ambiguous_frequency_fraction": 0.1473750790638836,
+        "clean_ridge_pass": true
+      },
+      "rayleigh_mode_support": {
+        "mode_0_valid_frequency_count": 1581,
+        "mode_0_median_energy": 0.9881403164222987,
+        "mode_0_fraction_ge_0p35": 0.9911448450347881,
+        "mode_1_valid_frequency_count": 1082,
+        "mode_1_median_energy": 0.11013009165933563,
+        "mode_1_fraction_ge_0p35": 0.01756007393715342,
+        "mode_2_valid_frequency_count": 455,
+        "mode_2_median_energy": 0.10701901338069073,
+        "mode_2_fraction_ge_0p35": 0.008791208791208791,
+        "mode_3_valid_frequency_count": 0,
+        "mode_3_median_energy": NaN,
+        "mode_3_fraction_ge_0p35": NaN
+      },
+      "rayleigh_phase_shift_mode_support": {
+        "mode_0_valid_frequency_count": 1581,
+        "mode_0_median_energy": 0.9881403164222987,
+        "mode_0_fraction_ge_0p35": 0.9911448450347881,
+        "mode_1_valid_frequency_count": 1082,
+        "mode_1_median_energy": 0.11013009165933563,
+        "mode_1_fraction_ge_0p35": 0.01756007393715342,
+        "mode_2_valid_frequency_count": 455,
+        "mode_2_median_energy": 0.10701901338069073,
+        "mode_2_fraction_ge_0p35": 0.008791208791208791,
+        "mode_3_valid_frequency_count": 0,
+        "mode_3_median_energy": NaN,
+        "mode_3_fraction_ge_0p35": NaN
+      }
+    },
+    "results_sha256": "cb8ca04b597ebb8ae4c0cd4571d6989abe912bb71ec8a81d974abfe279d73e03",
+    "input_sha256": "78b012aaf41d174fd75d7192b3a50fd5265a4d596b32f06ccc30a7e8922ffbd5",
+    "image_relative_l2_to_3600": 0.6901399607519826
+  },
+  "passive_600": {
+    "processing": {
+      "correlation_normalization": "spectral_whitening",
+      "dispersion_method": "phase_shift",
+      "frequency_min_hz": 3.0,
+      "frequency_max_hz": 18.8,
+      "velocity_min_mps": 140.0,
+      "velocity_max_mps": 580.0,
+      "velocity_step_mps": 0.2,
+      "distance_taper_fraction": 0.5,
+      "zero_padding": 8.0,
+      "radial_kernel_lookup_step": 0.002,
+      "picker_smoothness": 0.35,
+      "picker_maximum_jump_mps": 30.0,
+      "picker_minimum_energy": 0.05,
+      "rayleigh_modes": 4,
+      "love_modes": 4,
+      "frequency_step_hz": 0.01
+    },
+    "timing": {
+      "temporal_model": "stationary_gaussian",
+      "seed": 314159,
+      "duration_s": 600,
+      "dt_s": 0.005,
+      "window_s": 20.0,
+      "overlap": 0.0,
+      "psd_shape": "ricker",
+      "dominant_frequency_hz": 12.0,
+      "minimum_frequency_hz": 3.0,
+      "maximum_frequency_hz": 18.8,
+      "source_amplitude": 1.0,
+      "independent_sources": true,
+      "event_rate_hz": 0.4,
+      "maximum_lag_s": 5.455
+    },
+    "quality": {
+      "image": {
+        "valid_frequency_count": 1581,
+        "median_valid_theory_modes": 2.0,
+        "dominant_ridge_fraction": 1.0,
+        "median_ridge_concentration": 0.4143485452032102,
+        "median_half_power_width_mps": 13.799999999999216,
+        "p90_half_power_width_mps": 74.19999999999578,
+        "p10_dominance_margin": 0.2941016791137262,
+        "ambiguous_frequency_fraction": 0.07084123972169513,
+        "clean_ridge_pass": true
+      },
+      "picks": {
+        "pick_count": 1581,
+        "mae_mps": 2.7239820648605035,
+        "rmse_mps": 5.673149997922876,
+        "maximum_absolute_error_mps": 25.45321118035389
+      },
+      "zz_image": {
+        "valid_frequency_count": 1581,
+        "median_valid_theory_modes": 2.0,
+        "dominant_ridge_fraction": 1.0,
+        "median_ridge_concentration": 0.4143485452032102,
+        "median_half_power_width_mps": 13.799999999999216,
+        "p90_half_power_width_mps": 74.19999999999578,
+        "p10_dominance_margin": 0.2941016791137262,
+        "ambiguous_frequency_fraction": 0.07084123972169513,
+        "clean_ridge_pass": true
+      },
+      "rayleigh_mode_support": {
+        "mode_0_valid_frequency_count": 1581,
+        "mode_0_median_energy": 0.9981171985530848,
+        "mode_0_fraction_ge_0p35": 1.0,
+        "mode_1_valid_frequency_count": 1082,
+        "mode_1_median_energy": 0.03853090172010628,
+        "mode_1_fraction_ge_0p35": 0.0,
+        "mode_2_valid_frequency_count": 455,
+        "mode_2_median_energy": 0.03774612978210384,
+        "mode_2_fraction_ge_0p35": 0.0,
+        "mode_3_valid_frequency_count": 0,
+        "mode_3_median_energy": NaN,
+        "mode_3_fraction_ge_0p35": NaN
+      },
+      "rayleigh_phase_shift_mode_support": {
+        "mode_0_valid_frequency_count": 1581,
+        "mode_0_median_energy": 0.9981171985530848,
+        "mode_0_fraction_ge_0p35": 1.0,
+        "mode_1_valid_frequency_count": 1082,
+        "mode_1_median_energy": 0.03853090172010628,
+        "mode_1_fraction_ge_0p35": 0.0,
+        "mode_2_valid_frequency_count": 455,
+        "mode_2_median_energy": 0.03774612978210384,
+        "mode_2_fraction_ge_0p35": 0.0,
+        "mode_3_valid_frequency_count": 0,
+        "mode_3_median_energy": NaN,
+        "mode_3_fraction_ge_0p35": NaN
+      }
+    },
+    "results_sha256": "58f5c7ec60e3ec6c7b3935a5f1da965dcd561e572de0aa0e940bebf53ee98a85",
+    "input_sha256": "c1c784655895a6d25b584a08db174f4dc716004a4694d2e05ede82549fc8eba0",
+    "image_relative_l2_to_3600": 0.17930565405018817
+  },
+  "passive_1800": {
+    "processing": {
+      "correlation_normalization": "spectral_whitening",
+      "dispersion_method": "phase_shift",
+      "frequency_min_hz": 3.0,
+      "frequency_max_hz": 18.8,
+      "velocity_min_mps": 140.0,
+      "velocity_max_mps": 580.0,
+      "velocity_step_mps": 0.2,
+      "distance_taper_fraction": 0.5,
+      "zero_padding": 8.0,
+      "radial_kernel_lookup_step": 0.002,
+      "picker_smoothness": 0.35,
+      "picker_maximum_jump_mps": 30.0,
+      "picker_minimum_energy": 0.05,
+      "rayleigh_modes": 4,
+      "love_modes": 4,
+      "frequency_step_hz": 0.01
+    },
+    "timing": {
+      "temporal_model": "stationary_gaussian",
+      "seed": 314159,
+      "duration_s": 1800,
+      "dt_s": 0.005,
+      "window_s": 20.0,
+      "overlap": 0.0,
+      "psd_shape": "ricker",
+      "dominant_frequency_hz": 12.0,
+      "minimum_frequency_hz": 3.0,
+      "maximum_frequency_hz": 18.8,
+      "source_amplitude": 1.0,
+      "independent_sources": true,
+      "event_rate_hz": 0.4,
+      "maximum_lag_s": 5.455
+    },
+    "quality": {
+      "image": {
+        "valid_frequency_count": 1581,
+        "median_valid_theory_modes": 2.0,
+        "dominant_ridge_fraction": 1.0,
+        "median_ridge_concentration": 0.5257433051065711,
+        "median_half_power_width_mps": 13.19999999999925,
+        "p90_half_power_width_mps": 72.79999999999586,
+        "p10_dominance_margin": 0.2996760536122335,
+        "ambiguous_frequency_fraction": 0.06388361796331436,
+        "clean_ridge_pass": true
+      },
+      "picks": {
+        "pick_count": 1581,
+        "mae_mps": 2.6932923512797564,
+        "rmse_mps": 5.739266943632112,
+        "maximum_absolute_error_mps": 25.65321118035388
+      },
+      "zz_image": {
+        "valid_frequency_count": 1581,
+        "median_valid_theory_modes": 2.0,
+        "dominant_ridge_fraction": 1.0,
+        "median_ridge_concentration": 0.5257433051065711,
+        "median_half_power_width_mps": 13.19999999999925,
+        "p90_half_power_width_mps": 72.79999999999586,
+        "p10_dominance_margin": 0.2996760536122335,
+        "ambiguous_frequency_fraction": 0.06388361796331436,
+        "clean_ridge_pass": true
+      },
+      "rayleigh_mode_support": {
+        "mode_0_valid_frequency_count": 1581,
+        "mode_0_median_energy": 0.9991465821771985,
+        "mode_0_fraction_ge_0p35": 1.0,
+        "mode_1_valid_frequency_count": 1082,
+        "mode_1_median_energy": 0.020780481041933134,
+        "mode_1_fraction_ge_0p35": 0.0,
+        "mode_2_valid_frequency_count": 455,
+        "mode_2_median_energy": 0.019355874443419456,
+        "mode_2_fraction_ge_0p35": 0.0,
+        "mode_3_valid_frequency_count": 0,
+        "mode_3_median_energy": NaN,
+        "mode_3_fraction_ge_0p35": NaN
+      },
+      "rayleigh_phase_shift_mode_support": {
+        "mode_0_valid_frequency_count": 1581,
+        "mode_0_median_energy": 0.9991465821771985,
+        "mode_0_fraction_ge_0p35": 1.0,
+        "mode_1_valid_frequency_count": 1082,
+        "mode_1_median_energy": 0.020780481041933134,
+        "mode_1_fraction_ge_0p35": 0.0,
+        "mode_2_valid_frequency_count": 455,
+        "mode_2_median_energy": 0.019355874443419456,
+        "mode_2_fraction_ge_0p35": 0.0,
+        "mode_3_valid_frequency_count": 0,
+        "mode_3_median_energy": NaN,
+        "mode_3_fraction_ge_0p35": NaN
+      }
+    },
+    "results_sha256": "83fd96ee09bb0b599b80d3b0c5b27fccf01cd580624ce63afd198e972c471138",
+    "input_sha256": "825ad656de31cded7f667fbdb3ebc9e271c43fb6b2c79560c9e354d2273a1312",
+    "image_relative_l2_to_3600": 0.07072602774683388
+  },
+  "passive_3600": {
+    "processing": {
+      "correlation_normalization": "spectral_whitening",
+      "dispersion_method": "phase_shift",
+      "frequency_min_hz": 3.0,
+      "frequency_max_hz": 18.8,
+      "velocity_min_mps": 140.0,
+      "velocity_max_mps": 580.0,
+      "velocity_step_mps": 0.2,
+      "distance_taper_fraction": 0.5,
+      "zero_padding": 8.0,
+      "radial_kernel_lookup_step": 0.002,
+      "picker_smoothness": 0.35,
+      "picker_maximum_jump_mps": 30.0,
+      "picker_minimum_energy": 0.05,
+      "rayleigh_modes": 4,
+      "love_modes": 4,
+      "frequency_step_hz": 0.01
+    },
+    "timing": {
+      "temporal_model": "stationary_gaussian",
+      "seed": 314159,
+      "duration_s": 3600,
+      "dt_s": 0.005,
+      "window_s": 20.0,
+      "overlap": 0.0,
+      "psd_shape": "ricker",
+      "dominant_frequency_hz": 12.0,
+      "minimum_frequency_hz": 3.0,
+      "maximum_frequency_hz": 18.8,
+      "source_amplitude": 1.0,
+      "independent_sources": true,
+      "event_rate_hz": 0.4,
+      "maximum_lag_s": 5.455
+    },
+    "quality": {
+      "image": {
+        "valid_frequency_count": 1581,
+        "median_valid_theory_modes": 2.0,
+        "dominant_ridge_fraction": 1.0,
+        "median_ridge_concentration": 0.5960975566364127,
+        "median_half_power_width_mps": 13.19999999999925,
+        "p90_half_power_width_mps": 72.79999999999586,
+        "p10_dominance_margin": 0.30258295180530004,
+        "ambiguous_frequency_fraction": 0.058191018342821,
+        "clean_ridge_pass": true
+      },
+      "picks": {
+        "pick_count": 1581,
+        "mae_mps": 2.6334154265545857,
+        "rmse_mps": 5.770163522216169,
+        "maximum_absolute_error_mps": 25.853211180353867
+      },
+      "zz_image": {
+        "valid_frequency_count": 1581,
+        "median_valid_theory_modes": 2.0,
+        "dominant_ridge_fraction": 1.0,
+        "median_ridge_concentration": 0.5960975566364127,
+        "median_half_power_width_mps": 13.19999999999925,
+        "p90_half_power_width_mps": 72.79999999999586,
+        "p10_dominance_margin": 0.30258295180530004,
+        "ambiguous_frequency_fraction": 0.058191018342821,
+        "clean_ridge_pass": true
+      },
+      "rayleigh_mode_support": {
+        "mode_0_valid_frequency_count": 1581,
+        "mode_0_median_energy": 0.9995267538919612,
+        "mode_0_fraction_ge_0p35": 1.0,
+        "mode_1_valid_frequency_count": 1082,
+        "mode_1_median_energy": 0.014958501523109282,
+        "mode_1_fraction_ge_0p35": 0.0,
+        "mode_2_valid_frequency_count": 455,
+        "mode_2_median_energy": 0.014255622283697594,
+        "mode_2_fraction_ge_0p35": 0.0,
+        "mode_3_valid_frequency_count": 0,
+        "mode_3_median_energy": NaN,
+        "mode_3_fraction_ge_0p35": NaN
+      },
+      "rayleigh_phase_shift_mode_support": {
+        "mode_0_valid_frequency_count": 1581,
+        "mode_0_median_energy": 0.9995267538919612,
+        "mode_0_fraction_ge_0p35": 1.0,
+        "mode_1_valid_frequency_count": 1082,
+        "mode_1_median_energy": 0.014958501523109282,
+        "mode_1_fraction_ge_0p35": 0.0,
+        "mode_2_valid_frequency_count": 455,
+        "mode_2_median_energy": 0.014255622283697594,
+        "mode_2_fraction_ge_0p35": 0.0,
+        "mode_3_valid_frequency_count": 0,
+        "mode_3_median_energy": NaN,
+        "mode_3_fraction_ge_0p35": NaN
+      }
+    },
+    "results_sha256": "4e9a58fc04ce93dd45b2e559f2e21fa75c0a5edc20437bc8c3b267b5d3cc5379",
+    "input_sha256": "3e1defb7c810552a90a880806dcc95a9aa2b3b445001bd879262f282302e0aa1",
+    "image_relative_l2_to_3600": 0.0
+  }
+}

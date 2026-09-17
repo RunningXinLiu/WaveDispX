@@ -87,7 +87,7 @@ TEMPLATES = {
     "DAS｜被动线阵快速检查": PROJECT_ROOT / "examples/passive_das_line_quick.toml",
     "DAS｜被动面阵快速检查": PROJECT_ROOT / "examples/passive_das_grid_quick.toml",
     "DAS｜被动逐道光缆": PROJECT_ROOT / "examples/passive_das_channel_file_quick.toml",
-    "被动源｜正式收敛": PROJECT_ROOT / "examples/passive_two_layer.toml",
+    "被动源｜长记录示例": PROJECT_ROOT / "examples/passive_two_layer.toml",
     "被动源｜高阶模态物理 3C": PROJECT_ROOT / "examples/passive_high_modes_3c.toml",
     "被动源｜二维面阵": PROJECT_ROOT / "examples/passive_grid_quick.toml",
 }
@@ -238,8 +238,8 @@ class ParameterPage(QWidget):
         tools_layout = QGridLayout(tools)
         tools_layout.setContentsMargins(10, 8, 10, 8)
         for index, (label, key, tooltip) in enumerate((
-            ("自动填入 f/v/df/dv", "apply_auto_design", "按当前模型、源谱、Geometry 与 DAS 标距计算频散范围/网格，并填入主动记录时长或被动 NCF lag。填入后仍可逐项编辑。"),
-            ("恢复模板默认", "reset_auto_design", "只恢复所选模板中的 f/v/df/dv 与记录窗/lag；不覆盖模型、Geometry 或源位置。"),
+            ("自动填入 f/v/df/dv", "apply_auto_design", "填入源支持频带、速度范围和网格，以及主动记录时长或被动窗长/lag/总时长。被动至少60独立窗且600秒是待倍时长检查的候选，不保证收敛；不会更改源位置和数量。有activity_file时不扩展总时长。孔径不足和DAS零点保留为警告，不裁窄频带隐藏。填入后均可修改。"),
+            ("恢复模板默认", "reset_auto_design", "只恢复所选模板中的 f/v/df/dv 与主动记录时长或被动总时长/窗长/lag；不覆盖模型、Geometry 或源位置。"),
             ("＋ 模型层", "add_layer", "在末层半空间之前增加一个有限层，并复制邻近层的 Vp/Vs/ρ/Q 作为可编辑起点。修改层厚和速度后必须重新审核理论频散。"),
             ("－ 模型层", "remove_layer", "删除最下面一个有限层；末层 inf 半空间始终保留。该操作会使全部正演、NCF 和频散缓存失效。"),
             ("线阵", "receiver_line", "用参数设计线阵：x 起点、x 终点、道间距和固定 y。会替换当前接收器表，但不会改模型或源。"),
@@ -676,7 +676,7 @@ class MainWindow(QMainWindow):
         self._current_config = None
         self._active_worker: WorkflowWorker | None = None
 
-        initial = Path(template_path).expanduser().resolve() if template_path else TEMPLATES["被动源｜快速检查"]
+        initial = Path(template_path).expanduser().resolve() if template_path else TEMPLATES["被动源｜长记录示例"]
         self.session = CaseSession(initial.parent)
         self._build_ui()
         for template_name, template_file in TEMPLATES.items():
@@ -926,6 +926,7 @@ class MainWindow(QMainWindow):
                     f"f={float(diagnostics['recommended_frequency_min_hz']):.2f}–"
                     f"{float(diagnostics['recommended_frequency_max_hz']):.2f} Hz，"
                     f"df={float(diagnostics['recommended_display_frequency_step_hz']):.4g} Hz"
+                    + (f"；被动总时长 {mapping['noise']['duration_s']:.1f} s / 窗长 {mapping['noise']['window_s']:.2f} s（候选，需倍时长检查）" if mapping['run']['mode'] == 'passive' else "")
                 )
             elif action == "reset_auto_design":
                 template = load_template_mapping(

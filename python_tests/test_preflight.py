@@ -17,6 +17,18 @@ from wavedispx.preflight import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def test_passive_display_fft_grid_uses_retained_lag_not_random_window():
+    from dataclasses import replace
+    config = load_config(ROOT / "examples/passive_quick.toml")
+    config = replace(config, noise=replace(config.noise, maximum_lag_s=2.5))
+    short = build_preflight_review(config).diagnostics
+    long = build_preflight_review(replace(config, noise=replace(config.noise, window_s=20.0))).diagnostics
+    assert short["display_frequency_step_hz"] == long["display_frequency_step_hz"]
+    assert short["ncf_fft_period_s"] == pytest.approx(2.5 + config.noise.dt_s)
+    assert short["ncf_physical_frequency_step_hz"] == pytest.approx(1 / (2.5 + config.noise.dt_s))
+    assert short["physical_frequency_step_hz"] != long["physical_frequency_step_hz"]
+
+
 @pytest.mark.parametrize(
     ("example", "receiver_count", "source_count"),
     (

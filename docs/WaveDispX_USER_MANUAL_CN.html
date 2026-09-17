@@ -23,7 +23,9 @@ PYTHONPATH=python_src conda run -n seisloc wavedispx run examples/active_quick.t
 <table><tr><th>参数组</th><th>需要确认</th></tr><tr><td>model.layers</td><td>每层厚度 m、Vp/Vs m/s、密度 kg/m³、Qp/Qs；最后一层 thickness_m=inf；Vp&gt;Vs&gt;0。</td></tr><tr><td>geometry.receivers</td><td>line / grid / file；与震源使用同一坐标系和米制单位。</td></tr><tr><td>active_source</td><td>炮点、载荷分量、子波、主频、最高频率、dt、记录时长。</td></tr><tr><td>ambient_sources + noise</td><td>源位置与数量、空间种子、时间模型、PSD、时间种子、总时长、独立窗长、最大 lag。</td></tr><tr><td>processing</td><td>成像方法、f/v 范围、df/dv、归一化、距离 taper、理论模态及拾取参数。</td></tr><tr><td>run</td><td>独立输出目录、CPU workers、分块大小、径向插值精度。</td></tr></table></section>
 
 <section id="auto"><h2>3. 自动建议是可编辑的起点</h2><p>桌面按钮“自动填入 f/v/df/dv”（网页“计算并套用自动推荐”）按当前模型、源谱、阵列孔径/采样和 DAS 标距计算建议，并把数值填入普通输入框。可继续修改任何字段；运行不会再次用建议值覆盖你的手动输入。</p>
-<p>“恢复模板默认”只恢复所选模板的频散范围/步长与记录窗/lag。它不重新计算当前模型的建议；模型或 Geometry 已改变时，请使用“自动填入”。“载入模板”则完整替换算例输入。两种重置用途不同。</p>
+<p>“恢复模板默认”只恢复所选模板的频散范围/步长与主动记录时长或被动总时长/窗长/lag。它不重新计算当前模型的建议；模型或 Geometry 已改变时，请使用“自动填入”。“载入模板”则完整替换算例输入。两种重置用途不同。</p>
+<p class="note">2026-09-17 修订：推荐展示源功率不低于峰值 −20 dB 且有空间采样支持的连续频带，不再用“所有模态满足两波长孔径”裁窄频带。短孔径、DAS 标距零点仍会影响结果，审核保留警告。速度边界采用理论模态范围加余量；dv 按慢分支的孔径峰宽/8 与速度跨度/300 的较小值向下取工程步长，仍需 dv/2 检查弱峰。理论估计不是能量的严格边界。</p>
+<p>被动自动按钮现在同时增加总时长到<strong>至少60独立窗、至少600 s</strong>，并按窗长整数倍取整；保留更长的原时长。此值只是不从6窗起步的工程候选，必须固定源场、种子、窗长比较 T 与 2T；不保证收敛。不会偷偷增加源数、换源位置或加长阵列。activity_file 指定活动时序时不自动扩展总时长，需自行同步时序文件。</p>
 <table><tr><th>字段</th><th>含义 / 允许值</th><th>调整后影响</th></tr>
 <tr><td>frequency_min_hz / frequency_max_hz</td><td>能量图频带，须有源谱和采样支持；实际使用正频率。</td><td>改变频带还可能改变自动设计的正演时长，需要重算受影响上游。</td></tr>
 <tr><td>frequency_step_hz（df）</td><td>0 或省略：由记录长度与 FFT 补零给出；正数：显式输出频率步长。</td><td>补零 FFT 复谱在指定轴上插值。更密网格不增加物理分辨率。</td></tr>
@@ -57,8 +59,17 @@ S002,-20,0</pre>
 <p>当前 DWM 在复频率—波数域求解，再合成波形。主动频散来自有限炮集，被动频散来自有限噪声记录的 NCF；它们有真实记录窗限制。波形可含体波、面波、近场和尾波；本界面没有自动完成物理分离。</p></section>
 
 <section id="cases"><h2>7. 看实际波形和完整结果</h2><figure><a href="manual_assets/current-active-results.png"><img src="manual_assets/current-active-results.png" alt="当前主动结果浏览完整窗口"></a><figcaption>结果浏览页可切换汇总图、分量图和方法对照，并打开输出目录。</figcaption></figure>
-<figure><a href="manual_assets/current-active-summary.png"><img src="manual_assets/current-active-summary.png" alt="主动线阵模型Geometry波形频散完整结果"></a><figcaption>本轮主动线阵运行。记录周期3.5 s；实际时间轴最后一采样点3.495 s。模型、密度、Geometry、波形和频散同图展示。</figcaption></figure>
-<figure><a href="manual_assets/current-passive-summary.png"><img src="manual_assets/current-passive-summary.png" alt="被动线阵模型Geometry互相关频散完整结果"></a><figcaption>本轮被动线阵运行，24源、60 s，lag=2.5 s。这是短记录流程测试，残余噪声和旁瓣不代表正式收敛。</figcaption></figure>
+<h3>主要示例：宽频主动源与长记录被动源</h3>
+<p>本节更新后全量回归254项通过。它验证软件行为，不等于全部物理/统计收敛。</p>
+<p>新会话默认使用“被动源｜长记录示例”（384源、1800 s），而不是24源60秒quick；已打开的旧会话需自行载入模板，避免覆盖未保存编辑。下面被动主图在同一配置基础上显式延长到3600 s。</p>
+<table><tr><th>本轮实际参数</th><th>主动</th><th>被动主图</th></tr><tr><td>处理频带</td><td>4.06263–44.106054 Hz</td><td>3–18.8 Hz</td></tr><tr><td>速度范围 / dv</td><td>140–580 m/s / 0.5 m/s</td><td>140–580 m/s / 0.2 m/s</td></tr><tr><td>输出 df</td><td>0.1 Hz</td><td>0.01 Hz</td></tr><tr><td>实际保存记录 / NCF lag</td><td>2.301 s周期；末样点2.300 s；dt=0.001 s</td><td>总长3600 s；窗长20 s；最大lag=5.455 s；dt=0.005 s</td></tr><tr><td>不同时间尺度的频率间隔</td><td>1/2.301≈0.435 Hz</td><td>单噪声窗1/20=0.05 Hz；保留正lag的FFT周期5.46 s，对应约0.183 Hz</td></tr></table>
+<p>df小于1/T只让扫描更密，不增加有效信息；以上小数来自离散估计，不意味着边界已知到该精度。所有数值可改，模型或源谱变更后应重新审核。主动图低频自动拾取仍偏离理论，不能直接用黑线替代人工质检。</p>
+<p>以下是实算结果，不是用理论曲线生成的理想图。模型仍为10 m覆盖层（Vp/Vs=380/220 m/s）和半空间（760/440 m/s），ρ=2000 kg/m³。两种采集的源谱、阵列和成像核不同，不能把图的差异当作主动/被动内核误差。白虚线为理论模态，黑线为自动拾取；色值为逐频归一化成像量，非绝对物理能流。全部图无后期平滑、无理论附近掩膜。</p>
+<figure><a href="manual_assets/showcase-active-summary.png"><img src="manual_assets/showcase-active-summary.png" alt="宽频主动源完整模型波形频散结果"></a><figcaption>主动示例：1–200 m、1 m道距；Ricker主频20 Hz，竖直/水平力；Hankel成像。应用新版自动范围，保留高阶分支和旁瓣，不裁成10–17 Hz的窄带。<a href="manual_assets/showcase-active-input.toml">完整输入参数</a>（运行前修改输出目录）。</figcaption></figure>
+<figure><a href="manual_assets/showcase-passive-summary.png"><img src="manual_assets/showcase-passive-summary.png" alt="3600秒真实混合噪声相关频散结果"></a><figcaption>被动示例：−300–300 m、5 m道距；384个竖直力噪声源，800–1200 m源环，分层方位采样；Ricker PSD主频12 Hz，3–18.8 Hz源频带；3600 s / 20 s = 180独立窗。真实混合波形→谱白化NCF→phase shift，不采用逐源理想相关。<a href="manual_assets/showcase-passive-input.toml">完整输入参数</a>。长记录仍不保证高阶能量强，也不消除短孔径或源照明偏差。</figcaption></figure>
+<figure><a href="manual_assets/showcase-duration-comparison.png"><img src="manual_assets/showcase-duration-comparison.png" alt="同源场60至3600秒被动时长对照"></a><figcaption>受控对照：模型、384源、600 m阵列、随机种子、20 s窗和所有成像参数相同，仅总时长变化；相同坐标和0–1色标，无理论线遮挡。逐频归一化用于比较形状，不比较绝对功率。3600 s为本轮较长参考，不是无限时长真值。<a href="manual_assets/showcase-report.json">参数、哈希与差异指标</a>；<a href="../scripts/run_manual_showcase.py">可复算脚本</a>。</figcaption></figure>
+<details><summary>旧的60秒快速流程测试（仅用于了解失败/欠收敛外观）</summary><figure><img src="manual_assets/current-passive-summary.png" alt="原24源60秒短记录测试"><figcaption>24源、200 m阵列、60 s、lag=2.5 s：不同于上面的受控对照，不能据此把全部改善只归因于时长。quick模板用于检查操作流程，不是推荐科研结果。</figcaption></figure></details>
+<p>全图相对差定义为 ‖E<sub>T</sub>−E<sub>3600</sub>‖₂/‖E<sub>3600</sub>‖₂，E为同一坐标上逐频归一化成像量。60/600/1800 s分别为69.01%/17.93%/7.07%；它不是波形误差、速度误差或跨求解器误差。1800→3600 s仍有变化，当前不宣布完全统计收敛。</p>
 <table><tr><th>目标</th><th>起始配置</th><th>需要检查</th></tr><tr><td>主动线阵</td><td><a href="../examples/active_quick.toml">active_quick.toml</a></td><td>炮检距、波形完整性和体波/面波到时。</td></tr><tr><td>主动面阵</td><td><a href="../examples/manual_active_array.toml">manual_active_array.toml</a></td><td>实际径向检距分布；阵列x/y间距不等同径向采样。</td></tr><tr><td>被动线阵</td><td><a href="../examples/passive_quick.toml">passive_quick.toml</a></td><td>方位照明、独立窗数、NCF lag和统计收敛。</td></tr><tr><td>被动面阵</td><td><a href="../examples/passive_grid_quick.toml">passive_grid_quick.toml</a></td><td>每个距离箱的台站对数量、分箱宽度和有效孔径。</td></tr></table>
 <h3>面阵布局参考</h3><figure><a href="manual_assets/manual_active_array-preflight.png"><img src="manual_assets/manual_active_array-preflight.png" alt="主动二维面阵布局参考"></a><figcaption>既有主动面阵示例图；仅说明布局与输入审查，不把旧图当作本轮新参数重算结果。</figcaption></figure><figure><a href="manual_assets/manual_passive_array-preflight.png"><img src="manual_assets/manual_passive_array-preflight.png" alt="被动二维面阵源和接收器参考"></a><figcaption>既有被动面阵示例，阵列与周边源分别展示。当前模板的具体数值以TOML为准。</figcaption></figure></section>
 

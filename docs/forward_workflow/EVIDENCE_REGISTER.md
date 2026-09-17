@@ -1,5 +1,35 @@
 # WaveDispX DAS 本地证据登记
 
+## AUTO-SHOWCASE-002：推荐策略修订与手册实算（2026-09-17）
+
+状态：指定两层算例完成实算与图像检查；**不是完全统计收敛/跨求解器验收**。
+用户指出手册60秒短记录不足以展示，自动范围过窄、时长建议不全。
+修改仅涉及建议策略、UI默认入口、预检显示诊断与文档，不改正演核、NCF或成像算子。
+
+- 频带保留源功率≥−20 dB及空间采样支持；不以全模态两波长孔径或DAS首零点裁掉频带，相关物理限制保留预检警告。
+- 速度边界不再依赖旧dv；dv上限按最慢保留理论相速度的孔径峰宽/8计算，工程取整不得超过候选上限。仍需dv/2独立收敛测试，不能视为严格峰宽界。
+- 点击自动按钮才改被动总时长：至少60窗且600秒，整窗取整、保留更长输入；有activity_file不自动延长总时长。此为工程候选而非误差门槛。源数量/位置/模型不变。
+- 新会话默认载入384源/1800秒长记录模板，不覆盖已有会话。quick仍可选择。NCF显示FFT网格按保留正lag样点数计算，并另列1/window与1/T_ncf。
+
+实算脚本 `scripts/run_manual_showcase.py`，本机seisloc/4 workers；原始结果
+`output_python/manual_showcase_20260917/{active_auto,passive_60,passive_600,passive_1800,passive_3600}`。
+两层模型Vp/Vs=380/220、760/440 m/s、h=10 m、rho=2000 kg/m³；主动Ricker20 Hz，1–200 m/1 m，both分量，Hankel；被动384竖直源800–1200 m环带、−300–300 m/5 m、Ricker PSD12 Hz、20秒独立窗、固定空间/时间种子、谱白化NCF/phase shift。
+被动仅总时长变化，保留所有频率与速度坐标；无平滑或理论掩膜。相对3600秒，归一化全图L2差为60秒69.013996%、600秒17.930565%、1800秒7.072603%。3600秒只作较长参考，**未设通过阈值，不据此宣布完全收敛**。主动低频自动拾取仍偏离理论；高阶弱信号、源数量和数值收敛尚未在本轮全面检查。
+
+QC图 `docs/manual_assets/showcase-{active,passive}-summary.png` 和
+`showcase-duration-comparison.png` 已逐图查看，手册保留旧短记录反例。
+逐例配置、输入/结果SHA256及指标见 `docs/manual_assets/showcase-report.json`。
+全量回归：`PYTHONPATH=python_src conda run -n seisloc pytest -q --tb=short`，**254 passed in 62.36s**。
+本轮computer use两次超时，未宣称网页点击复验；仅截图渲染检查及本地HTML链接检查。
+
+| 文件 | SHA256 |
+|---|---|
+| survey_design.py | 9815e941166d862bed7e29dce17ce0501b2d3c5baf69fbb17760cf67f95c7b5e |
+| app_service.py | 3cefa9ea680663f181cf378225110ea5e7a90cb665f3bc51b0b531e17bdfda5e |
+| preflight.py | b86b09d81bdbbaba6dfede9f30907e6fcb3d0ea69ef73aeb656e8240c0f1c836 |
+| scripts/run_manual_showcase.py | d2e0e16e7e6d62c500a31c7cfe6552afadae0d93f120986b923a7e43a3f3b1d9 |
+| docs/manual_assets/showcase-report.json | f04b9dafa4a47e46a87490f269ccc60536f061d3252eaaca9faf8f17802edcb8 |
+
 更新时间：2026-09-17。此文件是本项目对便携工作流的本地补充，不是跨模型或跨求解器的通用验证证书。
 
 ## 状态定义

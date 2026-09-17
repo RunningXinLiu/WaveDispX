@@ -23,7 +23,6 @@ from .processing.theory import TheoreticalDispersion, theoretical_dispersion
 
 
 SOURCE_POWER_THRESHOLD = 0.01  # -20 dB relative power
-APERTURE_WAVELENGTHS = 2.0
 VELOCITY_LOWER_MARGIN = 0.70
 VELOCITY_UPPER_MARGIN = 1.30
 MINIMUM_PHYSICAL_FREQUENCY_BINS = 20.0
@@ -192,7 +191,8 @@ def _nice_step(value: float) -> float:
     value = max(float(value), np.finfo(float).eps)
     exponent = float(10.0 ** np.floor(np.log10(value)))
     scaled = value / exponent
-    factor = 1.0 if scaled <= 1.0 else 2.0 if scaled <= 2.0 else 5.0
+    # Never round above the sampling bound supplied by the caller.
+    factor = 5.0 if scaled >= 5.0 else 2.0 if scaled >= 2.0 else 1.0
     return factor * exponent
 
 
@@ -206,10 +206,9 @@ def design_survey_window(
 ) -> SurveyDesign:
     """Design an auditable f-v window and finite-record requirement.
 
-    The frequency recommendation is the largest contiguous interval that has
-    source power above -20 dB, at least two wavelengths of aperture, no simple
-    spatial alias under the effective radial sampling, and (for DAS) remains
-    below the first finite-gauge zero for the slowest retained mode.
+    Show source-supported frequencies without simple spatial aliasing. Short
+    aperture and DAS zeros remain visible diagnostic warnings, not hidden band
+    cropping criteria: imperfect resolution is not absence of source energy.
     """
 
     if config.mode == "active":
@@ -254,22 +253,10 @@ def design_survey_window(
     phase_min, phase_max = _finite_row_extrema(phase)
     finite_phase = np.isfinite(phase_min) & np.isfinite(phase_max)
     source_ok = source_power >= SOURCE_POWER_THRESHOLD
-    aperture_ok = (
-        finite_phase
-        & (receiver_aperture_m * frequency / phase_max >= APERTURE_WAVELENGTHS)
-    )
     alias_ok = finite_phase & (
         frequency <= phase_min / (2.0 * effective_spacing_m)
     )
-    if maximum_gauge_length_m is None:
-        gauge_ok = np.ones_like(frequency, dtype=bool)
-    else:
-        gauge_ok = finite_phase & (
-            frequency < phase_min / maximum_gauge_length_m
-        )
-    recommended_mask = _largest_true_run(
-        source_ok & finite_phase & aperture_ok & alias_ok & gauge_ok
-    )
+    recommended_mask = _largest_true_run(source_ok & finite_phase & alias_ok)
     if not np.any(recommended_mask):
         recommended_mask = _largest_true_run(source_ok & finite_phase)
     if not np.any(recommended_mask):
@@ -292,7 +279,8 @@ def design_survey_window(
     finite_selected_phase = selected_phase[
         np.isfinite(selected_phase) & (selected_phase > 0.0)
     ]
-    step = config.processing.velocity_step_mps
+    # Bounds must not depend on the user's previous scan interval.
+    step = 10.0
     recommended_vmin = max(
         step,
         _round_down(
@@ -360,21 +348,14 @@ def design_survey_window(
         min(0.25 * physical_df_hz, image_bandwidth_hz / 120.0)
     )
     velocity_bandwidth_mps = recommended_vmax - recommended_vmin
-    representative_velocity_mps = 0.5 * (
-        recommended_vmin + recommended_vmax
-    )
+    representative_velocity_mps = float(np.min(finite_selected_phase))
     aperture_velocity_resolution_mps = (
         representative_velocity_mps**2
         / max(recommended_fmax * receiver_aperture_m, np.finfo(float).eps)
     )
     recommended_dv_mps = _nice_step(
-        max(
-            0.5,
-            min(
-                velocity_bandwidth_mps / 250.0,
-                0.5 * aperture_velocity_resolution_mps,
-            ),
-        )
+        min(velocity_bandwidth_mps / 300.0,
+            aperture_velocity_resolution_mps / 8.0)
     )
     recommended_maximum_lag_s = 1.3 * maximum_pair_lag_s
     if config.nnws.enabled or config.nnws_v2.enabled:

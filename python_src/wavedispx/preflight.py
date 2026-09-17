@@ -278,6 +278,13 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
     # observation's physical frequency resolution.
     physical_frequency_step_hz = 1.0 / observation_window_s
     observation_sample_count = max(2, int(np.ceil(observation_window_s / dt_s)))
+    if config.mode == "passive":
+        # The image FFT sees the retained positive/symmetric NCF, not the
+        # entire random window used to estimate it.
+        retained_lag = (design.recommended_passive_maximum_lag_s
+                        if config.noise.maximum_lag_s is None
+                        else config.noise.maximum_lag_s)
+        observation_sample_count = int(round(retained_lag / dt_s)) + 1
     padded_sample_count = 1 << max(
         0,
         (int(np.ceil(observation_sample_count * processing.zero_padding)) - 1).bit_length(),
@@ -487,6 +494,8 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
             ),
             recommended_passive_window_s=design.recommended_passive_window_s,
             passive_maximum_lag_s=actual_maximum_lag_s,
+            ncf_fft_period_s=observation_sample_count * dt_s,
+            ncf_physical_frequency_step_hz=1.0 / (observation_sample_count * dt_s),
             recommended_passive_maximum_lag_s=(
                 design.recommended_passive_maximum_lag_s
             ),
@@ -622,6 +631,11 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
                 design.recommended_passive_green_duration_s
             ),
             recommended_passive_window_s=recommended_window_s,
+            recommended_passive_duration_s=(
+                max(60, int(np.ceil(600.0 / max(config.noise.window_s, recommended_window_s))))
+                * max(config.noise.window_s, recommended_window_s)
+            ),
+            passive_duration_recommendation_basis="candidate: >=60 independent windows and >=600 s; verify by doubling",
             maximum_source_azimuth_gap_deg=maximum_gap,
             radial_interpolation_limit_m=radial_step_limit,
             independent_window_count=int(round(config.noise.duration_s / config.noise.window_s)),

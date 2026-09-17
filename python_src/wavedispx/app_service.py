@@ -351,11 +351,21 @@ def apply_automatic_parameters(
         noise["maximum_lag_s"] = math.ceil(recommended_lag / dt_s) * dt_s
         if noise["maximum_lag_s"] >= noise["window_s"]:
             noise["window_s"] = noise["maximum_lag_s"] + dt_s
+        # Total duration controls statistical averaging, not the Green period.
+        # Do not extend externally prescribed source-activity schedules.
+        if not candidate.get("ambient_sources", {}).get("activity_file"):
+            window = noise["window_s"]
+            count = max(60, math.ceil(600.0 / window),
+                        math.ceil(float(noise["duration_s"]) / window))
+            noise["duration_s"] = count * window
         if noise["window_s"] > noise["duration_s"]:
             raise CaseInputError(
                 f"noise.duration_s 至少需要 {noise['window_s']:.3f} s，"
                 "才能容纳推荐独立窗；请先增加总记录时长。"
             )
+    diagnostics = build_preflight_review(
+        config_from_mapping(candidate, base_directory=base_directory)
+    ).diagnostics
     return candidate, diagnostics
 
 
@@ -383,6 +393,8 @@ def reset_automatic_parameters(
         template_noise = template_mapping.get("noise", {})
         if "window_s" in template_noise:
             noise["window_s"] = deepcopy(template_noise["window_s"])
+        if "duration_s" in template_noise:
+            noise["duration_s"] = deepcopy(template_noise["duration_s"])
         noise["maximum_lag_s"] = deepcopy(
             template_noise.get("maximum_lag_s", 0.0)
         )
