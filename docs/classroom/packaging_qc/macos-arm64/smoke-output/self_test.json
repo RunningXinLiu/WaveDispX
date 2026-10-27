@@ -1,0 +1,48 @@
+{
+  "platform": "macOS-14.8.9-arm64-arm-64bit",
+  "passed": true,
+  "checks": {
+    "ui_font": {
+      "family": "Noto Sans SC",
+      "glyph_coverage_passed": true
+    },
+    "qedisp": {
+      "max_error_mps": {
+        "rayleigh": 0.0,
+        "love": 0.0
+      },
+      "binaries": {
+        "qedisp": {
+          "path": "/private/var/folders/s6/5hzmn6lx4dz5nxs7k_0slzph0000gn/T/classroom-relocated-wu0fhc33/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/forward",
+          "sha256": "e12801f646d197a4de439e977d72cb1201c8a8770a8ac141aadf0f28c0d70cc8"
+        }
+      }
+    },
+    "cps": {
+      "max_error_mps": {
+        "rayleigh": 2.0500000118772732e-05,
+        "love": 2.1600000081889448e-05
+      },
+      "binaries": {
+        "sprep96": {
+          "path": "/private/var/folders/s6/5hzmn6lx4dz5nxs7k_0slzph0000gn/T/classroom-relocated-wu0fhc33/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/sprep96",
+          "sha256": "61bca9fe93fde8d74dc03012c5618b69b8cbd836281b0b0b4d1b4a3b97d1419e"
+        },
+        "sdisp96": {
+          "path": "/private/var/folders/s6/5hzmn6lx4dz5nxs7k_0slzph0000gn/T/classroom-relocated-wu0fhc33/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/sdisp96",
+          "sha256": "33d66719230882dc96c71fc860907a20b06af181af150a64a1413ee9c3abe590"
+        },
+        "sdpsrf96": {
+          "path": "/private/var/folders/s6/5hzmn6lx4dz5nxs7k_0slzph0000gn/T/classroom-relocated-wu0fhc33/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/sdpsrf96",
+          "sha256": "9af39dad043e41c7f74fdd60a59bf0c57cb9c59a8be697cef4e10a60f7f6e321"
+        }
+      }
+    },
+    "ideal": {
+      "curves_unchanged": true,
+      "complex_response_matches": true
+    },
+    "unicode_temp_directory": true,
+    "frozen": true
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "status": "private unsigned candidates; redistribution notice review pending",
+  "date": "2026-10-27",
+  "server_directory": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/releases",
+  "baseline_sha256": "e96822f194036a81227e0f7c425913f515dbf6af71560f86cddd739afb229177",
+  "assets": [
+    {
+      "platform": "windows-x64",
+      "artifact_id": "12730339626",
+      "run_id": "40496166313",
+      "url": "https://github.com/RunningXinLiu/WaveDispX/actions/runs/40496166313/artifacts/12730339626",
+      "artifact_sha256": "sha256:b777f984a91914135b919b429c3f00ba9be7109b3d1b15533a33c8b67712e686",
+      "artifact_bytes": 127822480,
+      "expires_at": "2026-11-10T11:30:58Z",
+      "build_commit": "fd870bf77d83ffbb947c965948d16cbf1e67b30c",
+      "tested_os": "Windows-2022Server-10.0.20348-SP0",
+      "max_curve_error_mps": 0.0,
+      "binary_provenance": {
+        "ui_font": {
+          "family": "Noto Sans SC",
+          "glyph_coverage_passed": true
+        },
+        "qedisp": {
+          "max_error_mps": {
+            "rayleigh": 0.0,
+            "love": 0.0
+          },
+          "binaries": {
+            "qedisp": {
+              "path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\classroom-relocated-wmjp4czm\\学生 软件\\WaveDispX-Classroom\\_internal\\solvers\\forward.exe",
+              "sha256": "a985d0fcb41f393b83eb48caa12094773b4e348ce79894baf20e18325ee91847"
+            }
+          }
+        },
+        "cps": {
+          "max_error_mps": {
+            "rayleigh": 0.0,
+            "love": 0.0
+          },
+          "binaries": {
+            "sprep96": {
+              "path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\classroom-relocated-wmjp4czm\\学生 软件\\WaveDispX-Classroom\\_internal\\solvers\\sprep96.exe",
+              "sha256": "5820765d6ef12f30ead32c09a107c27750094d712838e130f7db2c3d77f33cd4"
+            },
+            "sdisp96": {
+              "path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\classroom-relocated-wmjp4czm\\学生 软件\\WaveDispX-Classroom\\_internal\\solvers\\sdisp96.exe",
+              "sha256": "70d3fc82bbce1bdacbfe6608e2b86dd90dad1f6bdf20ecb4b6a3f5835fef376a"
+            },
+            "sdpsrf96": {
+              "path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\classroom-relocated-wmjp4czm\\学生 软件\\WaveDispX-Classroom\\_internal\\solvers\\sdpsrf96.exe",
+              "sha256": "f580344af85982aa37d32d2baf137a67316f6823e54d3d6e8e323c25f3f3476d"
+            }
+          }
+        },
+        "ideal": {
+          "curves_unchanged": true,
+          "complex_response_matches": true
+        },
+        "unicode_temp_directory": true,
+        "frozen": true
+      },
+      "server_archive": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/releases/classroom-windows-x64-12730339626.zip"
+    },
+    {
+      "platform": "linux-x64",
+      "artifact_id": "12729748663",
+      "run_id": "40495293225",
+      "url": "https://github.com/RunningXinLiu/WaveDispX/actions/runs/40495293225/artifacts/12729748663",
+      "artifact_sha256": "sha256:c1b7d4be0e4d27a38b73ff2f06bc1978ff51bf3aa9ad4b485f0a5b33ce7a2582",
+      "artifact_bytes": 168105084,
+      "expires_at": "2026-11-10T11:23:05Z",
+      "build_commit": "c3b94358e9564faa4bbd8befcce1382361d43a2c",
+      "tested_os": "Linux-6.8.0-1064-azure-x86_64-with-glibc2.35",
+      "max_curve_error_mps": 0.0,
+      "binary_provenance": {
+        "ui_font": {
+          "family": "Noto Sans SC",
+          "glyph_coverage_passed": true
+        },
+        "qedisp": {
+          "max_error_mps": {
+            "rayleigh": 0.0,
+            "love": 0.0
+          },
+          "binaries": {
+            "qedisp": {
+              "path": "/tmp/classroom-relocated-8j7vsm_5/学生 软件/WaveDispX-Classroom/_internal/solvers/forward",
+              "sha256": "076f3180ce11a1475cdcc42eb54f9c769d0d917318f16ef4805aa7a08420c796"
+            }
+          }
+        },
+        "cps": {
+          "max_error_mps": {
+            "rayleigh": 0.0,
+            "love": 0.0
+          },
+          "binaries": {
+            "sprep96": {
+              "path": "/tmp/classroom-relocated-8j7vsm_5/学生 软件/WaveDispX-Classroom/_internal/solvers/sprep96",
+              "sha256": "70a3159e642ec460e399a455b6bf2bd900a70bd79af9192e99af62f562ccaf60"
+            },
+            "sdisp96": {
+              "path": "/tmp/classroom-relocated-8j7vsm_5/学生 软件/WaveDispX-Classroom/_internal/solvers/sdisp96",
+              "sha256": "44f92fa66901dbf09270ef9e7ff78fe0b5bf9ac351c6f88859ecd17163ca22b5"
+            },
+            "sdpsrf96": {
+              "path": "/tmp/classroom-relocated-8j7vsm_5/学生 软件/WaveDispX-Classroom/_internal/solvers/sdpsrf96",
+              "sha256": "92713d2a3ff9be55c26d3642ba0d37c4967a0844ed01666085aa32623d9595b4"
+            }
+          }
+        },
+        "ideal": {
+          "curves_unchanged": true,
+          "complex_response_matches": true
+        },
+        "unicode_temp_directory": true,
+        "frozen": true
+      },
+      "server_archive": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/releases/classroom-linux-x64-12729748663.zip"
+    },
+    {
+      "platform": "macos-arm64",
+      "artifact_id": "12729518785",
+      "run_id": "40495293225",
+      "url": "https://github.com/RunningXinLiu/WaveDispX/actions/runs/40495293225/artifacts/12729518785",
+      "artifact_sha256": "sha256:8e579cff290736271b2657023e792bac39c1396f7ac3ca30859babd2827bd209",
+      "artifact_bytes": 87124522,
+      "expires_at": "2026-11-10T11:21:26Z",
+      "build_commit": "c3b94358e9564faa4bbd8befcce1382361d43a2c",
+      "tested_os": "macOS-14.8.9-arm64-arm-64bit",
+      "max_curve_error_mps": 2.1600000081889448e-05,
+      "binary_provenance": {
+        "ui_font": {
+          "family": "Noto Sans SC",
+          "glyph_coverage_passed": true
+        },
+        "qedisp": {
+          "max_error_mps": {
+            "rayleigh": 0.0,
+            "love": 0.0
+          },
+          "binaries": {
+            "qedisp": {
+              "path": "/private/var/folders/s6/5hzmn6lx4dz5nxs7k_0slzph0000gn/T/classroom-relocated-wu0fhc33/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/forward",
+              "sha256": "e12801f646d197a4de439e977d72cb1201c8a8770a8ac141aadf0f28c0d70cc8"
+            }
+          }
+        },
+        "cps": {
+          "max_error_mps": {
+            "rayleigh": 2.0500000118772732e-05,
+            "love": 2.1600000081889448e-05
+          },
+          "binaries": {
+            "sprep96": {
+              "path": "/private/var/folders/s6/5hzmn6lx4dz5nxs7k_0slzph0000gn/T/classroom-relocated-wu0fhc33/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/sprep96",
+              "sha256": "61bca9fe93fde8d74dc03012c5618b69b8cbd836281b0b0b4d1b4a3b97d1419e"
+            },
+            "sdisp96": {
+              "path": "/private/var/folders/s6/5hzmn6lx4dz5nxs7k_0slzph0000gn/T/classroom-relocated-wu0fhc33/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/sdisp96",
+              "sha256": "33d66719230882dc96c71fc860907a20b06af181af150a64a1413ee9c3abe590"
+            },
+            "sdpsrf96": {
+              "path": "/private/var/folders/s6/5hzmn6lx4dz5nxs7k_0slzph0000gn/T/classroom-relocated-wu0fhc33/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/sdpsrf96",
+              "sha256": "9af39dad043e41c7f74fdd60a59bf0c57cb9c59a8be697cef4e10a60f7f6e321"
+            }
+          }
+        },
+        "ideal": {
+          "curves_unchanged": true,
+          "complex_response_matches": true
+        },
+        "unicode_temp_directory": true,
+        "frozen": true
+      },
+      "server_archive": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/releases/classroom-macos-arm64-12729518785.zip"
+    },
+    {
+      "platform": "macos-x64",
+      "artifact_id": "12729654913",
+      "run_id": "40495293225",
+      "url": "https://github.com/RunningXinLiu/WaveDispX/actions/runs/40495293225/artifacts/12729654913",
+      "artifact_sha256": "sha256:f53215ea867ffc74e039908bb459053c7c9401d2b4b7f9271888c837e4dc58ae",
+      "artifact_bytes": 96161970,
+      "expires_at": "2026-11-10T11:25:35Z",
+      "build_commit": "c3b94358e9564faa4bbd8befcce1382361d43a2c",
+      "tested_os": "macOS-15.7.9-x86_64-i386-64bit",
+      "max_curve_error_mps": 0.0,
+      "binary_provenance": {
+        "ui_font": {
+          "family": "Noto Sans SC",
+          "glyph_coverage_passed": true
+        },
+        "qedisp": {
+          "max_error_mps": {
+            "rayleigh": 0.0,
+            "love": 0.0
+          },
+          "binaries": {
+            "qedisp": {
+              "path": "/private/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/classroom-relocated-xf7zwkpf/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/forward",
+              "sha256": "545a6334d1f91600a235d8448e593ff4b7e3a9dab1c4d0837a73c253e950cbb0"
+            }
+          }
+        },
+        "cps": {
+          "max_error_mps": {
+            "rayleigh": 0.0,
+            "love": 0.0
+          },
+          "binaries": {
+            "sprep96": {
+              "path": "/private/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/classroom-relocated-xf7zwkpf/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/sprep96",
+              "sha256": "5a673e7d8751c356d1236d1beba448c404cbc0e49588cc6b939d73b945ce4fb5"
+            },
+            "sdisp96": {
+              "path": "/private/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/classroom-relocated-xf7zwkpf/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/sdisp96",
+              "sha256": "1dce29e7dd9c987adccb60e3296256b3808cccba82e6046f1322baa55441be32"
+            },
+            "sdpsrf96": {
+              "path": "/private/var/folders/20/jp1_0n3n7kndh6rnbqb5344m0000gn/T/classroom-relocated-xf7zwkpf/学生 软件/WaveDispX-Classroom.app/Contents/Frameworks/solvers/sdpsrf96",
+              "sha256": "e37acf283088a353776fc7b5c58fc617c1dfeed786e867e20f4075c0b570258b"
+            }
+          }
+        },
+        "ideal": {
+          "curves_unchanged": true,
+          "complex_response_matches": true
+        },
+        "unicode_temp_directory": true,
+        "frozen": true
+      },
+      "server_archive": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/releases/classroom-macos-x64-12729654913.zip"
+    }
+  ]
+}

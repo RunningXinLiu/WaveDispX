@@ -1,0 +1,33 @@
+{
+  "status": "private release candidate; see redistribution notes",
+  "git_commit": "c3b94358e9564faa4bbd8befcce1382361d43a2c",
+  "platform": "Linux-6.8.0-1064-azure-x86_64-with-glibc2.35",
+  "python": "3.12.15 (main, Oct  1 2026, 02:36:35) [GCC 11.4.0]",
+  "sources_sha256": {
+    "python_src/wavedispx/classroom/app.py": "0a206a74fbc2c6fc9eb0204d295aea9386fcfdb4763ed9a67a223c36e5f148c5",
+    "python_src/wavedispx/classroom/plotting.py": "2a353c9fe9762fdb19eee0eb2c316ee13bdd424b5090dc585bcafb6d3e432b12",
+    "python_src/wavedispx/classroom/runtime.py": "9acd05415d7909ffc645e2c993a40377bb75b51dbacf6c6937a64f1da405c1b2",
+    "python_src/wavedispx/classroom/__init__.py": "3e2eb4871c74a4770153f285fded9de57bec194728b81f5889cbb56a7213a596",
+    "python_src/wavedispx/classroom/bundle_check.py": "363e0d6a46163301ecdc24c52721376ec6e4ab7f26be1562031a3503a4d24682",
+    "python_src/wavedispx/classroom/qt_runtime.py": "f5e0ae746597eb931e658477ad725292c5807f7548ca730a3bbd8982157c6a94",
+    "python_src/wavedispx/classroom/help_text.py": "e6960404406801cc48333643f13333d551bf3b320b7a49445d4abb7fae36eadb",
+    "python_src/wavedispx/classroom/engine.py": "31a24ee1de4c3eafadb323d56515a26f55afa302c891b3bdf0c16b61a275c7bc",
+    "packaging/classroom/native/windows_headers.hpp": "6304f33e792e826196992f28679381c435f21928250afeb0647a84a8c79373cd",
+    "packaging/classroom/native/CMakeLists.txt": "8f88b3410592b9a765aef0a7e6e3d262eb9f626726866e190d5b89a758bb1e0f",
+    "cpp/dwm_core.cpp": "1e01379e263cc8d6f16f9cf4c31a8d59aca92aafeb9b85bf9ec72bd05da320e8"
+  },
+  "font": {
+    "repository": "https://github.com/google/fonts",
+    "revision": "a85815a42757630ce188fdad368c2dfc444d4773",
+    "files": {
+      "NotoSansSC.ttf": {
+        "git_blob": "fb0637bafbcd804fe32152370a1225990745b4bc",
+        "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da"
+      },
+      "OFL.txt": {
+        "git_blob": "1c9f43281b8f216c5461fe9ac729afbade7724e4",
+        "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9"
+      }
+    }
+  }
+}

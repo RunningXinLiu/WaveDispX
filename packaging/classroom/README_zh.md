@@ -2,6 +2,10 @@
 
 本目录将 PySide6 界面、WaveDispX C++ 核、当前固定源码的 QEDispInv forward，以及 CPS sprep96/sdisp96/sdpsrf96 一起打包。学生端不需要 Python、Conda、编译器或配置 PATH。
 
+2026-10-27 候选包的下载链接、逐平台结果、截图及限制见
+[`PACKAGING_VALIDATION_20261027_zh.md`](../../docs/classroom/PACKAGING_VALIDATION_20261027_zh.md)。
+运行验证使用对应平台的成品；Windows 使用原生窗口插件，避免 Qt offscreen 插件不支持字体的问题。
+
 ## 平台与分发
 
 - Windows x64：ZIP 解压后运行 WaveDispX-Classroom.exe，保留整个文件夹。
@@ -35,8 +39,11 @@ cmake -S packaging/classroom/native -B native-build -DCMAKE_BUILD_TYPE=Release
 cmake --build native-build --parallel 2
 python -m pip install -r packaging/classroom/requirements.txt
 python setup.py build_ext --inplace
+python packaging/classroom/fetch_font.py
 CLASSROOM_NATIVE="$PWD/native-build/solvers" python packaging/classroom/freeze.py
 python packaging/classroom/check_distribution.py --label local-test
 ```
 
 Windows 构建配方使用 MSYS2 MinGW 原生求解器和 CPython/MSVC 的 Python 扩展；发行时包含所需 DLL，运行不依赖学生安装 MSYS2/WSL。所有较大的构建目录和候选包留在云端/学校服务器，本机仅保留代码、基准数组和少量 QC。
+
+构建前运行 `python packaging/classroom/fetch_font.py` 下载固定提交的 Noto Sans SC 与 OFL 许可；脚本验证 Git blob 身份并保存 SHA256。字体仅下载到构建机，不提交大字体文件。Windows 冻结时还需设置 `CLASSROOM_MINGW_BIN` 为实际 MinGW bin 目录，工作流会自动传递。

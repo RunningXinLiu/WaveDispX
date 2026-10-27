@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "scope": "Visible Chinese labels; side-by-side model and dispersion; density on its own axis; no scrolling parameter panel at the inspected size",
+  "image": "docs/classroom/packaging_qc/macos-arm64/smoke-output/compact_curves.png",
+  "image_sha256": "6862f3b44a49ef8429c685f9aa3e861db437974e284d8efa85b64082862e6568"
+}
