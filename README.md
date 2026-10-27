@@ -21,7 +21,7 @@ WaveDispX 包含面向本科课堂的 **Classroom 桌面版**，以及面向进�
 | Mac，Intel 处理器 | `WaveDispX-Classroom-macos-x64.tar.gz` | 解压，打开 `WaveDispX-Classroom.app` |
 | Linux，Intel / AMD 64 位 | `WaveDispX-Classroom-linux-x64.tar.gz` | 解压，运行 `WaveDispX-Classroom` |
 
-请保留完整解压目录，尤其是 Windows / Linux 的 `_internal` 文件夹。界面中的“QED 文件”“CPS 目录”留空即可使用内置后端。另外下载 `WaveDispX-Classroom-中文使用说明与模型示例.zip`，即可获得离线 HTML 说明和三个模型示例。
+请保留完整解压目录，尤其是 Windows / Linux 的 `_internal` 文件夹。界面中的“QED 文件”“CPS 目录”留空即可使用内置后端。另外下载 `WaveDispX-Classroom-guide-zh.zip`（中文说明与示例），即可获得离线 HTML 说明和三个模型示例。
 
 当前版本是 **未签名的教学试用版（Pre-release）**，尚未做 Apple 公证。已在 Windows Server 2022、Ubuntu 22.04、macOS 14 Apple 芯片和 macOS 15 Intel 构建环境运行成品自检；不等于所有学生电脑、Win10/Win11 和旧系统均已验收。Windows ARM、32 位系统和 Linux ARM 暂无对应包。系统提示及具体安装步骤见[安装说明](docs/classroom/INSTALL_AND_USE_zh.md)。
 
