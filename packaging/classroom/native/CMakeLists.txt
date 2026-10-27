@@ -19,6 +19,9 @@ target_link_libraries(qed_disp PUBLIC Eigen3::Eigen qed_fortran)
 add_executable(forward "${QED}/src/main_forward.cc")
 target_include_directories(forward PRIVATE "${QED}/external/highfive/include" "${QED}/external/toml11/include" ${HDF5_INCLUDE_DIRS})
 target_link_libraries(forward PRIVATE qed_disp ${HDF5_LIBRARIES})
+if(WIN32)
+    target_compile_options(forward PRIVATE -include "${CMAKE_CURRENT_LIST_DIR}/windows_headers.hpp")
+endif()
 
 # Native CPS implementations, including its real CALPLOT file writer. No X11,
 # plotting stubs, replacement dispersion algorithm or changed numeric source.

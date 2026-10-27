@@ -1,6 +1,12 @@
 name: Classroom private desktop candidates
 on:
   workflow_dispatch:
+    inputs:
+      platform:
+        description: Platforms to build
+        type: choice
+        default: all
+        options: [all, windows]
   push:
     branches: [codex/classroom-packaging]
 permissions:
@@ -10,15 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: windows-2022
-            label: windows-x64
-          - os: ubuntu-22.04
-            label: linux-x64
-          - os: macos-14
-            label: macos-arm64
-          - os: macos-15-intel
-            label: macos-x64
+        include: ${{ fromJSON(inputs.platform == 'windows' && '[{"os":"windows-2022","label":"windows-x64"}]' || '[{"os":"windows-2022","label":"windows-x64"},{"os":"ubuntu-22.04","label":"linux-x64"},{"os":"macos-14","label":"macos-arm64"},{"os":"macos-15-intel","label":"macos-x64"}]') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 35
     env:
@@ -90,3 +88,15 @@ jobs:
             smoke-output/**
             packaging/classroom/build_manifest.json
             build/classroom/warn-*.txt
+      - name: Upload lightweight QC separately
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: classroom-qc-${{ matrix.label }}
+          retention-days: 14
+          if-no-files-found: ignore
+          path: |
+            smoke-output/*.json
+            smoke-output/*.png
+            smoke-output/*.txt
+            packaging/classroom/build_manifest.json
