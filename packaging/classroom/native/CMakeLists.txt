@@ -32,8 +32,11 @@ add_library(calplot STATIC ${calplot_fortran}
     "${CPS}/CALPLOT/src/clib/ponintr.c")
 target_include_directories(calplot PRIVATE "${CPS}/CALPLOT/src/include")
 if(WIN32)
-    # Upstream's existing non-POSIX signal and binary-file I/O branches.
-    target_compile_definitions(calplot PRIVATE MSDOS)
+    # Only the file writer needs the existing Windows signal/binary-I/O branch.
+    # Global MSDOS would select obsolete 16-bit DOS types and remove gfortran's
+    # trailing underscores in dfsubs.c; MinGW uses the normal Fortran ABI.
+    set_source_files_properties("${CPS}/CALPLOT/src/clib/clcplt.c"
+        PROPERTIES COMPILE_DEFINITIONS MSDOS)
 endif()
 foreach(name sprep96 sdisp96)
     add_executable(${name} "${CPS}/VOLIII/src/${name}.f")

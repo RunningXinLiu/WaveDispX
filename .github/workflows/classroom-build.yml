@@ -46,9 +46,11 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install gcc eigen hdf5 ninja
       - name: Build native solvers on Windows
+        id: native_windows
         if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
+          echo "mingw_bin=$(cygpath -w /mingw64/bin)" >> "$GITHUB_OUTPUT"
           cmake -S packaging/classroom/native -B native-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_Fortran_COMPILER=gfortran
           cmake --build native-build --parallel 2
       - name: Build native solvers on Linux
@@ -68,10 +70,9 @@ jobs:
           python setup.py build_ext --inplace
       - name: Freeze complete application
         shell: bash
+        env:
+          CLASSROOM_MINGW_BIN: ${{ steps.native_windows.outputs.mingw_bin }}
         run: |
-          if [ "$RUNNER_OS" = Windows ]; then
-            export PATH="/c/msys64/mingw64/bin:$PATH"
-          fi
           export CLASSROOM_NATIVE="$GITHUB_WORKSPACE/native-build/solvers"
           python packaging/classroom/freeze.py
       - name: Relocate and test shipped executable
@@ -88,4 +89,4 @@ jobs:
             release/*
             smoke-output/**
             packaging/classroom/build_manifest.json
-            build/WaveDispX-Classroom/warn-*.txt
+            build/classroom/warn-*.txt

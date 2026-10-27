@@ -8,6 +8,11 @@ import subprocess
 import sys
 
 root = Path(__file__).resolve().parents[2]
+if os.name == 'nt':
+    mingw = Path(os.environ['CLASSROOM_MINGW_BIN'])
+    if not (mingw/'libgfortran-5.dll').is_file():
+        raise RuntimeError(f'Missing MinGW runtime directory: {mingw}')
+    os.environ['PATH'] = str(mingw)+os.pathsep+os.environ.get('PATH', '')
 manifest = {
     'status': 'private release candidate; see redistribution notes',
     'git_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip(),
