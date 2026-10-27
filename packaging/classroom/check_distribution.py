@@ -29,7 +29,9 @@ with tempfile.TemporaryDirectory(prefix='classroom-relocated-') as temp:
         env.pop(key, None)
     # Exclude compiler DLL directories and developer-installed solvers.
     env['PATH'] = str(Path(os.environ['SystemRoot'])/'System32') if os.name == 'nt' else '/usr/bin:/bin'
-    env['QT_QPA_PLATFORM'] = 'offscreen'
+    # Qt's Windows offscreen plugin has no usable font database; exercise the
+    # real Windows platform plugin used by students, including font rendering.
+    env['QT_QPA_PLATFORM'] = 'windows' if os.name == 'nt' else 'offscreen'
     done = subprocess.run([str(executable), '--self-test', str(out)], cwd=temp, env=env,
                           capture_output=True, timeout=300)
     (out/'process_stdout.txt').write_bytes(done.stdout)
