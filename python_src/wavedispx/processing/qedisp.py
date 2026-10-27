@@ -383,15 +383,15 @@ def _run_wave_type(
     command = [
         str(executable),
         "--config",
-        str(config_path),
+        config_path.name,
         "--model",
-        str(model_path),
+        model_path.name,
         "--disp",
-        str(target_path),
+        target_path.name,
         "--mode",
         str(mode_count - 1),
         "--out",
-        str(output_path),
+        output_path.name,
     ]
     if sh:
         command.append("--sh")
@@ -405,6 +405,8 @@ def _run_wave_type(
             capture_output=True,
             text=True,
             timeout=timeout_s,
+            stdin=subprocess.DEVNULL,
+            creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
         )
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
         stdout = getattr(exc, "stdout", "") or ""

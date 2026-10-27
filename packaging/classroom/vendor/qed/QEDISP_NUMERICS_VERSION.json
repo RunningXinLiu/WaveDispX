@@ -1,0 +1,57 @@
+{
+  "baseline_commit": "68ac095f29308cad3b84f2ac0d5ca335c2767082",
+  "baseline_repository": "https://github.com/RunningXinLiu/QEDispInv-private",
+  "local_source_hashes": {
+    "src/disp.cc": "9ce7ffef0ec773fc6e63ef3bec90e13903f421dec5c855a7bc641dd8494a91c6",
+    "src/secfunc.cc": "6febeefc493c0c6239444831c3937f6b0c4556e9a4085d06825e01ec958920ec",
+    "src/utils.cc": "ccf571520307eb58c72fb6091560019f498870f9dcdfa049873465f9fc1a3540",
+    "src/problem.cc": "1c951cfcd1de3196fd0a5e055eebc49eb5714efbf861c4fcf6bdff89a0f6ea1f",
+    "src/model.cc": "eb7d02f66c6e697902226e63253c9a1d02c546856de6fedc98833293c60143af",
+    "src/main_step4_batch.cc": "2cdb17aedcfdf0ae825ab753c333589a3c77f89945e4344d6a94d185ef2eadc4",
+    "src/timer.cc": "5f87da6cebd667b779a2d187b69c7f6ebe50a086ed91ddc2f91480ccfd420a3f",
+    "src/main_forward.cc": "4529fce3063e579b9a7e1c9dcd9a13e21fe392bf812c21845bea1a54f8ecb698",
+    "src/toms748.cc": "0344c2bf4612973bc0a218114abc9fb1cf14f9b9dd1b2153ba7037cb89c550bc",
+    "src/swegn96.cc": "1abf01455594d6749360e9a3b61141a312922004400435f1eede0f010a57b665",
+    "src/main_secfunc.cc": "f96a89c4fb3b5f4769a606549cfc4ea6720ac39fcc622cba524bff43d0a86dde",
+    "src/main_inversion.cc": "fc6dc41330b47845b7a68680b5857ceab20beccbb56bb51ecb463e6131dc3d21",
+    "include/areclose.hpp": "49b90ddc3fbe2bbb0f1848f2d90483f22f9b5007716f4f1684372a2cb7363c37",
+    "include/tqdm.hpp": "4491c36a5581cbd5e6f31264dc150cad9f35ae7685f4a564a80c6ab05e6e728a",
+    "include/disp.hpp": "257ebef4b4119b09687b283ab65af5a6c0f430d2e1161b7bda9332b58a9b5dbf",
+    "include/model.hpp": "a5e31d58a0001cf57313a26f4170958dd2475ea73fa9548f3fc1c0fe2d20909c",
+    "include/secfunc.hpp": "53a2a95a3f3ab1a96587859786042427834bf6c0ae438afc90888e7db6a9b949",
+    "include/timer.hpp": "eaae1b85a982e3a9ba6bc259a19809e7323e20112dd48080ff874aed7a2e9032",
+    "include/CLI11.hpp": "f54d422b19a92d12b351200ed3a09d5de8f628f1d8a3fd7e73f7bc1d754c6bf3",
+    "include/problem.hpp": "f2831f440b78ad7cbab8b196cfbd45fbbf06215759d9786eb8ed6f1766cc4603",
+    "include/utils.hpp": "340c45ff4cfcef13c3a39db23d15855f62ac7d5332f89c35665dc479a36a8841",
+    "include/swegn96.hpp": "420b1ab5fcb6a5fbd4e0d468dbe8db65941378427ed53f7439735ffd108c27f0",
+    "fortran/slegn96.f90": "df56485c3f99d1c179c8ede3fa4d16fb280305bc74fee6da282891b062c23e05",
+    "fortran/sregn96.f90": "62bb1e23d17d8db3e9d6907cd8c0c611293753208d6a9116426fc6a4f4fa7eab"
+  },
+  "runtime_status": "deployed",
+  "build_directory": "/Users/liuxin/Documents/Codex/2026-09-05/ni-ne/work/migration/builds/aa3c909beab6",
+  "binaries": [
+    {
+      "path": "/Volumes/lx_exFAT/PassiveFW_versionstable/.wavedispx-tools/QEDispInv/bin/secfunc",
+      "sha256": "58aeaff39c18cb4bd7a74b938703ed071ba1e05734114eedb71357e00edaf1d4"
+    },
+    {
+      "path": "/Volumes/lx_exFAT/PassiveFW_versionstable/.wavedispx-tools/QEDispInv/bin/inversion",
+      "sha256": "f7364903681e8591d6bd0b0555c5fe21c978e9c201d3bd17eedc8a32709fcfd3"
+    },
+    {
+      "path": "/Volumes/lx_exFAT/PassiveFW_versionstable/.wavedispx-tools/QEDispInv/bin/step4_batch_forward",
+      "sha256": "169b92c1b948d425e53eabc265d19ad26f6acd8bebdf53cf2450beb69710bc56"
+    },
+    {
+      "path": "/Volumes/lx_exFAT/PassiveFW_versionstable/.wavedispx-tools/QEDispInv/bin/forward",
+      "sha256": "66d7427bcfcbd48641d5151dd7707bc7994692e1d7e2d92bc7846cf4abbc1e46"
+    },
+    {
+      "path": "/Volumes/lx_exFAT/PassiveFW_versionstable/.wavedispx-tools/QEDispInv/lib/libqedisp_group.dylib",
+      "sha256": "0d7e4896813d873612ee217df4f574e61906e2c11ecdedbbc42d05ef54ae3472"
+    }
+  ],
+  "openmp": true,
+  "baseline_tag": "numerics-20260905.3",
+  "validation": "phase_and_group_native_regressions_passed"
+}
