@@ -32,6 +32,13 @@ def main(output):
             reference = root/'packaging/classroom/reference'
         expected = np.load(reference/'baseline.npz')
         window = ClassroomWindow()
+        if getattr(__import__('sys'), 'frozen', False):
+            from PySide6.QtGui import QRawFont
+            font = QRawFont.fromFont(window.font())
+            assert font.isValid(), 'Invalid UI font'
+            missing = [c for c in '频散曲线模型密度计算后端VpVs0123456789ρ' if not font.supportsCharacter(ord(c))]
+            assert not missing, f'Missing UI font glyphs: {missing}'
+            report['checks']['ui_font'] = {'family': font.familyName(), 'glyph_coverage_passed': True}
         errors = []
 
         def failed(message):

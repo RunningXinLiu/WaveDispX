@@ -26,3 +26,21 @@ def prepare_runtime():
         # separately executed native solvers. No user environment is modified.
         root = resource_root()
         os.environ['PATH'] = os.pathsep.join([str(root/'solvers'), str(root), os.environ.get('PATH','')])
+
+
+def configure_ui_font(app):
+    """Use the shipped Chinese font, independent of OS language packs."""
+    if app.property('classroom_font_family'):
+        return
+    font = resource_root()/'fonts/NotoSansSC.ttf'
+    if not font.is_file():
+        if getattr(sys, 'frozen', False):
+            raise FileNotFoundError('发行包缺少中文字体 NotoSansSC.ttf')
+        return  # Development checkout can use its existing system fonts.
+    from PySide6.QtGui import QFont, QFontDatabase
+    identifier = QFontDatabase.addApplicationFont(str(font))
+    families = QFontDatabase.applicationFontFamilies(identifier)
+    if identifier < 0 or not families:
+        raise RuntimeError('无法载入内置中文字体。')
+    app.setFont(QFont(families[0], 10))
+    app.setProperty('classroom_font_family', families[0])

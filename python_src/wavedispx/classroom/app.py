@@ -48,6 +48,8 @@ def spin(low, high, value, decimals=None):
 
 class ClassroomWindow(QMainWindow):
     def __init__(self):
+        from .runtime import configure_ui_font
+        configure_ui_font(QApplication.instance())
         super().__init__()
         self.setWindowTitle('WaveDispX Classroom · 弹性层状介质频散实验室')
         self.resize(1440, 900)

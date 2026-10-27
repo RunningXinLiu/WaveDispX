@@ -72,6 +72,7 @@ jobs:
           CLASSROOM_MINGW_BIN: ${{ steps.native_windows.outputs.mingw_bin }}
         run: |
           export CLASSROOM_NATIVE="$GITHUB_WORKSPACE/native-build/solvers"
+          python packaging/classroom/fetch_font.py
           python packaging/classroom/freeze.py
       - name: Relocate and test shipped executable
         shell: bash

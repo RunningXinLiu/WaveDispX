@@ -23,6 +23,7 @@ manifest = {
         for p in (root/folder).rglob('*') if p.is_file() and '__pycache__' not in p.parts
     },
 }
+manifest['font'] = json.loads((root/'packaging/classroom/fonts/SOURCE.json').read_text(encoding='utf-8'))
 (root/'packaging/classroom/build_manifest.json').write_text(json.dumps(manifest, indent=2), encoding='utf-8')
 subprocess.run([sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean',
                 str(root/'packaging/classroom/classroom.spec')], cwd=root, check=True)

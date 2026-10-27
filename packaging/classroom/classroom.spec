@@ -14,6 +14,7 @@ for name in names:
 a = Analysis([str(root/'packaging/classroom/entry.py')],
     pathex=[str(root/'python_src')], binaries=binaries,
     datas=[(str(root/'packaging/classroom/reference'),'reference'),
+           (str(root/'packaging/classroom/fonts'),'fonts'),
            (str(root/'docs/classroom/two_layer.csv'),'examples'),
            (str(root/'docs/classroom/low_velocity_layer.csv'),'examples'),
            (str(root/'docs/classroom/halfspace.csv'),'examples'),
