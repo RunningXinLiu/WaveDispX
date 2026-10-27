@@ -1,0 +1,20 @@
+{
+  "qedisp_rayleigh": {
+    "max_error_mps": 0.0
+  },
+  "qedisp_love": {
+    "max_error_mps": 0.0
+  },
+  "cps_rayleigh": {
+    "max_error_mps": 0.0
+  },
+  "cps_love": {
+    "max_error_mps": 0.0
+  },
+  "binaries_sha256": {
+    "sdisp96": "9e3eb124e8c9c9da1bbe76506aab59a0043c1ddd5839c86c27dc0979bbe6c8be",
+    "sdpsrf96": "4b6d0c6d784d177b04bdf59e7ad5c907a4f9cc082a1202160516de699a051757",
+    "sprep96": "84af1701366582395ba755b9ab551b4a5769a46889dae2ea8c96a501bf628fbc",
+    "forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+  }
+}

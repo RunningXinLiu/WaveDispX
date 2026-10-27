@@ -1,0 +1,33 @@
+{
+  "status": "private release candidate; see redistribution notes",
+  "git_commit": "fd870bf77d83ffbb947c965948d16cbf1e67b30c",
+  "platform": "Windows-2022Server-10.0.20348-SP0",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "sources_sha256": {
+    "python_src\\wavedispx\\classroom\\app.py": "8b2cee63a84d66e132adc636efea8449c4e7f46c6a6ff8e79cb6e63e5d9d8746",
+    "python_src\\wavedispx\\classroom\\bundle_check.py": "a1748f5cc8623c7444636c3befed5ba6b08cc19873ea8800e96b4492ea9b4f31",
+    "python_src\\wavedispx\\classroom\\engine.py": "b4d9baa55ce51e08facedbcade31553f61c618ee575f933b9f1a3a5cf64f5b99",
+    "python_src\\wavedispx\\classroom\\help_text.py": "3bf6ee20443a34aa6f3d6ceabd07a7bd2dc4d8b7eed67d7ccefe37e94f60cb37",
+    "python_src\\wavedispx\\classroom\\plotting.py": "ce3897d5f98f8570018ef4bdc537feb4b841ed5fd95a4cc8065c22ba36b495fd",
+    "python_src\\wavedispx\\classroom\\qt_runtime.py": "ccc2cb6c22d4f46c9ee5d3873bf1fc8e7a410af55d03c56fc876da0fabc73419",
+    "python_src\\wavedispx\\classroom\\runtime.py": "c8c15c9223ff87de2ed716f18a001405e15d9aa88d4d954e54cb0995cad61f2e",
+    "python_src\\wavedispx\\classroom\\__init__.py": "ab72797e0f464fa97d693e530daa086684b3cf8c3771f41b14a4beb7c3c9f50f",
+    "packaging\\classroom\\native\\CMakeLists.txt": "78538830792d46fece36ccfaa5e7c4ea446d17a08d617ecbc808819fbea0af92",
+    "packaging\\classroom\\native\\windows_headers.hpp": "f2822c1fced56ba406adbb577f09842b8493bcc90becb0a763cb987d6baf19ed",
+    "cpp\\dwm_core.cpp": "a1cc47b283f79411782559ec834cedbc2593adc06afe624abf02303c3c96f7cc"
+  },
+  "font": {
+    "repository": "https://github.com/google/fonts",
+    "revision": "a85815a42757630ce188fdad368c2dfc444d4773",
+    "files": {
+      "NotoSansSC.ttf": {
+        "git_blob": "fb0637bafbcd804fe32152370a1225990745b4bc",
+        "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da"
+      },
+      "OFL.txt": {
+        "git_blob": "1c9f43281b8f216c5461fe9ac729afbade7724e4",
+        "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9"
+      }
+    }
+  }
+}

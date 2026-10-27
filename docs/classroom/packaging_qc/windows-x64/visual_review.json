@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "scope": "Native Windows Qt window; Chinese labels and numbers readable; model and curves side by side; full parameter controls visible at 1200x780",
+  "image": "docs/classroom/packaging_qc/windows-x64/smoke-output/compact_curves.png",
+  "image_sha256": "cb39af73089cbfb54643fddc001e576aeb1af62d4c0ae9e270a6f393ed5ac78a"
+}

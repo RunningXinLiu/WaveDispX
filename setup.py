@@ -1,5 +1,6 @@
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
+import sys
 
 
 extensions = [
@@ -7,7 +8,8 @@ extensions = [
         "wavedispx._dwm_core",
         ["cpp/dwm_core.cpp"],
         cxx_std=17,
-        extra_compile_args=["-O3"],
+        extra_compile_args=["/O2"] if sys.platform == "win32" else ["-O3"],
+        define_macros=[("_USE_MATH_DEFINES", "1")],
     )
 ]
 

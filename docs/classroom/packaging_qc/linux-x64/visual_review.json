@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "scope": "Visible Chinese labels; side-by-side model and dispersion; density on its own axis; no scrolling parameter panel at the inspected size",
+  "image": "docs/classroom/packaging_qc/linux-x64/smoke-output/love_ideal.png",
+  "image_sha256": "c5e5d332743c89205f63c032375ba2b10734186feb7cdd4297ca9483319ce71c"
+}

@@ -1,0 +1,48 @@
+{
+  "platform": "Linux-6.8.0-1064-azure-x86_64-with-glibc2.35",
+  "passed": true,
+  "checks": {
+    "ui_font": {
+      "family": "Noto Sans SC",
+      "glyph_coverage_passed": true
+    },
+    "qedisp": {
+      "max_error_mps": {
+        "rayleigh": 0.0,
+        "love": 0.0
+      },
+      "binaries": {
+        "qedisp": {
+          "path": "/tmp/classroom-relocated-8j7vsm_5/学生 软件/WaveDispX-Classroom/_internal/solvers/forward",
+          "sha256": "076f3180ce11a1475cdcc42eb54f9c769d0d917318f16ef4805aa7a08420c796"
+        }
+      }
+    },
+    "cps": {
+      "max_error_mps": {
+        "rayleigh": 0.0,
+        "love": 0.0
+      },
+      "binaries": {
+        "sprep96": {
+          "path": "/tmp/classroom-relocated-8j7vsm_5/学生 软件/WaveDispX-Classroom/_internal/solvers/sprep96",
+          "sha256": "70a3159e642ec460e399a455b6bf2bd900a70bd79af9192e99af62f562ccaf60"
+        },
+        "sdisp96": {
+          "path": "/tmp/classroom-relocated-8j7vsm_5/学生 软件/WaveDispX-Classroom/_internal/solvers/sdisp96",
+          "sha256": "44f92fa66901dbf09270ef9e7ff78fe0b5bf9ac351c6f88859ecd17163ca22b5"
+        },
+        "sdpsrf96": {
+          "path": "/tmp/classroom-relocated-8j7vsm_5/学生 软件/WaveDispX-Classroom/_internal/solvers/sdpsrf96",
+          "sha256": "92713d2a3ff9be55c26d3642ba0d37c4967a0844ed01666085aa32623d9595b4"
+        }
+      }
+    },
+    "ideal": {
+      "curves_unchanged": true,
+      "complex_response_matches": true
+    },
+    "unicode_temp_directory": true,
+    "frozen": true
+  }
+}

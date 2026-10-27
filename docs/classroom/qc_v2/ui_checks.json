@@ -1,0 +1,11 @@
+{
+  "phase": "cps",
+  "before_ideal": {
+    "rayleigh": "4d6c97a419829bdb8a32a9ddff9a48fb671df653dd38fc01373e19ebf51b6dfb",
+    "love": "090ac26e3a790d8af6b44e996752cbfed30c94d4716c9594bc21db601c58e2ad"
+  },
+  "after_ideal": {
+    "rayleigh": "4d6c97a419829bdb8a32a9ddff9a48fb671df653dd38fc01373e19ebf51b6dfb",
+    "love": "090ac26e3a790d8af6b44e996752cbfed30c94d4716c9594bc21db601c58e2ad"
+  }
+}

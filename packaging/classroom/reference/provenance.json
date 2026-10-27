@@ -1,0 +1,14 @@
+{
+  "sources_sha256": {
+    "docs/classroom/qc_v2/qedisp_ideal.zip": "ed48a4f8c21df20e136fcc86a62369d779cbebb05c0df808f03cd47d7d3d786e",
+    "docs/classroom/qc_v2/cps_curves.zip": "6b1dc3eff5c255819dd96e8ea1a6c82e4dfacd58f7cf65500762df2eef6750a6"
+  },
+  "purpose": "Packaging regression against existing v2 diagnostic, not independent physical validation",
+  "ideal_velocity_subset": "every eighth column; unchanged frequency grid; gamma=0.2 s^-1",
+  "tolerances": {
+    "curves_atol_mps": 0.002,
+    "curves_rtol": 2e-06,
+    "complex_response_rtol": 1e-07,
+    "complex_response_atol": 1e-18
+  }
+}
