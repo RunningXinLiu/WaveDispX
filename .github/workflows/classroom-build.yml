@@ -1,4 +1,4 @@
-name: Classroom private desktop candidates
+name: Classroom desktop builds
 on:
   workflow_dispatch:
     inputs:

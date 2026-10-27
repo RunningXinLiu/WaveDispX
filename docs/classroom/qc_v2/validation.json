@@ -1,0 +1,31 @@
+{
+  "qedisp_curves_equal_v1": true,
+  "cps_curves_equal_v1": true,
+  "ideal_raw_arrays_equal_v1": true,
+  "ui_checks": {
+    "phase": "cps",
+    "before_ideal": {
+      "rayleigh": "4d6c97a419829bdb8a32a9ddff9a48fb671df653dd38fc01373e19ebf51b6dfb",
+      "love": "090ac26e3a790d8af6b44e996752cbfed30c94d4716c9594bc21db601c58e2ad"
+    },
+    "after_ideal": {
+      "rayleigh": "4d6c97a419829bdb8a32a9ddff9a48fb671df653dd38fc01373e19ebf51b6dfb",
+      "love": "090ac26e3a790d8af6b44e996752cbfed30c94d4716c9594bc21db601c58e2ad"
+    }
+  },
+  "code_sha256": {
+    "python_src/wavedispx/classroom/help_text.py": "ec0d1e5e43de369e63ebea6190f5d880d2d0c92ce47dec08e36c9aefbd178197",
+    "python_src/wavedispx/classroom/plotting.py": "bcef5219aafad037ccec7aee79547dae65348bfaf2a6d09886af4954f91c16c5",
+    "python_src/wavedispx/classroom/__init__.py": "3e2eb4871c74a4770153f285fded9de57bec194728b81f5889cbb56a7213a596",
+    "python_src/wavedispx/classroom/engine.py": "896bcd2dd85fb04473ffd0f64cfcaea84afc91b637b81bd1944a5a77d5ffa35d",
+    "python_src/wavedispx/classroom/app.py": "5c8bf2d2ceec3dfe5b765b265b0e6f11c1224758e52d3691a31e4875ef769139",
+    "python_src/wavedispx/classroom/qt_runtime.py": "859f2c9c4ef22fb2dae0ead62742ef6d53fc7d36daff06c4b7f5e14b0daa9016",
+    "python_tests/test_classroom.py": "986c5240b41e7814d592b2155a567be6043d945271965853a1619b3b5c15ba16",
+    "scripts/check_classroom_ui.py": "7101628679ff9eddc71d54e3f56a736d53200159d3d78a402712d84b2dea1577"
+  },
+  "result_sha256": {
+    "docs/classroom/qc_v2/qedisp_curves.zip": "420e256db710bf961fd8aa32c262b6e4fa3bbb8eb8234752ae06c018f68fb59e",
+    "docs/classroom/qc_v2/qedisp_ideal.zip": "ed48a4f8c21df20e136fcc86a62369d779cbebb05c0df808f03cd47d7d3d786e",
+    "docs/classroom/qc_v2/cps_curves.zip": "6b1dc3eff5c255819dd96e8ea1a6c82e4dfacd58f7cf65500762df2eef6750a6"
+  }
+}

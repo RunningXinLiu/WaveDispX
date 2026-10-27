@@ -41,3 +41,8 @@ venv/
 /output/
 /output_python/
 /**/output/
+
+# Local application delivery copies; release provenance remains in docs/classroom.
+/classroom-delivery-20261027/
+
+/classroom-delivery-20261027.zip

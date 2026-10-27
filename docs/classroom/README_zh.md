@@ -2,7 +2,15 @@
 
 2026-10-27，单后端简洁界面版。PySide6 原生桌面；现有 WaveDispX 主动/被动工作台不变。
 
-## 启动
+## 学生安装与使用（已打包版）
+
+已有 Windows x64、Linux x64、Mac Apple 芯片和 Mac Intel 四种独立候选包，内置 Python 运行环境、QED、CPS 和中文字体。学生不需要安装 Conda、Python 或编译器。
+
+从 [Release 公开下载页](https://github.com/RunningXinLiu/WaveDispX/releases/tag/classroom-2026.10.27-rc1) 选择对应平台的软件包。请先看 [中文安装与使用说明](INSTALL_AND_USE_zh.md)；下载说明资料 ZIP 后，可在浏览器打开其中的离线 HTML。测试范围见 [打包验证记录](PACKAGING_VALIDATION_20261027_zh.md)。
+
+Windows 解压后双击 `WaveDispX-Classroom.exe`，保留整个目录；Mac 解压后打开 `.app`；Linux 解压后运行同名程序。主界面的 QED 文件、CPS 目录留空即可使用内置程序。
+
+## 开发者源码启动
 
 在项目根目录执行 `./scripts/launch_classroom.sh`，或：
 
@@ -11,10 +19,10 @@ PYTHONPATH=python_src conda run --no-capture-output -n seisloc python -m wavedis
 ```
 
 复用已有 seisloc、PySide6、Matplotlib、WaveDispX 编译核心、QEDispInv forward 和原生 CPS。
-本轮没有安装依赖。新机器须分别准备这些运行依赖和对应平台的原生二进制；这不是已打包的 Windows/macOS 安装包。
+只有运行源码时才需要分别准备这些依赖和对应平台的原生二进制；使用上面的独立包不需要此步骤。
 运行位置独立于物理参数：CPS 使用界面目录、`CPS_BIN` 或 `PATH`；QEDispInv 使用界面文件、
 `QEDISPINV_FORWARD` 或项目 `.wavedispx-tools/QEDispInv/bin/forward`。
-保留第三方源码、许可证和版本记录；未在本软件中复制第三方源码。
+打包所用第三方源码子集、原始声明和版本记录保存在 `packaging/classroom/vendor/`；正式分发的许可整理状态见打包验证记录。
 
 本机混装 Conda Qt 与 PySide6 wheel 时，应用为当前进程绑定 PySide6 自带插件目录，避免 QApplication 混载两套 Qt；不修改环境安装或系统 Qt。
 

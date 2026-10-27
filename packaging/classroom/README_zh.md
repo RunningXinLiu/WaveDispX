@@ -12,9 +12,9 @@
 - macOS arm64 / x64：分别构建 .app，以 tar.gz 保存权限和符号链接。
 - Linux x64：在 Ubuntu 22.04 构建，tar.gz 解压后运行 WaveDispX-Classroom。
 - 不承诺所有历史操作系统版本通用；目标机器还须满足所用 Qt/Python 的最低系统要求。Windows ARM、32 位系统、旧版 Linux 和旧版 macOS 不在本轮验证矩阵内。
-- 当前为私有候选包；未做 Windows 商业代码签名或 Apple 公证。干净虚拟构建机的测试不能代替每种学生机器的人工试用。
+- 当前为公开试用候选包；未做 Windows 商业代码签名或 Apple 公证。干净虚拟构建机的测试不能代替每种学生机器的人工试用。
 
-GitHub Actions 工作流为 `.github/workflows/classroom-build.yml`，仅在独立构建分支 push 或手动调用时执行。不开通公开 Release；候选包、截图、自检 JSON 和 SHA256 在私有 Actions artifact，保留 14 天。正式给学生发包前须另存到课程共享目录。
+GitHub Actions 工作流为 `.github/workflows/classroom-build.yml`，仅在独立构建分支 push 或手动调用时执行。学生软件下载入口为 [公开 Release](https://github.com/RunningXinLiu/WaveDispX/releases/tag/classroom-2026.10.27-rc1)。Actions artifact 只用于构建记录，保留 14 天，下载可能需要 GitHub 登录；不要把它作为长期学生下载入口。
 
 ## 验证门槛
 
@@ -28,7 +28,7 @@ GitHub Actions 工作流为 `.github/workflows/classroom-build.yml`，仅在独�
 
 `vendor/SOURCE_MANIFEST.json` 记录精确源文件 SHA256。QED 来源为本地既有固定版本，不更新远端 main；CPS 为本地既有源码子集。上游数值代码不修改，单独的 CMake 配方只负责构建及现有平台分支。
 
-当前 QED 根目录 LICENSE 与部分源码头的许可证表述存在差异，旧 CPS 源码也需要补齐对应版本的分发说明；不能用当前网页上的新版本许可证替代旧源码的授权记录。私有候选测试可以继续，正式学生分发前应明确所用版本的授权与随包源码/许可证要求，并包含 Python、Qt/PySide、数值库及编译器运行库的第三方声明。
+当前 QED 根目录 LICENSE 与部分源码头的许可证表述存在差异，旧 CPS 源码也需要补齐对应版本的分发说明；不能用当前网页上的新版本许可证替代旧源码的授权记录。公开试用版保留现有声明并提供对应源码；仍需核对版本授权记录及 Python、Qt/PySide、数值库和编译器运行库的完整分发要求。见 [第三方组件说明](THIRD_PARTY_zh.md)，不宣称许可审计已完成。
 
 ## 本机复现
 
