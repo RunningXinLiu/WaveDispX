@@ -1,0 +1,53 @@
+name: Publish verified Classroom 2026-10-27 packages
+on:
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: write
+concurrency:
+  group: classroom-2026-10-27-release-upload
+  cancel-in-progress: false
+jobs:
+  upload:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      # This one-time promotion uses existing, verified binaries; it never rebuilds.
+      # Historical Actions artifacts expire. Do not use this workflow for a new version.
+      - name: Require the intended draft release
+        run: |
+          test "$(gh release view classroom-2026.10.27-rc1 --json isDraft --jq .isDraft)" = true
+      - name: Download verified Windows candidate
+        run: gh run download 40496166313 --name classroom-windows-x64 --dir incoming/classroom-windows-x64
+      - name: Download verified Linux and Mac candidates
+        run: |
+          gh run download 40495293225 --name classroom-linux-x64 --name classroom-macos-arm64 --name classroom-macos-x64 --dir incoming
+      - name: Verify original SHA256 and upload to draft
+        shell: python
+        run: |
+          import hashlib
+          import subprocess
+          from pathlib import Path
+          expected = {
+              'WaveDispX-Classroom-windows-x64.zip': '27e2b485743a6a522993ab850f32390a105e551be31de783d903072e58b2e172',
+              'WaveDispX-Classroom-linux-x64.tar.gz': '118c49f450137c38d4b12d079bc401417f2f537e5be9e994762b60b15a8d8115',
+              'WaveDispX-Classroom-macos-arm64.tar.gz': '2b5676fb5ed73104e470e7d82e537a4684556e54258c18116ec8c732f9cab1f4',
+              'WaveDispX-Classroom-macos-x64.tar.gz': '125a8bf190d1aee810ff327eec171dfbfb8e1f85271f9dfdb0e400ad56927cbd',
+          }
+          files = []
+          for name, digest in expected.items():
+              matches = list(Path('incoming').rglob(name))
+              assert len(matches) == 1, (name, len(matches))
+              path = matches[0]
+              checksum = hashlib.sha256()
+              with path.open('rb') as source:
+                  for chunk in iter(lambda: source.read(1024 * 1024), b''):
+                      checksum.update(chunk)
+              actual = checksum.hexdigest()
+              assert actual == digest, (name, actual)
+              print(f'Verified: {name} sha256:{actual}', flush=True)
+              files.append(str(path))
+          subprocess.run(['gh', 'release', 'upload', 'classroom-2026.10.27-rc1', '--clobber', *files], check=True)
