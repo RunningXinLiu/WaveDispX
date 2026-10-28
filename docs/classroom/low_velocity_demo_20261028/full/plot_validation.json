@@ -1,0 +1,44 @@
+{
+  "source_sha256_before": "9f2b8b57937ef5641a62bba16df782c9d3436614ae4dbe682b8066eeacfde3aa",
+  "source_sha256_after": "9f2b8b57937ef5641a62bba16df782c9d3436614ae4dbe682b8066eeacfde3aa",
+  "frequency_extent_hz": [
+    1.0,
+    60.0
+  ],
+  "frequency_count": 153,
+  "velocity_extent_mps": [
+    0,
+    1200
+  ],
+  "model_unchanged": true,
+  "style_source": "python_src/wavedispx/classroom/plotting.py",
+  "stats": {
+    "qed": {
+      "positive_per_mode": [
+        153,
+        144,
+        138,
+        115
+      ],
+      "max_positive_mps": 1099.4548
+    },
+    "cps_default": {
+      "positive_per_mode": [
+        153,
+        144,
+        138,
+        115
+      ],
+      "max_positive_mps": 1099.454796
+    },
+    "surfdisp": {
+      "positive_per_mode": [
+        137,
+        115,
+        105,
+        98
+      ],
+      "max_positive_mps": 1098.9328622817993
+    }
+  }
+}

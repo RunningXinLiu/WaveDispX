@@ -1,0 +1,56 @@
+{
+  "completed_local_date": "2026-10-28",
+  "case_id": "three_backend_model_20261027",
+  "main_array_shape": [
+    151,
+    4
+  ],
+  "all_main_outputs_positive": true,
+  "independent_matching_confirmed": 302,
+  "independent_matching_max_root_difference_mps": 4.971893702077068e-05,
+  "independent_matching_max_relative_singular_value": 3.0914426548347575e-13,
+  "global_stiffness_confirmed": 301,
+  "global_stiffness_inconclusive": 1,
+  "stats": {
+    "cps_default": {
+      "m0_over20_count": 3,
+      "max_same_ordinal_difference_mps": [
+        94.5542893,
+        132.09925980000003,
+        208.04639100000003,
+        237.2658490999999
+      ]
+    },
+    "cps_fac20": {
+      "m0_over20_count": 1,
+      "max_same_ordinal_difference_mps": [
+        94.44451989999993,
+        131.84689020000002,
+        208.01911280000002,
+        237.22984019999996
+      ]
+    },
+    "surfdisp": {
+      "m0_over20_count": 151,
+      "max_same_ordinal_difference_mps": [
+        104.25404423713684,
+        152.93261623878482,
+        208.7161506263733,
+        241.64305761108403
+      ]
+    },
+    "cps_fac100": {
+      "m0_over20_count": 0,
+      "max_same_ordinal_difference_mps": [
+        5.050000004303001e-05,
+        5.360000005794063e-05,
+        5.03999999637017e-05,
+        4.950000004555477e-05
+      ]
+    }
+  },
+  "classroom_adapter_m0_mismatch_count": 3,
+  "gui_changed": false,
+  "energy_computed": false,
+  "released_packages_revalidated": false
+}

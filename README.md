@@ -70,6 +70,10 @@ ideal 图由 WaveDispX 层状介质刚度核独立计算：Rayleigh 使用单位
 
 可以从以下练习开始：改变覆盖层厚度观察频散变化；保持 Vp 和密度不变，只修改 Vs；增加计算模态数观察高阶截止；导入低速夹层，比较理论曲线与响应亮脊；用均匀半空间检查 Rayleigh 与 Love 的区别。
 
+## 低速夹层：后端差异教学案例
+
+新增 [四层低速夹层模型与实测结果](docs/classroom/low_velocity_demo_20261028/README.md)：可直接导入的 [teaching_model.csv](docs/classroom/low_velocity_demo_20261028/teaching_model.csv)、QED/CPS真实软件截图、QED/sdisp96/surfdisp96全频段对照与原始曲线。按说明设置1–60 Hz、355点、4个模态即可复现实测界面。示例同时保留默认搜索的漏根现象，以及加密sdisp96搜索后恢复结果的控制证据。
+
 ## 文档与开发
 
 | 内容 | 入口 |

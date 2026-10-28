@@ -1,0 +1,3934 @@
+{
+  "method": "P/SV wave-amplitude global matching: traction-free surface, displacement/traction continuity, decaying halfspace; no QED/CPS routines",
+  "scope": "local verification of 302 candidate roots; not a formal proof of exhaustive modal count",
+  "script_sha256": "bc9535a648c6e54e771fb639965477028e0e8edddb3d0b498771b4c9ab536814",
+  "all_passed": true,
+  "checks": [
+    {
+      "frequency_hz": 39.0,
+      "reported_mode": 0,
+      "qed_mps": 282.7475,
+      "bracket_mps": [
+        282.7425,
+        282.7525
+      ],
+      "root_mps": 282.7475216431399,
+      "relative_min_singular_value": 1.3815136197233795e-16,
+      "abs_difference_mps": 2.1643139916704968e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.0,
+      "reported_mode": 1,
+      "qed_mps": 284.8348,
+      "bracket_mps": [
+        284.8298,
+        284.83979999999997
+      ],
+      "root_mps": 284.83478615484125,
+      "relative_min_singular_value": 1.7189948495675138e-16,
+      "abs_difference_mps": 1.3845158719050232e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.016666412353516,
+      "reported_mode": 0,
+      "qed_mps": 282.7459,
+      "bracket_mps": [
+        282.7409,
+        282.7509
+      ],
+      "root_mps": 282.74589161607844,
+      "relative_min_singular_value": 5.201057959254715e-17,
+      "abs_difference_mps": 8.383921567656216e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.016666412353516,
+      "reported_mode": 1,
+      "qed_mps": 284.8047,
+      "bracket_mps": [
+        284.79970000000003,
+        284.8097
+      ],
+      "root_mps": 284.8047479090665,
+      "relative_min_singular_value": 1.0302690888563308e-16,
+      "abs_difference_mps": 4.7909066495321895e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.03333282470703,
+      "reported_mode": 0,
+      "qed_mps": 282.7443,
+      "bracket_mps": [
+        282.7393,
+        282.7493
+      ],
+      "root_mps": 282.74426605535194,
+      "relative_min_singular_value": 8.425276042179961e-17,
+      "abs_difference_mps": 3.394464806660835e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.03333282470703,
+      "reported_mode": 1,
+      "qed_mps": 284.77479999999997,
+      "bracket_mps": [
+        284.7698,
+        284.77979999999997
+      ],
+      "root_mps": 284.7747670282659,
+      "relative_min_singular_value": 8.590154519361502e-17,
+      "abs_difference_mps": 3.297173407190712e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.04999923706055,
+      "reported_mode": 0,
+      "qed_mps": 282.74260000000004,
+      "bracket_mps": [
+        282.73760000000004,
+        282.74760000000003
+      ],
+      "root_mps": 282.7426449480485,
+      "relative_min_singular_value": 1.2459417359602627e-16,
+      "abs_difference_mps": 4.4948048468995694e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.04999923706055,
+      "reported_mode": 1,
+      "qed_mps": 284.7448,
+      "bracket_mps": [
+        284.7398,
+        284.7498
+      ],
+      "root_mps": 284.74484335900524,
+      "relative_min_singular_value": 3.4067737391642315e-16,
+      "abs_difference_mps": 4.3359005246657034e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.06666564941406,
+      "reported_mode": 0,
+      "qed_mps": 282.74100000000004,
+      "bracket_mps": [
+        282.73600000000005,
+        282.74600000000004
+      ],
+      "root_mps": 282.7410282812967,
+      "relative_min_singular_value": 4.085841324067862e-17,
+      "abs_difference_mps": 2.8281296636123443e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.06666564941406,
+      "reported_mode": 1,
+      "qed_mps": 284.715,
+      "bracket_mps": [
+        284.71,
+        284.71999999999997
+      ],
+      "root_mps": 284.71497674838736,
+      "relative_min_singular_value": 6.585464773024411e-17,
+      "abs_difference_mps": 2.3251612617514184e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.08333206176758,
+      "reported_mode": 0,
+      "qed_mps": 282.7394,
+      "bracket_mps": [
+        282.7344,
+        282.7444
+      ],
+      "root_mps": 282.7394160422649,
+      "relative_min_singular_value": 6.408860970505592e-17,
+      "abs_difference_mps": 1.6042264917359716e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.08333206176758,
+      "reported_mode": 1,
+      "qed_mps": 284.6852,
+      "bracket_mps": [
+        284.6802,
+        284.6902
+      ],
+      "root_mps": 284.68516704404954,
+      "relative_min_singular_value": 1.8711342610595555e-16,
+      "abs_difference_mps": 3.295595047347888e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.099998474121094,
+      "reported_mode": 0,
+      "qed_mps": 282.7378,
+      "bracket_mps": [
+        282.7328,
+        282.7428
+      ],
+      "root_mps": 282.7378082181619,
+      "relative_min_singular_value": 7.277177075411677e-17,
+      "abs_difference_mps": 8.218161895001685e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.099998474121094,
+      "reported_mode": 1,
+      "qed_mps": 284.6554,
+      "bracket_mps": [
+        284.6504,
+        284.6604
+      ],
+      "root_mps": 284.6554140941612,
+      "relative_min_singular_value": 1.0728338864683994e-16,
+      "abs_difference_mps": 1.4094161201683164e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.11666488647461,
+      "reported_mode": 0,
+      "qed_mps": 282.7362,
+      "bracket_mps": [
+        282.7312,
+        282.7412
+      ],
+      "root_mps": 282.73620479623605,
+      "relative_min_singular_value": 1.0013957528570125e-17,
+      "abs_difference_mps": 4.7962360554265615e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.11666488647461,
+      "reported_mode": 1,
+      "qed_mps": 284.6257,
+      "bracket_mps": [
+        284.6207,
+        284.6307
+      ],
+      "root_mps": 284.62571774742185,
+      "relative_min_singular_value": 5.204162198971668e-16,
+      "abs_difference_mps": 1.7747421850344836e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.13333511352539,
+      "reported_mode": 0,
+      "qed_mps": 282.7346,
+      "bracket_mps": [
+        282.7296,
+        282.7396
+      ],
+      "root_mps": 282.7346053982821,
+      "relative_min_singular_value": 1.4934798091417212e-16,
+      "abs_difference_mps": 5.398282098667551e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.13333511352539,
+      "reported_mode": 1,
+      "qed_mps": 284.59610000000004,
+      "bracket_mps": [
+        284.59110000000004,
+        284.60110000000003
+      ],
+      "root_mps": 284.5960710753718,
+      "relative_min_singular_value": 2.0518352385952633e-16,
+      "abs_difference_mps": 2.8924628225013294e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.150001525878906,
+      "reported_mode": 0,
+      "qed_mps": 282.733,
+      "bracket_mps": [
+        282.728,
+        282.738
+      ],
+      "root_mps": 282.73301074361547,
+      "relative_min_singular_value": 1.213041359864106e-16,
+      "abs_difference_mps": 1.074361546216096e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.150001525878906,
+      "reported_mode": 1,
+      "qed_mps": 284.5665,
+      "bracket_mps": [
+        284.5615,
+        284.5715
+      ],
+      "root_mps": 284.5664874960059,
+      "relative_min_singular_value": 2.692855312322767e-16,
+      "abs_difference_mps": 1.2503994128110207e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.16666793823242,
+      "reported_mode": 0,
+      "qed_mps": 282.7314,
+      "bracket_mps": [
+        282.7264,
+        282.7364
+      ],
+      "root_mps": 282.7314204531067,
+      "relative_min_singular_value": 9.772511850291808e-17,
+      "abs_difference_mps": 2.0453106685636158e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.16666793823242,
+      "reported_mode": 1,
+      "qed_mps": 284.537,
+      "bracket_mps": [
+        284.532,
+        284.542
+      ],
+      "root_mps": 284.53696006900884,
+      "relative_min_singular_value": 8.98969924333337e-17,
+      "abs_difference_mps": 3.9930991135861404e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.18333435058594,
+      "reported_mode": 0,
+      "qed_mps": 282.72979999999995,
+      "bracket_mps": [
+        282.72479999999996,
+        282.73479999999995
+      ],
+      "root_mps": 282.7298345141626,
+      "relative_min_singular_value": 1.503148266498721e-16,
+      "abs_difference_mps": 3.45141626212353e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.18333435058594,
+      "reported_mode": 1,
+      "qed_mps": 284.50750000000005,
+      "bracket_mps": [
+        284.50250000000005,
+        284.51250000000005
+      ],
+      "root_mps": 284.50748864517675,
+      "relative_min_singular_value": 3.6211911016326588e-16,
+      "abs_difference_mps": 1.1354823300280259e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.20000076293945,
+      "reported_mode": 0,
+      "qed_mps": 282.7283,
+      "bracket_mps": [
+        282.7233,
+        282.7333
+      ],
+      "root_mps": 282.7282529142289,
+      "relative_min_singular_value": 2.4662884583998786e-16,
+      "abs_difference_mps": 4.708577108658574e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.20000076293945,
+      "reported_mode": 1,
+      "qed_mps": 284.4781,
+      "bracket_mps": [
+        284.4731,
+        284.4831
+      ],
+      "root_mps": 284.47807307582417,
+      "relative_min_singular_value": 1.1631475161851666e-16,
+      "abs_difference_mps": 2.6924175813292095e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.21666717529297,
+      "reported_mode": 0,
+      "qed_mps": 282.7267,
+      "bracket_mps": [
+        282.7217,
+        282.7317
+      ],
+      "root_mps": 282.72667564079086,
+      "relative_min_singular_value": 8.0614359156456e-17,
+      "abs_difference_mps": 2.4359209135127458e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.21666717529297,
+      "reported_mode": 1,
+      "qed_mps": 284.4487,
+      "bracket_mps": [
+        284.4437,
+        284.45369999999997
+      ],
+      "root_mps": 284.4487132127815,
+      "relative_min_singular_value": 6.775254278201403e-17,
+      "abs_difference_mps": 1.3212781539095886e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.233333587646484,
+      "reported_mode": 0,
+      "qed_mps": 282.7251,
+      "bracket_mps": [
+        282.7201,
+        282.7301
+      ],
+      "root_mps": 282.7251026813724,
+      "relative_min_singular_value": 5.2487635506196917e-17,
+      "abs_difference_mps": 2.6813723934537848e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.233333587646484,
+      "reported_mode": 1,
+      "qed_mps": 284.4194,
+      "bracket_mps": [
+        284.4144,
+        284.4244
+      ],
+      "root_mps": 284.41940890839345,
+      "relative_min_singular_value": 1.9729406460471805e-16,
+      "abs_difference_mps": 8.90839345402128e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.25,
+      "reported_mode": 0,
+      "qed_mps": 282.7235,
+      "bracket_mps": [
+        282.7185,
+        282.7285
+      ],
+      "root_mps": 282.7235340235362,
+      "relative_min_singular_value": 8.04840380020541e-17,
+      "abs_difference_mps": 3.4023536215954664e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.25,
+      "reported_mode": 1,
+      "qed_mps": 284.3902,
+      "bracket_mps": [
+        284.3852,
+        284.3952
+      ],
+      "root_mps": 284.3901600155162,
+      "relative_min_singular_value": 6.189730983111443e-17,
+      "abs_difference_mps": 3.9984483805710624e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.266666412353516,
+      "reported_mode": 0,
+      "qed_mps": 282.722,
+      "bracket_mps": [
+        282.717,
+        282.727
+      ],
+      "root_mps": 282.7219696548839,
+      "relative_min_singular_value": 8.480613435165776e-17,
+      "abs_difference_mps": 3.034511610167101e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.266666412353516,
+      "reported_mode": 1,
+      "qed_mps": 284.361,
+      "bracket_mps": [
+        284.356,
+        284.366
+      ],
+      "root_mps": 284.3609663875157,
+      "relative_min_singular_value": 1.2871033412682667e-16,
+      "abs_difference_mps": 3.3612484287459665e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.28333282470703,
+      "reported_mode": 0,
+      "qed_mps": 282.7204,
+      "bracket_mps": [
+        282.7154,
+        282.7254
+      ],
+      "root_mps": 282.72040956305534,
+      "relative_min_singular_value": 4.0640949028889504e-17,
+      "abs_difference_mps": 9.56305535737556e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.28333282470703,
+      "reported_mode": 1,
+      "qed_mps": 284.33180000000004,
+      "bracket_mps": [
+        284.32680000000005,
+        284.33680000000004
+      ],
+      "root_mps": 284.3318278782649,
+      "relative_min_singular_value": 2.7858055691466825e-16,
+      "abs_difference_mps": 2.7878264859282353e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.29999923706055,
+      "reported_mode": 0,
+      "qed_mps": 282.7189,
+      "bracket_mps": [
+        282.7139,
+        282.7239
+      ],
+      "root_mps": 282.718853735729,
+      "relative_min_singular_value": 4.6261959362109055e-17,
+      "abs_difference_mps": 4.626427102039088e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.29999923706055,
+      "reported_mode": 1,
+      "qed_mps": 284.3027,
+      "bracket_mps": [
+        284.2977,
+        284.3077
+      ],
+      "root_mps": 284.3027443421421,
+      "relative_min_singular_value": 2.1677912500478067e-16,
+      "abs_difference_mps": 4.434214207549303e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.31666564941406,
+      "reported_mode": 0,
+      "qed_mps": 282.7173,
+      "bracket_mps": [
+        282.7123,
+        282.7223
+      ],
+      "root_mps": 282.7173021606217,
+      "relative_min_singular_value": 9.344908565596638e-17,
+      "abs_difference_mps": 2.1606217046610254e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.31666564941406,
+      "reported_mode": 1,
+      "qed_mps": 284.2737,
+      "bracket_mps": [
+        284.2687,
+        284.2787
+      ],
+      "root_mps": 284.27371563402846,
+      "relative_min_singular_value": 1.8953225955264754e-16,
+      "abs_difference_mps": 1.5634028443400894e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.33333206176758,
+      "reported_mode": 0,
+      "qed_mps": 282.7158,
+      "bracket_mps": [
+        282.7108,
+        282.7208
+      ],
+      "root_mps": 282.71575482548815,
+      "relative_min_singular_value": 6.347580117174144e-17,
+      "abs_difference_mps": 4.517451185392929e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.33333206176758,
+      "reported_mode": 1,
+      "qed_mps": 284.2447,
+      "bracket_mps": [
+        284.2397,
+        284.2497
+      ],
+      "root_mps": 284.24474160930583,
+      "relative_min_singular_value": 5.641978411572151e-17,
+      "abs_difference_mps": 4.1609305810652586e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.349998474121094,
+      "reported_mode": 0,
+      "qed_mps": 282.7142,
+      "bracket_mps": [
+        282.7092,
+        282.7192
+      ],
+      "root_mps": 282.7142117181213,
+      "relative_min_singular_value": 4.5443964232645027e-17,
+      "abs_difference_mps": 1.1718121299963968e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.349998474121094,
+      "reported_mode": 1,
+      "qed_mps": 284.2158,
+      "bracket_mps": [
+        284.2108,
+        284.2208
+      ],
+      "root_mps": 284.21582212385476,
+      "relative_min_singular_value": 2.799787919749149e-16,
+      "abs_difference_mps": 2.212385476241252e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.36666488647461,
+      "reported_mode": 0,
+      "qed_mps": 282.7127,
+      "bracket_mps": [
+        282.7077,
+        282.7177
+      ],
+      "root_mps": 282.7126728263519,
+      "relative_min_singular_value": 1.8387344447468896e-16,
+      "abs_difference_mps": 2.717364810678191e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.36666488647461,
+      "reported_mode": 1,
+      "qed_mps": 284.187,
+      "bracket_mps": [
+        284.182,
+        284.192
+      ],
+      "root_mps": 284.1869570340522,
+      "relative_min_singular_value": 3.345878997306292e-16,
+      "abs_difference_mps": 4.296594778452345e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.38333511352539,
+      "reported_mode": 0,
+      "qed_mps": 282.7111,
+      "bracket_mps": [
+        282.7061,
+        282.7161
+      ],
+      "root_mps": 282.711137787261,
+      "relative_min_singular_value": 7.31359494938759e-17,
+      "abs_difference_mps": 3.778726102154906e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.38333511352539,
+      "reported_mode": 1,
+      "qed_mps": 284.15810000000005,
+      "bracket_mps": [
+        284.15310000000005,
+        284.16310000000004
+      ],
+      "root_mps": 284.15813960859083,
+      "relative_min_singular_value": 1.436735302433704e-16,
+      "abs_difference_mps": 3.960859078233625e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.400001525878906,
+      "reported_mode": 0,
+      "qed_mps": 282.7096,
+      "bracket_mps": [
+        282.7046,
+        282.7146
+      ],
+      "root_mps": 282.70960729128774,
+      "relative_min_singular_value": 4.020343219387614e-17,
+      "abs_difference_mps": 7.291287715815997e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.400001525878906,
+      "reported_mode": 1,
+      "qed_mps": 284.1294,
+      "bracket_mps": [
+        284.1244,
+        284.13439999999997
+      ],
+      "root_mps": 284.1293828935601,
+      "relative_min_singular_value": 2.3753706963012304e-16,
+      "abs_difference_mps": 1.7106439884173597e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.41666793823242,
+      "reported_mode": 0,
+      "qed_mps": 282.7081,
+      "bracket_mps": [
+        282.7031,
+        282.7131
+      ],
+      "root_mps": 282.7080809746274,
+      "relative_min_singular_value": 8.787762444922516e-17,
+      "abs_difference_mps": 1.9025372580472322e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.41666793823242,
+      "reported_mode": 1,
+      "qed_mps": 284.10069999999996,
+      "bracket_mps": [
+        284.09569999999997,
+        284.10569999999996
+      ],
+      "root_mps": 284.1006801462337,
+      "relative_min_singular_value": 4.2482162156625273e-17,
+      "abs_difference_mps": 1.9853766275446105e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.43333435058594,
+      "reported_mode": 0,
+      "qed_mps": 282.7066,
+      "bracket_mps": [
+        282.7016,
+        282.7116
+      ],
+      "root_mps": 282.7065588252612,
+      "relative_min_singular_value": 1.3970019909778557e-16,
+      "abs_difference_mps": 4.117473878295641e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.43333435058594,
+      "reported_mode": 1,
+      "qed_mps": 284.072,
+      "bracket_mps": [
+        284.067,
+        284.077
+      ],
+      "root_mps": 284.0720312249533,
+      "relative_min_singular_value": 6.951720848235174e-17,
+      "abs_difference_mps": 3.12249533180875e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.45000076293945,
+      "reported_mode": 0,
+      "qed_mps": 282.705,
+      "bracket_mps": [
+        282.7,
+        282.71
+      ],
+      "root_mps": 282.7050408312074,
+      "relative_min_singular_value": 1.4114576641960922e-16,
+      "abs_difference_mps": 4.083120740006052e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.45000076293945,
+      "reported_mode": 1,
+      "qed_mps": 284.0434,
+      "bracket_mps": [
+        284.0384,
+        284.0484
+      ],
+      "root_mps": 284.04343598854655,
+      "relative_min_singular_value": 2.2993364807815907e-17,
+      "abs_difference_mps": 3.598854652864247e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.46666717529297,
+      "reported_mode": 0,
+      "qed_mps": 282.7035,
+      "bracket_mps": [
+        282.6985,
+        282.7085
+      ],
+      "root_mps": 282.7035269805213,
+      "relative_min_singular_value": 4.9123952829980604e-17,
+      "abs_difference_mps": 2.6980521283803682e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.46666717529297,
+      "reported_mode": 1,
+      "qed_mps": 284.0149,
+      "bracket_mps": [
+        284.0099,
+        284.0199
+      ],
+      "root_mps": 284.0148942963247,
+      "relative_min_singular_value": 7.570376022426815e-16,
+      "abs_difference_mps": 5.703675299173483e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.483333587646484,
+      "reported_mode": 0,
+      "qed_mps": 282.702,
+      "bracket_mps": [
+        282.697,
+        282.707
+      ],
+      "root_mps": 282.7020172612954,
+      "relative_min_singular_value": 2.672493556952473e-16,
+      "abs_difference_mps": 1.7261295397474896e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.483333587646484,
+      "reported_mode": 1,
+      "qed_mps": 283.9864,
+      "bracket_mps": [
+        283.9814,
+        283.9914
+      ],
+      "root_mps": 283.98640600808096,
+      "relative_min_singular_value": 2.2344494685831646e-16,
+      "abs_difference_mps": 6.0080809589635464e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.5,
+      "reported_mode": 0,
+      "qed_mps": 282.70050000000003,
+      "bracket_mps": [
+        282.69550000000004,
+        282.70550000000003
+      ],
+      "root_mps": 282.700511661659,
+      "relative_min_singular_value": 3.2921276298913646e-17,
+      "abs_difference_mps": 1.1661658959383203e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.5,
+      "reported_mode": 1,
+      "qed_mps": 283.95799999999997,
+      "bracket_mps": [
+        283.953,
+        283.96299999999997
+      ],
+      "root_mps": 283.957970984088,
+      "relative_min_singular_value": 2.69712118166251e-16,
+      "abs_difference_mps": 2.9015911991336907e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.516666412353516,
+      "reported_mode": 0,
+      "qed_mps": 282.69899999999996,
+      "bracket_mps": [
+        282.69399999999996,
+        282.70399999999995
+      ],
+      "root_mps": 282.6990101697779,
+      "relative_min_singular_value": 3.2659309356335814e-17,
+      "abs_difference_mps": 1.0169777965529647e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.516666412353516,
+      "reported_mode": 1,
+      "qed_mps": 283.9296,
+      "bracket_mps": [
+        283.9246,
+        283.9346
+      ],
+      "root_mps": 283.92958908509627,
+      "relative_min_singular_value": 2.2098653294375208e-16,
+      "abs_difference_mps": 1.0914903725733893e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.53333282470703,
+      "reported_mode": 0,
+      "qed_mps": 282.6975,
+      "bracket_mps": [
+        282.6925,
+        282.7025
+      ],
+      "root_mps": 282.697512773855,
+      "relative_min_singular_value": 8.651835248562185e-17,
+      "abs_difference_mps": 1.2773855019077018e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.53333282470703,
+      "reported_mode": 1,
+      "qed_mps": 283.90130000000005,
+      "bracket_mps": [
+        283.89630000000005,
+        283.90630000000004
+      ],
+      "root_mps": 283.90126017233166,
+      "relative_min_singular_value": 2.950317496899415e-16,
+      "abs_difference_mps": 3.982766838817042e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.54999923706055,
+      "reported_mode": 0,
+      "qed_mps": 282.696,
+      "bracket_mps": [
+        282.69100000000003,
+        282.701
+      ],
+      "root_mps": 282.6960194621292,
+      "relative_min_singular_value": 2.2802670201555794e-16,
+      "abs_difference_mps": 1.9462129159819597e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.54999923706055,
+      "reported_mode": 1,
+      "qed_mps": 283.873,
+      "bracket_mps": [
+        283.868,
+        283.878
+      ],
+      "root_mps": 283.87298410749383,
+      "relative_min_singular_value": 3.097822173531954e-16,
+      "abs_difference_mps": 1.5892506155523733e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.56666564941406,
+      "reported_mode": 0,
+      "qed_mps": 282.6945,
+      "bracket_mps": [
+        282.6895,
+        282.6995
+      ],
+      "root_mps": 282.694530222876,
+      "relative_min_singular_value": 5.635875014906029e-17,
+      "abs_difference_mps": 3.022287597786999e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.56666564941406,
+      "reported_mode": 1,
+      "qed_mps": 283.8448,
+      "bracket_mps": [
+        283.8398,
+        283.8498
+      ],
+      "root_mps": 283.84476075275387,
+      "relative_min_singular_value": 1.6095002468763093e-16,
+      "abs_difference_mps": 3.9247246149898274e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.58333206176758,
+      "reported_mode": 0,
+      "qed_mps": 282.69300000000004,
+      "bracket_mps": [
+        282.68800000000005,
+        282.69800000000004
+      ],
+      "root_mps": 282.69304504440714,
+      "relative_min_singular_value": 9.581716814875476e-17,
+      "abs_difference_mps": 4.504440710206836e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.58333206176758,
+      "reported_mode": 1,
+      "qed_mps": 283.8166,
+      "bracket_mps": [
+        283.8116,
+        283.8216
+      ],
+      "root_mps": 283.8165899707524,
+      "relative_min_singular_value": 5.666542274572034e-16,
+      "abs_difference_mps": 1.0029247619058879e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.599998474121094,
+      "reported_mode": 0,
+      "qed_mps": 282.6916,
+      "bracket_mps": [
+        282.6866,
+        282.6966
+      ],
+      "root_mps": 282.69156391507045,
+      "relative_min_singular_value": 1.707146100646303e-16,
+      "abs_difference_mps": 3.608492954754183e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.599998474121094,
+      "reported_mode": 1,
+      "qed_mps": 283.7885,
+      "bracket_mps": [
+        283.7835,
+        283.7935
+      ],
+      "root_mps": 283.78847162459755,
+      "relative_min_singular_value": 5.277837134491344e-17,
+      "abs_difference_mps": 2.837540245081982e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.61666488647461,
+      "reported_mode": 0,
+      "qed_mps": 282.6901,
+      "bracket_mps": [
+        282.6851,
+        282.69509999999997
+      ],
+      "root_mps": 282.6900868232497,
+      "relative_min_singular_value": 8.495611744153954e-17,
+      "abs_difference_mps": 1.3176750258026004e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.61666488647461,
+      "reported_mode": 1,
+      "qed_mps": 283.7604,
+      "bracket_mps": [
+        283.7554,
+        283.7654
+      ],
+      "root_mps": 283.7604055778631,
+      "relative_min_singular_value": 4.852388332747569e-16,
+      "abs_difference_mps": 5.57786307808783e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.63333511352539,
+      "reported_mode": 0,
+      "qed_mps": 282.6886,
+      "bracket_mps": [
+        282.6836,
+        282.6936
+      ],
+      "root_mps": 282.6886134206614,
+      "relative_min_singular_value": 2.9948091550420084e-17,
+      "abs_difference_mps": 1.3420661389318411e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.63333511352539,
+      "reported_mode": 1,
+      "qed_mps": 283.7324,
+      "bracket_mps": [
+        283.7274,
+        283.7374
+      ],
+      "root_mps": 283.73238528858025,
+      "relative_min_singular_value": 2.6566917887564577e-17,
+      "abs_difference_mps": 1.4711419737523102e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.650001525878906,
+      "reported_mode": 0,
+      "qed_mps": 282.68710000000004,
+      "bracket_mps": [
+        282.68210000000005,
+        282.69210000000004
+      ],
+      "root_mps": 282.6871443700851,
+      "relative_min_singular_value": 1.8869559811243613e-16,
+      "abs_difference_mps": 4.437008504964979e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.650001525878906,
+      "reported_mode": 1,
+      "qed_mps": 283.7044,
+      "bracket_mps": [
+        283.6994,
+        283.7094
+      ],
+      "root_mps": 283.7044234451531,
+      "relative_min_singular_value": 1.4279755213717553e-16,
+      "abs_difference_mps": 2.3445153090051463e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.66666793823242,
+      "reported_mode": 0,
+      "qed_mps": 282.6857,
+      "bracket_mps": [
+        282.6807,
+        282.6907
+      ],
+      "root_mps": 282.6856793223881,
+      "relative_min_singular_value": 5.9172717096553e-17,
+      "abs_difference_mps": 2.0677611871633417e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.66666793823242,
+      "reported_mode": 1,
+      "qed_mps": 283.6765,
+      "bracket_mps": [
+        283.6715,
+        283.68149999999997
+      ],
+      "root_mps": 283.67651349461033,
+      "relative_min_singular_value": 4.890348495570672e-16,
+      "abs_difference_mps": 1.3494610357156489e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.68333435058594,
+      "reported_mode": 0,
+      "qed_mps": 282.6842,
+      "bracket_mps": [
+        282.6792,
+        282.68919999999997
+      ],
+      "root_mps": 282.68421826609733,
+      "relative_min_singular_value": 6.46553655246378e-17,
+      "abs_difference_mps": 1.8266097356445243e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.68333435058594,
+      "reported_mode": 1,
+      "qed_mps": 283.64869999999996,
+      "bracket_mps": [
+        283.64369999999997,
+        283.65369999999996
+      ],
+      "root_mps": 283.6486553023684,
+      "relative_min_singular_value": 4.2523247999154997e-16,
+      "abs_difference_mps": 4.469763155157125e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.70000076293945,
+      "reported_mode": 0,
+      "qed_mps": 282.6828,
+      "bracket_mps": [
+        282.6778,
+        282.6878
+      ],
+      "root_mps": 282.68276118977457,
+      "relative_min_singular_value": 1.4777189026331362e-16,
+      "abs_difference_mps": 3.881022541918355e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.70000076293945,
+      "reported_mode": 1,
+      "qed_mps": 283.62080000000003,
+      "bracket_mps": [
+        283.61580000000004,
+        283.6258
+      ],
+      "root_mps": 283.6208487342995,
+      "relative_min_singular_value": 1.0499536977618168e-15,
+      "abs_difference_mps": 4.873429946883334e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.71666717529297,
+      "reported_mode": 0,
+      "qed_mps": 282.6813,
+      "bracket_mps": [
+        282.6763,
+        282.6863
+      ],
+      "root_mps": 282.68130808201727,
+      "relative_min_singular_value": 8.733833543879496e-17,
+      "abs_difference_mps": 8.082017245669704e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.71666717529297,
+      "reported_mode": 1,
+      "qed_mps": 283.5931,
+      "bracket_mps": [
+        283.5881,
+        283.5981
+      ],
+      "root_mps": 283.59309365672937,
+      "relative_min_singular_value": 1.0300830086683478e-15,
+      "abs_difference_mps": 6.343270626985031e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.733333587646484,
+      "reported_mode": 0,
+      "qed_mps": 282.6799,
+      "bracket_mps": [
+        282.6749,
+        282.68489999999997
+      ],
+      "root_mps": 282.6798589314573,
+      "relative_min_singular_value": 1.3935668692704568e-16,
+      "abs_difference_mps": 4.1068542657285434e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.733333587646484,
+      "reported_mode": 1,
+      "qed_mps": 283.5654,
+      "bracket_mps": [
+        283.5604,
+        283.5704
+      ],
+      "root_mps": 283.5653899364364,
+      "relative_min_singular_value": 8.36630284105475e-16,
+      "abs_difference_mps": 1.0063563593121216e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.75,
+      "reported_mode": 0,
+      "qed_mps": 282.6784,
+      "bracket_mps": [
+        282.6734,
+        282.6834
+      ],
+      "root_mps": 282.6784137267627,
+      "relative_min_singular_value": 8.139719367642506e-17,
+      "abs_difference_mps": 1.3726762688293093e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.75,
+      "reported_mode": 1,
+      "qed_mps": 283.53770000000003,
+      "bracket_mps": [
+        283.53270000000003,
+        283.5427
+      ],
+      "root_mps": 283.5377374406486,
+      "relative_min_singular_value": 1.2983304916683178e-15,
+      "abs_difference_mps": 3.7440648554820655e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.766666412353516,
+      "reported_mode": 0,
+      "qed_mps": 282.677,
+      "bracket_mps": [
+        282.672,
+        282.682
+      ],
+      "root_mps": 282.6769724566354,
+      "relative_min_singular_value": 3.2134256644521605e-16,
+      "abs_difference_mps": 2.7543364637949708e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.766666412353516,
+      "reported_mode": 1,
+      "qed_mps": 283.51009999999997,
+      "bracket_mps": [
+        283.50509999999997,
+        283.51509999999996
+      ],
+      "root_mps": 283.5101360370417,
+      "relative_min_singular_value": 1.3943745926629372e-15,
+      "abs_difference_mps": 3.6037041752479126e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.78333282470703,
+      "reported_mode": 0,
+      "qed_mps": 282.6755,
+      "bracket_mps": [
+        282.6705,
+        282.6805
+      ],
+      "root_mps": 282.6755351098123,
+      "relative_min_singular_value": 2.2711565975799e-16,
+      "abs_difference_mps": 3.510981230192556e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.78333282470703,
+      "reported_mode": 1,
+      "qed_mps": 283.4826,
+      "bracket_mps": [
+        283.4776,
+        283.4876
+      ],
+      "root_mps": 283.4825855937382,
+      "relative_min_singular_value": 1.6186003398452677e-15,
+      "abs_difference_mps": 1.4406261811927834e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.79999923706055,
+      "reported_mode": 0,
+      "qed_mps": 282.6741,
+      "bracket_mps": [
+        282.6691,
+        282.6791
+      ],
+      "root_mps": 282.6741016750654,
+      "relative_min_singular_value": 1.388884200652515e-16,
+      "abs_difference_mps": 1.67506539128226e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.79999923706055,
+      "reported_mode": 1,
+      "qed_mps": 283.4551,
+      "bracket_mps": [
+        283.4501,
+        283.4601
+      ],
+      "root_mps": 283.45508597930507,
+      "relative_min_singular_value": 2.1641075398819186e-15,
+      "abs_difference_mps": 1.4020694948158052e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.81666564941406,
+      "reported_mode": 0,
+      "qed_mps": 282.6727,
+      "bracket_mps": [
+        282.6677,
+        282.6777
+      ],
+      "root_mps": 282.6726721412009,
+      "relative_min_singular_value": 4.609808965345885e-16,
+      "abs_difference_mps": 2.7858799114710564e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.81666564941406,
+      "reported_mode": 1,
+      "qed_mps": 283.4276,
+      "bracket_mps": [
+        283.4226,
+        283.4326
+      ],
+      "root_mps": 283.4276370627519,
+      "relative_min_singular_value": 1.996809965961072e-15,
+      "abs_difference_mps": 3.7062751914618275e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.83333206176758,
+      "reported_mode": 0,
+      "qed_mps": 282.6712,
+      "bracket_mps": [
+        282.6662,
+        282.6762
+      ],
+      "root_mps": 282.6712464970594,
+      "relative_min_singular_value": 1.3046915522872922e-16,
+      "abs_difference_mps": 4.6497059429384535e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.83333206176758,
+      "reported_mode": 1,
+      "qed_mps": 283.4002,
+      "bracket_mps": [
+        283.3952,
+        283.4052
+      ],
+      "root_mps": 283.4002387135279,
+      "relative_min_singular_value": 2.333944500516126e-15,
+      "abs_difference_mps": 3.8713527942491055e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.849998474121094,
+      "reported_mode": 0,
+      "qed_mps": 282.6698,
+      "bracket_mps": [
+        282.6648,
+        282.6748
+      ],
+      "root_mps": 282.66982473151614,
+      "relative_min_singular_value": 5.839308634557774e-16,
+      "abs_difference_mps": 2.473151613457958e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.849998474121094,
+      "reported_mode": 1,
+      "qed_mps": 283.37289999999996,
+      "bracket_mps": [
+        283.36789999999996,
+        283.37789999999995
+      ],
+      "root_mps": 283.3728908015218,
+      "relative_min_singular_value": 3.1894043658348828e-15,
+      "abs_difference_mps": 9.198478153393808e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.86666488647461,
+      "reported_mode": 0,
+      "qed_mps": 282.66839999999996,
+      "bracket_mps": [
+        282.66339999999997,
+        282.67339999999996
+      ],
+      "root_mps": 282.66840683348005,
+      "relative_min_singular_value": 5.433933678314661e-16,
+      "abs_difference_mps": 6.833480085788324e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.86666488647461,
+      "reported_mode": 1,
+      "qed_mps": 283.3456,
+      "bracket_mps": [
+        283.3406,
+        283.3506
+      ],
+      "root_mps": 283.34559319705994,
+      "relative_min_singular_value": 3.2015924921681944e-15,
+      "abs_difference_mps": 6.802940049510653e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.88333511352539,
+      "reported_mode": 0,
+      "qed_mps": 282.66700000000003,
+      "bracket_mps": [
+        282.66200000000003,
+        282.672
+      ],
+      "root_mps": 282.6669924686817,
+      "relative_min_singular_value": 5.413470053277726e-16,
+      "abs_difference_mps": 7.531318317433033e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.88333511352539,
+      "reported_mode": 1,
+      "qed_mps": 283.3183,
+      "bracket_mps": [
+        283.3133,
+        283.3233
+      ],
+      "root_mps": 283.31833954010136,
+      "relative_min_singular_value": 3.5676917479977754e-15,
+      "abs_difference_mps": 3.954010134066266e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.900001525878906,
+      "reported_mode": 0,
+      "qed_mps": 282.66560000000004,
+      "bracket_mps": [
+        282.66060000000004,
+        282.67060000000004
+      ],
+      "root_mps": 282.6655822734028,
+      "relative_min_singular_value": 8.962258526671223e-16,
+      "abs_difference_mps": 1.772659726384518e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.900001525878906,
+      "reported_mode": 1,
+      "qed_mps": 283.29110000000003,
+      "bracket_mps": [
+        283.28610000000003,
+        283.2961
+      ],
+      "root_mps": 283.29114217488416,
+      "relative_min_singular_value": 4.958756069021821e-15,
+      "abs_difference_mps": 4.217488412905368e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.91666793823242,
+      "reported_mode": 0,
+      "qed_mps": 282.6642,
+      "bracket_mps": [
+        282.6592,
+        282.6692
+      ],
+      "root_mps": 282.66417591256004,
+      "relative_min_singular_value": 1.0253178699636426e-15,
+      "abs_difference_mps": 2.408743995374607e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.91666793823242,
+      "reported_mode": 1,
+      "qed_mps": 283.264,
+      "bracket_mps": [
+        283.259,
+        283.269
+      ],
+      "root_mps": 283.26399473076134,
+      "relative_min_singular_value": 6.210485746497216e-15,
+      "abs_difference_mps": 5.269238670280174e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.93333435058594,
+      "reported_mode": 0,
+      "qed_mps": 282.6628,
+      "bracket_mps": [
+        282.6578,
+        282.6678
+      ],
+      "root_mps": 282.6627733751982,
+      "relative_min_singular_value": 1.2299360723247204e-15,
+      "abs_difference_mps": 2.6624801819252752e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.93333435058594,
+      "reported_mode": 1,
+      "qed_mps": 283.2369,
+      "bracket_mps": [
+        283.2319,
+        283.2419
+      ],
+      "root_mps": 283.23689707979014,
+      "relative_min_singular_value": 7.506375080813813e-15,
+      "abs_difference_mps": 2.9202098517089325e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.95000076293945,
+      "reported_mode": 0,
+      "qed_mps": 282.6614,
+      "bracket_mps": [
+        282.6564,
+        282.6664
+      ],
+      "root_mps": 282.66137465039554,
+      "relative_min_singular_value": 1.53517951666851e-15,
+      "abs_difference_mps": 2.5349604470648046e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.95000076293945,
+      "reported_mode": 1,
+      "qed_mps": 283.20980000000003,
+      "bracket_mps": [
+        283.20480000000003,
+        283.2148
+      ],
+      "root_mps": 283.2098490944545,
+      "relative_min_singular_value": 8.660536477743007e-15,
+      "abs_difference_mps": 4.90944544822014e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.96666717529297,
+      "reported_mode": 0,
+      "qed_mps": 282.66,
+      "bracket_mps": [
+        282.65500000000003,
+        282.665
+      ],
+      "root_mps": 282.6599797272639,
+      "relative_min_singular_value": 2.0341032395707424e-15,
+      "abs_difference_mps": 2.02727361511279e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.96666717529297,
+      "reported_mode": 1,
+      "qed_mps": 283.1829,
+      "bracket_mps": [
+        283.1779,
+        283.1879
+      ],
+      "root_mps": 283.18285064766,
+      "relative_min_singular_value": 1.1805572279379451e-14,
+      "abs_difference_mps": 4.935233999958655e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.983333587646484,
+      "reported_mode": 0,
+      "qed_mps": 282.6586,
+      "bracket_mps": [
+        282.6536,
+        282.6636
+      ],
+      "root_mps": 282.6585885949481,
+      "relative_min_singular_value": 2.61300058639309e-15,
+      "abs_difference_mps": 1.1405051850488235e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 39.983333587646484,
+      "reported_mode": 1,
+      "qed_mps": 283.15590000000003,
+      "bracket_mps": [
+        283.15090000000004,
+        283.1609
+      ],
+      "root_mps": 283.1559016127448,
+      "relative_min_singular_value": 1.5334444677601766e-14,
+      "abs_difference_mps": 1.6127447679537e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.0,
+      "reported_mode": 0,
+      "qed_mps": 282.6572,
+      "bracket_mps": [
+        282.6522,
+        282.6622
+      ],
+      "root_mps": 282.6572012426266,
+      "relative_min_singular_value": 3.2986005591977587e-15,
+      "abs_difference_mps": 1.242626638031652e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.0,
+      "reported_mode": 1,
+      "qed_mps": 283.129,
+      "bracket_mps": [
+        283.124,
+        283.134
+      ],
+      "root_mps": 283.12900186346434,
+      "relative_min_singular_value": 1.8671899424014368e-14,
+      "abs_difference_mps": 1.8634643197401601e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.016666412353516,
+      "reported_mode": 0,
+      "qed_mps": 282.6558,
+      "bracket_mps": [
+        282.6508,
+        282.6608
+      ],
+      "root_mps": 282.6558176595108,
+      "relative_min_singular_value": 4.63116389241516e-15,
+      "abs_difference_mps": 1.765951077459249e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.016666412353516,
+      "reported_mode": 1,
+      "qed_mps": 283.10220000000004,
+      "bracket_mps": [
+        283.09720000000004,
+        283.10720000000003
+      ],
+      "root_mps": 283.102151273996,
+      "relative_min_singular_value": 2.5582268749301476e-14,
+      "abs_difference_mps": 4.872600402450189e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.03333282470703,
+      "reported_mode": 0,
+      "qed_mps": 282.65439999999995,
+      "bracket_mps": [
+        282.64939999999996,
+        282.65939999999995
+      ],
+      "root_mps": 282.6544378348444,
+      "relative_min_singular_value": 6.05694237961623e-15,
+      "abs_difference_mps": 3.7834844420103764e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.03333282470703,
+      "reported_mode": 1,
+      "qed_mps": 283.07529999999997,
+      "bracket_mps": [
+        283.0703,
+        283.08029999999997
+      ],
+      "root_mps": 283.075349718937,
+      "relative_min_singular_value": 3.3542532035073097e-14,
+      "abs_difference_mps": 4.971893702077068e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.04999923706055,
+      "reported_mode": 0,
+      "qed_mps": 282.6531,
+      "bracket_mps": [
+        282.6481,
+        282.6581
+      ],
+      "root_mps": 282.65306175790465,
+      "relative_min_singular_value": 8.387602089941765e-15,
+      "abs_difference_mps": 3.824209534286638e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.04999923706055,
+      "reported_mode": 1,
+      "qed_mps": 283.04859999999996,
+      "bracket_mps": [
+        283.04359999999997,
+        283.05359999999996
+      ],
+      "root_mps": 283.0485970733016,
+      "relative_min_singular_value": 4.506322558776737e-14,
+      "abs_difference_mps": 2.926698357441637e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.06666564941406,
+      "reported_mode": 0,
+      "qed_mps": 282.6517,
+      "bracket_mps": [
+        282.6467,
+        282.6567
+      ],
+      "root_mps": 282.6516894180008,
+      "relative_min_singular_value": 1.178363470402086e-14,
+      "abs_difference_mps": 1.0581999219994032e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.06666564941406,
+      "reported_mode": 1,
+      "qed_mps": 283.0219,
+      "bracket_mps": [
+        283.0169,
+        283.0269
+      ],
+      "root_mps": 283.02189321252,
+      "relative_min_singular_value": 6.38494710424501e-14,
+      "abs_difference_mps": 6.787480003822566e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.08333206176758,
+      "reported_mode": 0,
+      "qed_mps": 282.6503,
+      "bracket_mps": [
+        282.6453,
+        282.6553
+      ],
+      "root_mps": 282.65032080447463,
+      "relative_min_singular_value": 1.6737862720423284e-14,
+      "abs_difference_mps": 2.0804474615943036e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.08333206176758,
+      "reported_mode": 1,
+      "qed_mps": 282.9952,
+      "bracket_mps": [
+        282.9902,
+        283.0002
+      ],
+      "root_mps": 282.99523801243686,
+      "relative_min_singular_value": 9.136511669054792e-14,
+      "abs_difference_mps": 3.8012436846202036e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.099998474121094,
+      "reported_mode": 0,
+      "qed_mps": 282.649,
+      "bracket_mps": [
+        282.644,
+        282.654
+      ],
+      "root_mps": 282.64895590670017,
+      "relative_min_singular_value": 2.4528201589720356e-14,
+      "abs_difference_mps": 4.4093299834457866e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.099998474121094,
+      "reported_mode": 1,
+      "qed_mps": 282.96860000000004,
+      "bracket_mps": [
+        282.96360000000004,
+        282.97360000000003
+      ],
+      "root_mps": 282.9686313493095,
+      "relative_min_singular_value": 1.32220360179564e-13,
+      "abs_difference_mps": 3.1349309438155615e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.11666488647461,
+      "reported_mode": 0,
+      "qed_mps": 282.6476,
+      "bracket_mps": [
+        282.6426,
+        282.6526
+      ],
+      "root_mps": 282.64759471408314,
+      "relative_min_singular_value": 3.762937708982213e-14,
+      "abs_difference_mps": 5.285916870434448e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.11666488647461,
+      "reported_mode": 1,
+      "qed_mps": 282.9421,
+      "bracket_mps": [
+        282.9371,
+        282.9471
+      ],
+      "root_mps": 282.9420730998059,
+      "relative_min_singular_value": 1.9873033772899698e-13,
+      "abs_difference_mps": 2.690019408646549e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.13333511352539,
+      "reported_mode": 0,
+      "qed_mps": 282.6462,
+      "bracket_mps": [
+        282.6412,
+        282.6512
+      ],
+      "root_mps": 282.64623690577145,
+      "relative_min_singular_value": 5.875937195720375e-14,
+      "abs_difference_mps": 3.69057714237897e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.13333511352539,
+      "reported_mode": 1,
+      "qed_mps": 282.9156,
+      "bracket_mps": [
+        282.9106,
+        282.9206
+      ],
+      "root_mps": 282.91555707878166,
+      "relative_min_singular_value": 3.0914426548347575e-13,
+      "abs_difference_mps": 4.292121832349949e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.150001525878906,
+      "reported_mode": 0,
+      "qed_mps": 282.64489999999995,
+      "bracket_mps": [
+        282.63989999999995,
+        282.64989999999995
+      ],
+      "root_mps": 282.6448830926048,
+      "relative_min_singular_value": 4.4221435650928273e-14,
+      "abs_difference_mps": 1.6907395149701188e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.150001525878906,
+      "reported_mode": 1,
+      "qed_mps": 282.8891,
+      "bracket_mps": [
+        282.8841,
+        282.8941
+      ],
+      "root_mps": 282.8890952992277,
+      "relative_min_singular_value": 1.651793368840539e-13,
+      "abs_difference_mps": 4.700772308297019e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.16666793823242,
+      "reported_mode": 0,
+      "qed_mps": 282.6435,
+      "bracket_mps": [
+        282.6385,
+        282.6485
+      ],
+      "root_mps": 282.6435329530413,
+      "relative_min_singular_value": 1.1106753865710588e-16,
+      "abs_difference_mps": 3.2953041284145e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.16666793823242,
+      "reported_mode": 1,
+      "qed_mps": 282.8627,
+      "bracket_mps": [
+        282.8577,
+        282.8677
+      ],
+      "root_mps": 282.8626815656879,
+      "relative_min_singular_value": 1.0128535040393264e-16,
+      "abs_difference_mps": 1.8434312096360372e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.18333435058594,
+      "reported_mode": 0,
+      "qed_mps": 282.6422,
+      "bracket_mps": [
+        282.6372,
+        282.6472
+      ],
+      "root_mps": 282.64218647653456,
+      "relative_min_singular_value": 7.968235989591223e-17,
+      "abs_difference_mps": 1.3523465440812288e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.18333435058594,
+      "reported_mode": 1,
+      "qed_mps": 282.8363,
+      "bracket_mps": [
+        282.8313,
+        282.8413
+      ],
+      "root_mps": 282.83631575652896,
+      "relative_min_singular_value": 3.28669131141395e-17,
+      "abs_difference_mps": 1.5756528966903716e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.20000076293945,
+      "reported_mode": 0,
+      "qed_mps": 282.6408,
+      "bracket_mps": [
+        282.6358,
+        282.6458
+      ],
+      "root_mps": 282.64084365264466,
+      "relative_min_singular_value": 7.399345069066041e-17,
+      "abs_difference_mps": 4.365264464922802e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.20000076293945,
+      "reported_mode": 1,
+      "qed_mps": 282.81,
+      "bracket_mps": [
+        282.805,
+        282.815
+      ],
+      "root_mps": 282.80999775045603,
+      "relative_min_singular_value": 3.678790109218802e-16,
+      "abs_difference_mps": 2.2495439679914853e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.21666717529297,
+      "reported_mode": 0,
+      "qed_mps": 282.6395,
+      "bracket_mps": [
+        282.6345,
+        282.6445
+      ],
+      "root_mps": 282.6395044709304,
+      "relative_min_singular_value": 3.569644747059265e-17,
+      "abs_difference_mps": 4.470930377920013e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.21666717529297,
+      "reported_mode": 1,
+      "qed_mps": 282.7837,
+      "bracket_mps": [
+        282.7787,
+        282.7887
+      ],
+      "root_mps": 282.7837274266046,
+      "relative_min_singular_value": 2.527067080661377e-16,
+      "abs_difference_mps": 2.74266046176308e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.233333587646484,
+      "reported_mode": 0,
+      "qed_mps": 282.6382,
+      "bracket_mps": [
+        282.6332,
+        282.6432
+      ],
+      "root_mps": 282.6381689209465,
+      "relative_min_singular_value": 8.950558984346954e-17,
+      "abs_difference_mps": 3.107905348542772e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.233333587646484,
+      "reported_mode": 1,
+      "qed_mps": 282.7575,
+      "bracket_mps": [
+        282.7525,
+        282.7625
+      ],
+      "root_mps": 282.7575046645446,
+      "relative_min_singular_value": 5.898151994655813e-17,
+      "abs_difference_mps": 4.664544633214973e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.25,
+      "reported_mode": 0,
+      "qed_mps": 282.6368,
+      "bracket_mps": [
+        282.6318,
+        282.6418
+      ],
+      "root_mps": 282.6368369921973,
+      "relative_min_singular_value": 1.4318247847327767e-16,
+      "abs_difference_mps": 3.699219729469405e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.25,
+      "reported_mode": 1,
+      "qed_mps": 282.73130000000003,
+      "bracket_mps": [
+        282.72630000000004,
+        282.7363
+      ],
+      "root_mps": 282.73132934432516,
+      "relative_min_singular_value": 1.085887575582961e-15,
+      "abs_difference_mps": 2.934432512802232e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.266666412353516,
+      "reported_mode": 0,
+      "qed_mps": 282.6355,
+      "bracket_mps": [
+        282.6305,
+        282.6405
+      ],
+      "root_mps": 282.63550867399124,
+      "relative_min_singular_value": 2.8401333234559007e-15,
+      "abs_difference_mps": 8.673991260366165e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.266666412353516,
+      "reported_mode": 1,
+      "qed_mps": 282.7052,
+      "bracket_mps": [
+        282.7002,
+        282.7102
+      ],
+      "root_mps": 282.70520134661825,
+      "relative_min_singular_value": 1.4336312498556757e-14,
+      "abs_difference_mps": 1.3466182622323686e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.28333282470703,
+      "reported_mode": 0,
+      "qed_mps": 282.6342,
+      "bracket_mps": [
+        282.6292,
+        282.6392
+      ],
+      "root_mps": 282.63418395480926,
+      "relative_min_singular_value": 4.0701712616144725e-17,
+      "abs_difference_mps": 1.604519076181532e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.28333282470703,
+      "reported_mode": 1,
+      "qed_mps": 282.6791,
+      "bracket_mps": [
+        282.6741,
+        282.6841
+      ],
+      "root_mps": 282.67912055334887,
+      "relative_min_singular_value": 4.1105711955050025e-16,
+      "abs_difference_mps": 2.0553348861085396e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.29999923706055,
+      "reported_mode": 0,
+      "qed_mps": 282.6329,
+      "bracket_mps": [
+        282.62886000000003,
+        282.63694
+      ],
+      "root_mps": 282.6328628170972,
+      "relative_min_singular_value": 7.125932032975386e-17,
+      "abs_difference_mps": 3.7182902815402485e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.29999923706055,
+      "reported_mode": 1,
+      "qed_mps": 282.6531,
+      "bracket_mps": [
+        282.64906,
+        282.65713999999997
+      ],
+      "root_mps": 282.6530868529002,
+      "relative_min_singular_value": 4.174763837398307e-16,
+      "abs_difference_mps": 1.3147099821253505e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.31666564941406,
+      "reported_mode": 0,
+      "qed_mps": 282.62710000000004,
+      "bracket_mps": [
+        282.62622000000005,
+        282.62798000000004
+      ],
+      "root_mps": 282.62709997175654,
+      "relative_min_singular_value": 6.91643732346944e-17,
+      "abs_difference_mps": 2.8243505312275374e-08,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.31666564941406,
+      "reported_mode": 1,
+      "qed_mps": 282.63149999999996,
+      "bracket_mps": [
+        282.63061999999996,
+        282.63237999999996
+      ],
+      "root_mps": 282.6315454056221,
+      "relative_min_singular_value": 8.418555676592482e-17,
+      "abs_difference_mps": 4.5405622131511336e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.33333206176758,
+      "reported_mode": 0,
+      "qed_mps": 282.6012,
+      "bracket_mps": [
+        282.5962,
+        282.6062
+      ],
+      "root_mps": 282.60116016199146,
+      "relative_min_singular_value": 1.5688127802715385e-16,
+      "abs_difference_mps": 3.983800854712172e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.33333206176758,
+      "reported_mode": 1,
+      "qed_mps": 282.6302,
+      "bracket_mps": [
+        282.6252,
+        282.6352
+      ],
+      "root_mps": 282.6302313399815,
+      "relative_min_singular_value": 1.1335185716202472e-16,
+      "abs_difference_mps": 3.1339981489963975e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.349998474121094,
+      "reported_mode": 0,
+      "qed_mps": 282.57529999999997,
+      "bracket_mps": [
+        282.5703,
+        282.58029999999997
+      ],
+      "root_mps": 282.5752669968687,
+      "relative_min_singular_value": 1.5001493829890456e-13,
+      "abs_difference_mps": 3.3003131250097795e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.349998474121094,
+      "reported_mode": 1,
+      "qed_mps": 282.62890000000004,
+      "bracket_mps": [
+        282.62390000000005,
+        282.63390000000004
+      ],
+      "root_mps": 282.62892091900125,
+      "relative_min_singular_value": 3.222168171883631e-14,
+      "abs_difference_mps": 2.0919001201491483e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.36666488647461,
+      "reported_mode": 0,
+      "qed_mps": 282.5494,
+      "bracket_mps": [
+        282.5444,
+        282.5544
+      ],
+      "root_mps": 282.5494204386134,
+      "relative_min_singular_value": 5.130172262050463e-15,
+      "abs_difference_mps": 2.0438613432816055e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.36666488647461,
+      "reported_mode": 1,
+      "qed_mps": 282.6276,
+      "bracket_mps": [
+        282.6226,
+        282.63259999999997
+      ],
+      "root_mps": 282.6276140529636,
+      "relative_min_singular_value": 1.1050567324500123e-15,
+      "abs_difference_mps": 1.40529636496467e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.38333511352539,
+      "reported_mode": 0,
+      "qed_mps": 282.5236,
+      "bracket_mps": [
+        282.5186,
+        282.5286
+      ],
+      "root_mps": 282.5236144737568,
+      "relative_min_singular_value": 6.844368882259103e-16,
+      "abs_difference_mps": 1.4473756834831875e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.38333511352539,
+      "reported_mode": 1,
+      "qed_mps": 282.6263,
+      "bracket_mps": [
+        282.6213,
+        282.6313
+      ],
+      "root_mps": 282.6263104304075,
+      "relative_min_singular_value": 5.03753976304116e-17,
+      "abs_difference_mps": 1.0430407485273463e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.400001525878906,
+      "reported_mode": 0,
+      "qed_mps": 282.4979,
+      "bracket_mps": [
+        282.4929,
+        282.5029
+      ],
+      "root_mps": 282.4978607969494,
+      "relative_min_singular_value": 2.1487093537904895e-16,
+      "abs_difference_mps": 3.920305061910767e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.400001525878906,
+      "reported_mode": 1,
+      "qed_mps": 282.625,
+      "bracket_mps": [
+        282.62,
+        282.63
+      ],
+      "root_mps": 282.6250106371273,
+      "relative_min_singular_value": 5.730327335892196e-17,
+      "abs_difference_mps": 1.0637127275003877e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.41666793823242,
+      "reported_mode": 0,
+      "qed_mps": 282.4722,
+      "bracket_mps": [
+        282.4672,
+        282.4772
+      ],
+      "root_mps": 282.4721533816665,
+      "relative_min_singular_value": 8.295696520253648e-17,
+      "abs_difference_mps": 4.6618333499282016e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.41666793823242,
+      "reported_mode": 1,
+      "qed_mps": 282.6237,
+      "bracket_mps": [
+        282.6187,
+        282.6287
+      ],
+      "root_mps": 282.6237143641064,
+      "relative_min_singular_value": 6.992192445734365e-17,
+      "abs_difference_mps": 1.4364106391440146e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.43333435058594,
+      "reported_mode": 0,
+      "qed_mps": 282.4465,
+      "bracket_mps": [
+        282.4415,
+        282.4515
+      ],
+      "root_mps": 282.44649211218075,
+      "relative_min_singular_value": 9.63052910328609e-17,
+      "abs_difference_mps": 7.887819265306462e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.43333435058594,
+      "reported_mode": 1,
+      "qed_mps": 282.62239999999997,
+      "bracket_mps": [
+        282.6174,
+        282.62739999999997
+      ],
+      "root_mps": 282.62242160122923,
+      "relative_min_singular_value": 2.1644760282390948e-16,
+      "abs_difference_mps": 2.1601229263978894e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.45000076293945,
+      "reported_mode": 0,
+      "qed_mps": 282.42089999999996,
+      "bracket_mps": [
+        282.41589999999997,
+        282.42589999999996
+      ],
+      "root_mps": 282.42087687308333,
+      "relative_min_singular_value": 2.257474900519961e-16,
+      "abs_difference_mps": 2.31269166306447e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.45000076293945,
+      "reported_mode": 1,
+      "qed_mps": 282.6211,
+      "bracket_mps": [
+        282.6161,
+        282.6261
+      ],
+      "root_mps": 282.6211323384697,
+      "relative_min_singular_value": 1.9606807158271981e-16,
+      "abs_difference_mps": 3.2338469679871196e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.46666717529297,
+      "reported_mode": 0,
+      "qed_mps": 282.3953,
+      "bracket_mps": [
+        282.3903,
+        282.4003
+      ],
+      "root_mps": 282.39530754931457,
+      "relative_min_singular_value": 7.343771431631656e-17,
+      "abs_difference_mps": 7.549314545940433e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.46666717529297,
+      "reported_mode": 1,
+      "qed_mps": 282.6198,
+      "bracket_mps": [
+        282.6148,
+        282.6248
+      ],
+      "root_mps": 282.61984656586,
+      "relative_min_singular_value": 4.4555290079915265e-17,
+      "abs_difference_mps": 4.656585997508955e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.483333587646484,
+      "reported_mode": 0,
+      "qed_mps": 282.3698,
+      "bracket_mps": [
+        282.3648,
+        282.3748
+      ],
+      "root_mps": 282.3697840261571,
+      "relative_min_singular_value": 2.5851623960649746e-13,
+      "abs_difference_mps": 1.5973842891980894e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.483333587646484,
+      "reported_mode": 1,
+      "qed_mps": 282.6186,
+      "bracket_mps": [
+        282.6136,
+        282.6236
+      ],
+      "root_mps": 282.61856427349136,
+      "relative_min_singular_value": 4.456155642869029e-14,
+      "abs_difference_mps": 3.572650865635296e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.5,
+      "reported_mode": 0,
+      "qed_mps": 282.3443,
+      "bracket_mps": [
+        282.3393,
+        282.34929999999997
+      ],
+      "root_mps": 282.3443061893542,
+      "relative_min_singular_value": 2.6891336058705586e-13,
+      "abs_difference_mps": 6.189354223806731e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.5,
+      "reported_mode": 1,
+      "qed_mps": 282.6173,
+      "bracket_mps": [
+        282.6123,
+        282.6223
+      ],
+      "root_mps": 282.61728545140875,
+      "relative_min_singular_value": 6.16917173290781e-14,
+      "abs_difference_mps": 1.4548591252605547e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.516666412353516,
+      "reported_mode": 0,
+      "qed_mps": 282.3189,
+      "bracket_mps": [
+        282.3139,
+        282.3239
+      ],
+      "root_mps": 282.3188739248382,
+      "relative_min_singular_value": 1.754888003805138e-13,
+      "abs_difference_mps": 2.607516177022262e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.516666412353516,
+      "reported_mode": 1,
+      "qed_mps": 282.616,
+      "bracket_mps": [
+        282.611,
+        282.621
+      ],
+      "root_mps": 282.61601008985843,
+      "relative_min_singular_value": 4.072398362597606e-14,
+      "abs_difference_mps": 1.0089858449191524e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.53333282470703,
+      "reported_mode": 0,
+      "qed_mps": 282.2935,
+      "bracket_mps": [
+        282.2885,
+        282.2985
+      ],
+      "root_mps": 282.2934871190592,
+      "relative_min_singular_value": 1.183506462550565e-13,
+      "abs_difference_mps": 1.2880940801096585e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.53333282470703,
+      "reported_mode": 1,
+      "qed_mps": 282.61469999999997,
+      "bracket_mps": [
+        282.6097,
+        282.61969999999997
+      ],
+      "root_mps": 282.6147381789735,
+      "relative_min_singular_value": 2.7706117861655896e-14,
+      "abs_difference_mps": 3.8178973511548975e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.54999923706055,
+      "reported_mode": 0,
+      "qed_mps": 282.2681,
+      "bracket_mps": [
+        282.2631,
+        282.2731
+      ],
+      "root_mps": 282.2681456587855,
+      "relative_min_singular_value": 8.214711713721513e-14,
+      "abs_difference_mps": 4.565878549556146e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.54999923706055,
+      "reported_mode": 1,
+      "qed_mps": 282.61350000000004,
+      "bracket_mps": [
+        282.60850000000005,
+        282.61850000000004
+      ],
+      "root_mps": 282.6134697089675,
+      "relative_min_singular_value": 1.926635893048543e-14,
+      "abs_difference_mps": 3.0291032544482732e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.56666564941406,
+      "reported_mode": 0,
+      "qed_mps": 282.2428,
+      "bracket_mps": [
+        282.2378,
+        282.2478
+      ],
+      "root_mps": 282.24284943115214,
+      "relative_min_singular_value": 5.86344438635065e-14,
+      "abs_difference_mps": 4.943115214928184e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.56666564941406,
+      "reported_mode": 1,
+      "qed_mps": 282.6122,
+      "bracket_mps": [
+        282.6072,
+        282.61719999999997
+      ],
+      "root_mps": 282.61220467008474,
+      "relative_min_singular_value": 1.3809336386471182e-14,
+      "abs_difference_mps": 4.670084763347404e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.58333206176758,
+      "reported_mode": 0,
+      "qed_mps": 282.2176,
+      "bracket_mps": [
+        282.2126,
+        282.2226
+      ],
+      "root_mps": 282.21759832365956,
+      "relative_min_singular_value": 4.235975578597808e-14,
+      "abs_difference_mps": 1.6763404460107267e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.58333206176758,
+      "reported_mode": 1,
+      "qed_mps": 282.6109,
+      "bracket_mps": [
+        282.6059,
+        282.6159
+      ],
+      "root_mps": 282.6109430525992,
+      "relative_min_singular_value": 1.0155176114445053e-14,
+      "abs_difference_mps": 4.305259921011384e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.599998474121094,
+      "reported_mode": 0,
+      "qed_mps": 282.1924,
+      "bracket_mps": [
+        282.1874,
+        282.1974
+      ],
+      "root_mps": 282.1923922241721,
+      "relative_min_singular_value": 3.133279309111933e-14,
+      "abs_difference_mps": 7.775827896239207e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.599998474121094,
+      "reported_mode": 1,
+      "qed_mps": 282.60970000000003,
+      "bracket_mps": [
+        282.60470000000004,
+        282.6147
+      ],
+      "root_mps": 282.60968484681524,
+      "relative_min_singular_value": 7.709980913921778e-15,
+      "abs_difference_mps": 1.5153184790506202e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.61666488647461,
+      "reported_mode": 0,
+      "qed_mps": 282.1672,
+      "bracket_mps": [
+        282.1622,
+        282.1722
+      ],
+      "root_mps": 282.1672310209169,
+      "relative_min_singular_value": 2.3946334643969834e-14,
+      "abs_difference_mps": 3.102091693563125e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.61666488647461,
+      "reported_mode": 1,
+      "qed_mps": 282.60839999999996,
+      "bracket_mps": [
+        282.60339999999997,
+        282.61339999999996
+      ],
+      "root_mps": 282.60843004306685,
+      "relative_min_singular_value": 5.6643960829898296e-15,
+      "abs_difference_mps": 3.004306688580982e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.63333511352539,
+      "reported_mode": 0,
+      "qed_mps": 282.1421,
+      "bracket_mps": [
+        282.13710000000003,
+        282.1471
+      ],
+      "root_mps": 282.1421088588207,
+      "relative_min_singular_value": 1.8601055605376157e-14,
+      "abs_difference_mps": 8.858820649493282e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.63333511352539,
+      "reported_mode": 1,
+      "qed_mps": 282.6072,
+      "bracket_mps": [
+        282.6022,
+        282.6122
+      ],
+      "root_mps": 282.6071783456753,
+      "relative_min_singular_value": 4.394350002169261e-15,
+      "abs_difference_mps": 2.1654324655173696e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.650001525878906,
+      "reported_mode": 0,
+      "qed_mps": 282.117,
+      "bracket_mps": [
+        282.112,
+        282.122
+      ],
+      "root_mps": 282.11703712436736,
+      "relative_min_singular_value": 1.4088581482530356e-14,
+      "abs_difference_mps": 3.712436733849245e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.650001525878906,
+      "reported_mode": 1,
+      "qed_mps": 282.6059,
+      "bracket_mps": [
+        282.6009,
+        282.6109
+      ],
+      "root_mps": 282.6059303178909,
+      "relative_min_singular_value": 3.649352759300269e-15,
+      "abs_difference_mps": 3.0317890889364207e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.66666793823242,
+      "reported_mode": 0,
+      "qed_mps": 282.092,
+      "bracket_mps": [
+        282.087,
+        282.097
+      ],
+      "root_mps": 282.0920099529643,
+      "relative_min_singular_value": 1.0992900740814406e-14,
+      "abs_difference_mps": 9.952964319381863e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.66666793823242,
+      "reported_mode": 1,
+      "qed_mps": 282.6047,
+      "bracket_mps": [
+        282.5997,
+        282.6097
+      ],
+      "root_mps": 282.6046856633185,
+      "relative_min_singular_value": 3.025237224747006e-15,
+      "abs_difference_mps": 1.4336681488202885e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.68333435058594,
+      "reported_mode": 0,
+      "qed_mps": 282.067,
+      "bracket_mps": [
+        282.062,
+        282.072
+      ],
+      "root_mps": 282.0670272342752,
+      "relative_min_singular_value": 8.852100440049339e-15,
+      "abs_difference_mps": 2.723427519413235e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.68333435058594,
+      "reported_mode": 1,
+      "qed_mps": 282.6034,
+      "bracket_mps": [
+        282.5984,
+        282.6084
+      ],
+      "root_mps": 282.6034443724096,
+      "relative_min_singular_value": 2.059881099782565e-15,
+      "abs_difference_mps": 4.437240960442068e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.70000076293945,
+      "reported_mode": 0,
+      "qed_mps": 282.0421,
+      "bracket_mps": [
+        282.0371,
+        282.0471
+      ],
+      "root_mps": 282.04208885831963,
+      "relative_min_singular_value": 7.181223931776122e-15,
+      "abs_difference_mps": 1.114168037474883e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.70000076293945,
+      "reported_mode": 1,
+      "qed_mps": 282.60220000000004,
+      "bracket_mps": [
+        282.59720000000004,
+        282.60720000000003
+      ],
+      "root_mps": 282.60220643564446,
+      "relative_min_singular_value": 1.795457537884751e-15,
+      "abs_difference_mps": 6.4356444227087195e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.71666717529297,
+      "reported_mode": 0,
+      "qed_mps": 282.0172,
+      "bracket_mps": [
+        282.0122,
+        282.0222
+      ],
+      "root_mps": 282.01719471547125,
+      "relative_min_singular_value": 5.936647189492662e-15,
+      "abs_difference_mps": 5.2845287541458674e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.71666717529297,
+      "reported_mode": 1,
+      "qed_mps": 282.601,
+      "bracket_mps": [
+        282.596,
+        282.606
+      ],
+      "root_mps": 282.6009718435323,
+      "relative_min_singular_value": 1.5908608023382615e-15,
+      "abs_difference_mps": 2.8156467692497245e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.733333587646484,
+      "reported_mode": 0,
+      "qed_mps": 281.9923,
+      "bracket_mps": [
+        281.9873,
+        281.9973
+      ],
+      "root_mps": 281.9923446964566,
+      "relative_min_singular_value": 4.521596498700976e-15,
+      "abs_difference_mps": 4.4696456598103396e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.733333587646484,
+      "reported_mode": 1,
+      "qed_mps": 282.5997,
+      "bracket_mps": [
+        282.5947,
+        282.6047
+      ],
+      "root_mps": 282.5997405866115,
+      "relative_min_singular_value": 1.1445758973910308e-15,
+      "abs_difference_mps": 4.0586611532944517e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.75,
+      "reported_mode": 0,
+      "qed_mps": 281.9675,
+      "bracket_mps": [
+        281.9625,
+        281.97249999999997
+      ],
+      "root_mps": 281.96753869235374,
+      "relative_min_singular_value": 3.735615847430988e-15,
+      "abs_difference_mps": 3.8692353768965404e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.75,
+      "reported_mode": 1,
+      "qed_mps": 282.5985,
+      "bracket_mps": [
+        282.5935,
+        282.6035
+      ],
+      "root_mps": 282.59851265544876,
+      "relative_min_singular_value": 8.679879943772215e-16,
+      "abs_difference_mps": 1.2655448756504484e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.766666412353516,
+      "reported_mode": 0,
+      "qed_mps": 281.9428,
+      "bracket_mps": [
+        281.9378,
+        281.9478
+      ],
+      "root_mps": 281.94277659459067,
+      "relative_min_singular_value": 3.750001440110537e-15,
+      "abs_difference_mps": 2.3405409308452363e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.766666412353516,
+      "reported_mode": 1,
+      "qed_mps": 282.5973,
+      "bracket_mps": [
+        282.5923,
+        282.6023
+      ],
+      "root_mps": 282.5972880406394,
+      "relative_min_singular_value": 8.796837208359069e-16,
+      "abs_difference_mps": 1.195936062003966e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.78333282470703,
+      "reported_mode": 0,
+      "qed_mps": 281.9181,
+      "bracket_mps": [
+        281.9131,
+        281.9231
+      ],
+      "root_mps": 281.9180582949437,
+      "relative_min_singular_value": 1.7835956176462517e-15,
+      "abs_difference_mps": 4.170505627598686e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.78333282470703,
+      "reported_mode": 1,
+      "qed_mps": 282.59610000000004,
+      "bracket_mps": [
+        282.59110000000004,
+        282.60110000000003
+      ],
+      "root_mps": 282.5960667328075,
+      "relative_min_singular_value": 6.810653870520296e-16,
+      "abs_difference_mps": 3.3267192520725075e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.79999923706055,
+      "reported_mode": 0,
+      "qed_mps": 281.89340000000004,
+      "bracket_mps": [
+        281.88840000000005,
+        281.89840000000004
+      ],
+      "root_mps": 281.89338368553774,
+      "relative_min_singular_value": 2.0693308174892272e-15,
+      "abs_difference_mps": 1.6314462300215382e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.79999923706055,
+      "reported_mode": 1,
+      "qed_mps": 282.59479999999996,
+      "bracket_mps": [
+        282.58979999999997,
+        282.59979999999996
+      ],
+      "root_mps": 282.5948487226057,
+      "relative_min_singular_value": 7.695229490049519e-16,
+      "abs_difference_mps": 4.8722605754392134e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.81666564941406,
+      "reported_mode": 0,
+      "qed_mps": 281.86879999999996,
+      "bracket_mps": [
+        281.86379999999997,
+        281.87379999999996
+      ],
+      "root_mps": 281.86875265884134,
+      "relative_min_singular_value": 2.064790635391035e-15,
+      "abs_difference_mps": 4.734115861992905e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.81666564941406,
+      "reported_mode": 1,
+      "qed_mps": 282.5936,
+      "bracket_mps": [
+        282.5886,
+        282.5986
+      ],
+      "root_mps": 282.59363400071317,
+      "relative_min_singular_value": 6.459198158873602e-16,
+      "abs_difference_mps": 3.400071318537812e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.83333206176758,
+      "reported_mode": 0,
+      "qed_mps": 281.8442,
+      "bracket_mps": [
+        281.8392,
+        281.8492
+      ],
+      "root_mps": 281.8441651076698,
+      "relative_min_singular_value": 1.5354636054748748e-15,
+      "abs_difference_mps": 3.489233017717197e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.83333206176758,
+      "reported_mode": 1,
+      "qed_mps": 282.5924,
+      "bracket_mps": [
+        282.5874,
+        282.5974
+      ],
+      "root_mps": 282.5924225578402,
+      "relative_min_singular_value": 3.4250838422733955e-16,
+      "abs_difference_mps": 2.255784022509033e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.849998474121094,
+      "reported_mode": 0,
+      "qed_mps": 281.8196,
+      "bracket_mps": [
+        281.8146,
+        281.8246
+      ],
+      "root_mps": 281.8196209251803,
+      "relative_min_singular_value": 1.3705004403634201e-15,
+      "abs_difference_mps": 2.0925180308495328e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.849998474121094,
+      "reported_mode": 1,
+      "qed_mps": 282.5912,
+      "bracket_mps": [
+        282.5862,
+        282.5962
+      ],
+      "root_mps": 282.59121438472283,
+      "relative_min_singular_value": 4.73488324792744e-16,
+      "abs_difference_mps": 1.4384722817339934e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.86666488647461,
+      "reported_mode": 0,
+      "qed_mps": 281.79510000000005,
+      "bracket_mps": [
+        281.79010000000005,
+        281.80010000000004
+      ],
+      "root_mps": 281.79512000487165,
+      "relative_min_singular_value": 1.169844982301351e-15,
+      "abs_difference_mps": 2.0004871601031482e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.86666488647461,
+      "reported_mode": 1,
+      "qed_mps": 282.59000000000003,
+      "bracket_mps": [
+        282.58500000000004,
+        282.595
+      ],
+      "root_mps": 282.5900094721263,
+      "relative_min_singular_value": 3.1579910781319335e-16,
+      "abs_difference_mps": 9.472126293985639e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.88333511352539,
+      "reported_mode": 0,
+      "qed_mps": 281.7707,
+      "bracket_mps": [
+        281.7657,
+        281.7757
+      ],
+      "root_mps": 281.77065664749205,
+      "relative_min_singular_value": 7.815009761143252e-16,
+      "abs_difference_mps": 4.3352507930194406e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.88333511352539,
+      "reported_mode": 1,
+      "qed_mps": 282.5888,
+      "bracket_mps": [
+        282.5838,
+        282.5938
+      ],
+      "root_mps": 282.588807536172,
+      "relative_min_singular_value": 2.693813264499093e-16,
+      "abs_difference_mps": 7.536172006439301e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.900001525878906,
+      "reported_mode": 0,
+      "qed_mps": 281.7462,
+      "bracket_mps": [
+        281.7412,
+        281.7512
+      ],
+      "root_mps": 281.74624194324497,
+      "relative_min_singular_value": 6.692118459749135e-16,
+      "abs_difference_mps": 4.194324498030255e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.900001525878906,
+      "reported_mode": 1,
+      "qed_mps": 282.5876,
+      "bracket_mps": [
+        282.5826,
+        282.5926
+      ],
+      "root_mps": 282.58760911776386,
+      "relative_min_singular_value": 2.929160130871162e-16,
+      "abs_difference_mps": 9.117763852373173e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.91666793823242,
+      "reported_mode": 0,
+      "qed_mps": 281.7219,
+      "bracket_mps": [
+        281.7169,
+        281.7269
+      ],
+      "root_mps": 281.72187018368913,
+      "relative_min_singular_value": 1.3672850983465869e-15,
+      "abs_difference_mps": 2.981631087095593e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.91666793823242,
+      "reported_mode": 1,
+      "qed_mps": 282.5864,
+      "bracket_mps": [
+        282.58140000000003,
+        282.5914
+      ],
+      "root_mps": 282.58641393233586,
+      "relative_min_singular_value": 3.699219059109685e-16,
+      "abs_difference_mps": 1.3932335832578246e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.93333435058594,
+      "reported_mode": 0,
+      "qed_mps": 281.6975,
+      "bracket_mps": [
+        281.6925,
+        281.7025
+      ],
+      "root_mps": 281.697541263678,
+      "relative_min_singular_value": 1.326179495851112e-15,
+      "abs_difference_mps": 4.126367798562569e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.93333435058594,
+      "reported_mode": 1,
+      "qed_mps": 282.5852,
+      "bracket_mps": [
+        282.5802,
+        282.5902
+      ],
+      "root_mps": 282.58522197076394,
+      "relative_min_singular_value": 1.9837447690142646e-16,
+      "abs_difference_mps": 2.1970763953049754e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.95000076293945,
+      "reported_mode": 0,
+      "qed_mps": 281.67330000000004,
+      "bracket_mps": [
+        281.66830000000004,
+        281.67830000000004
+      ],
+      "root_mps": 281.6732550783986,
+      "relative_min_singular_value": 1.051292721268517e-15,
+      "abs_difference_mps": 4.4921601443093095e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.95000076293945,
+      "reported_mode": 1,
+      "qed_mps": 282.584,
+      "bracket_mps": [
+        282.579,
+        282.589
+      ],
+      "root_mps": 282.5840332239516,
+      "relative_min_singular_value": 6.405435526899547e-17,
+      "abs_difference_mps": 3.322395161831082e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.96666717529297,
+      "reported_mode": 0,
+      "qed_mps": 281.649,
+      "bracket_mps": [
+        281.644,
+        281.654
+      ],
+      "root_mps": 281.64901152337313,
+      "relative_min_singular_value": 1.0943673577000977e-15,
+      "abs_difference_mps": 1.1523373132149572e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.96666717529297,
+      "reported_mode": 1,
+      "qed_mps": 282.5828,
+      "bracket_mps": [
+        282.5778,
+        282.5878
+      ],
+      "root_mps": 282.5828476828295,
+      "relative_min_singular_value": 3.121704835871225e-16,
+      "abs_difference_mps": 4.7682829460882203e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.983333587646484,
+      "reported_mode": 0,
+      "qed_mps": 281.6248,
+      "bracket_mps": [
+        281.6198,
+        281.6298
+      ],
+      "root_mps": 281.62481049445506,
+      "relative_min_singular_value": 1.0454736787269526e-15,
+      "abs_difference_mps": 1.0494455068510433e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 40.983333587646484,
+      "reported_mode": 1,
+      "qed_mps": 282.5817,
+      "bracket_mps": [
+        282.5767,
+        282.5867
+      ],
+      "root_mps": 282.5816653383559,
+      "relative_min_singular_value": 1.3650053529659196e-16,
+      "abs_difference_mps": 3.466164412202488e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.0,
+      "reported_mode": 0,
+      "qed_mps": 281.60069999999996,
+      "bracket_mps": [
+        281.59569999999997,
+        281.60569999999996
+      ],
+      "root_mps": 281.6006518878294,
+      "relative_min_singular_value": 3.093443062548706e-16,
+      "abs_difference_mps": 4.811217058886541e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.0,
+      "reported_mode": 1,
+      "qed_mps": 282.58050000000003,
+      "bracket_mps": [
+        282.57550000000003,
+        282.5855
+      ],
+      "root_mps": 282.58048618151645,
+      "relative_min_singular_value": 1.0489156886021655e-16,
+      "abs_difference_mps": 1.3818483580507746e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.016666412353516,
+      "reported_mode": 0,
+      "qed_mps": 281.5765,
+      "bracket_mps": [
+        281.5715,
+        281.5815
+      ],
+      "root_mps": 281.576535600011,
+      "relative_min_singular_value": 9.834988626773518e-16,
+      "abs_difference_mps": 3.5600011017322686e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.016666412353516,
+      "reported_mode": 1,
+      "qed_mps": 282.5793,
+      "bracket_mps": [
+        282.5743,
+        282.5843
+      ],
+      "root_mps": 282.57931020332364,
+      "relative_min_singular_value": 1.7779752888632293e-16,
+      "abs_difference_mps": 1.0203323654423002e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.03333282470703,
+      "reported_mode": 0,
+      "qed_mps": 281.5525,
+      "bracket_mps": [
+        281.5475,
+        281.5575
+      ],
+      "root_mps": 281.55246152784287,
+      "relative_min_singular_value": 3.6359846207155615e-16,
+      "abs_difference_mps": 3.847215714358754e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.03333282470703,
+      "reported_mode": 1,
+      "qed_mps": 282.5781,
+      "bracket_mps": [
+        282.5731,
+        282.5831
+      ],
+      "root_mps": 282.57813739481725,
+      "relative_min_singular_value": 6.353167833290995e-17,
+      "abs_difference_mps": 3.7394817240965494e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.04999923706055,
+      "reported_mode": 0,
+      "qed_mps": 281.52840000000003,
+      "bracket_mps": [
+        281.52340000000004,
+        281.53340000000003
+      ],
+      "root_mps": 281.52842956849554,
+      "relative_min_singular_value": 8.998675001109535e-16,
+      "abs_difference_mps": 2.956849550628249e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.04999923706055,
+      "reported_mode": 1,
+      "qed_mps": 282.577,
+      "bracket_mps": [
+        282.572,
+        282.582
+      ],
+      "root_mps": 282.57696774706386,
+      "relative_min_singular_value": 5.4039535366033946e-17,
+      "abs_difference_mps": 3.225293613695612e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.06666564941406,
+      "reported_mode": 0,
+      "qed_mps": 281.5044,
+      "bracket_mps": [
+        281.4994,
+        281.50939999999997
+      ],
+      "root_mps": 281.5044396194649,
+      "relative_min_singular_value": 6.51704418652735e-17,
+      "abs_difference_mps": 3.961946492836432e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.06666564941406,
+      "reported_mode": 1,
+      "qed_mps": 282.5758,
+      "bracket_mps": [
+        282.5708,
+        282.5808
+      ],
+      "root_mps": 282.5758012511572,
+      "relative_min_singular_value": 4.134610376588844e-17,
+      "abs_difference_mps": 1.2511571867435123e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.08333206176758,
+      "reported_mode": 0,
+      "qed_mps": 281.4805,
+      "bracket_mps": [
+        281.4755,
+        281.4855
+      ],
+      "root_mps": 281.4804915785719,
+      "relative_min_singular_value": 6.622615819704161e-17,
+      "abs_difference_mps": 8.421428105975792e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.08333206176758,
+      "reported_mode": 1,
+      "qed_mps": 282.57460000000003,
+      "bracket_mps": [
+        282.56960000000004,
+        282.5796
+      ],
+      "root_mps": 282.5746378982177,
+      "relative_min_singular_value": 2.705489965616585e-17,
+      "abs_difference_mps": 3.789821766986279e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.099998474121094,
+      "reported_mode": 0,
+      "qed_mps": 281.4566,
+      "bracket_mps": [
+        281.4516,
+        281.4616
+      ],
+      "root_mps": 281.45658534396057,
+      "relative_min_singular_value": 4.914362042733595e-17,
+      "abs_difference_mps": 1.4656039411420352e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.099998474121094,
+      "reported_mode": 1,
+      "qed_mps": 282.57349999999997,
+      "bracket_mps": [
+        282.5685,
+        282.57849999999996
+      ],
+      "root_mps": 282.5734776793923,
+      "relative_min_singular_value": 1.3156282824098824e-16,
+      "abs_difference_mps": 2.23206076839233e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.11666488647461,
+      "reported_mode": 0,
+      "qed_mps": 281.43269999999995,
+      "bracket_mps": [
+        281.42769999999996,
+        281.43769999999995
+      ],
+      "root_mps": 281.43272081409697,
+      "relative_min_singular_value": 3.613112762044346e-16,
+      "abs_difference_mps": 2.0814097013044375e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.11666488647461,
+      "reported_mode": 1,
+      "qed_mps": 282.5723,
+      "bracket_mps": [
+        282.5673,
+        282.5773
+      ],
+      "root_mps": 282.57232058585487,
+      "relative_min_singular_value": 1.6133979305952268e-16,
+      "abs_difference_mps": 2.0585854883847787e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.13333511352539,
+      "reported_mode": 0,
+      "qed_mps": 281.4089,
+      "bracket_mps": [
+        281.4039,
+        281.4139
+      ],
+      "root_mps": 281.4088924398042,
+      "relative_min_singular_value": 5.585451481914801e-16,
+      "abs_difference_mps": 7.560195797395863e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.13333511352539,
+      "reported_mode": 1,
+      "qed_mps": 282.57120000000003,
+      "bracket_mps": [
+        282.56620000000004,
+        282.57620000000003
+      ],
+      "root_mps": 282.5711663450335,
+      "relative_min_singular_value": 4.685561968424396e-17,
+      "abs_difference_mps": 3.36549665576058e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.150001525878906,
+      "reported_mode": 0,
+      "qed_mps": 281.3851,
+      "bracket_mps": [
+        281.3801,
+        281.3901
+      ],
+      "root_mps": 281.3851110256039,
+      "relative_min_singular_value": 3.450741786690672e-16,
+      "abs_difference_mps": 1.1025603896541725e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.150001525878906,
+      "reported_mode": 1,
+      "qed_mps": 282.57,
+      "bracket_mps": [
+        282.565,
+        282.575
+      ],
+      "root_mps": 282.57001547640965,
+      "relative_min_singular_value": 3.8003416420221364e-17,
+      "abs_difference_mps": 1.5476409657821932e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.16666793823242,
+      "reported_mode": 0,
+      "qed_mps": 281.3614,
+      "bracket_mps": [
+        281.3564,
+        281.3664
+      ],
+      "root_mps": 281.3613710134461,
+      "relative_min_singular_value": 5.742168716677912e-17,
+      "abs_difference_mps": 2.898655390026761e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.16666793823242,
+      "reported_mode": 1,
+      "qed_mps": 282.5689,
+      "bracket_mps": [
+        282.5639,
+        282.5739
+      ],
+      "root_mps": 282.56886770675203,
+      "relative_min_singular_value": 1.170265442459975e-16,
+      "abs_difference_mps": 3.22932479548399e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.18333435058594,
+      "reported_mode": 0,
+      "qed_mps": 281.33770000000004,
+      "bracket_mps": [
+        281.33270000000005,
+        281.34270000000004
+      ],
+      "root_mps": 281.3376723030725,
+      "relative_min_singular_value": 6.879915598929147e-17,
+      "abs_difference_mps": 2.7696927531906113e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.18333435058594,
+      "reported_mode": 1,
+      "qed_mps": 282.5677,
+      "bracket_mps": [
+        282.5627,
+        282.5727
+      ],
+      "root_mps": 282.5677230273399,
+      "relative_min_singular_value": 1.0338612779263136e-16,
+      "abs_difference_mps": 2.3027339921100065e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.20000076293945,
+      "reported_mode": 0,
+      "qed_mps": 281.314,
+      "bracket_mps": [
+        281.309,
+        281.319
+      ],
+      "root_mps": 281.3140147945406,
+      "relative_min_singular_value": 1.3512073715186797e-16,
+      "abs_difference_mps": 1.4794540561524627e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.20000076293945,
+      "reported_mode": 1,
+      "qed_mps": 282.5666,
+      "bracket_mps": [
+        282.5616,
+        282.5716
+      ],
+      "root_mps": 282.5665814294791,
+      "relative_min_singular_value": 8.383874235523165e-17,
+      "abs_difference_mps": 1.8570520921912248e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.21666717529297,
+      "reported_mode": 0,
+      "qed_mps": 281.2904,
+      "bracket_mps": [
+        281.2854,
+        281.2954
+      ],
+      "root_mps": 281.2903983882222,
+      "relative_min_singular_value": 6.742922324388321e-17,
+      "abs_difference_mps": 1.6117778045554587e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.21666717529297,
+      "reported_mode": 1,
+      "qed_mps": 282.5654,
+      "bracket_mps": [
+        282.5604,
+        282.5704
+      ],
+      "root_mps": 282.5654429045011,
+      "relative_min_singular_value": 5.219575578371282e-17,
+      "abs_difference_mps": 4.2904501071916457e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.233333587646484,
+      "reported_mode": 0,
+      "qed_mps": 281.2668,
+      "bracket_mps": [
+        281.2618,
+        281.2718
+      ],
+      "root_mps": 281.26682298480245,
+      "relative_min_singular_value": 6.68755390533941e-17,
+      "abs_difference_mps": 2.2984802455994213e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.233333587646484,
+      "reported_mode": 1,
+      "qed_mps": 282.5643,
+      "bracket_mps": [
+        282.5593,
+        282.5693
+      ],
+      "root_mps": 282.56430744376365,
+      "relative_min_singular_value": 3.4330851062404214e-17,
+      "abs_difference_mps": 7.443763649916946e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.25,
+      "reported_mode": 0,
+      "qed_mps": 281.2433,
+      "bracket_mps": [
+        281.2383,
+        281.2483
+      ],
+      "root_mps": 281.24328848527887,
+      "relative_min_singular_value": 6.184008030229515e-16,
+      "abs_difference_mps": 1.1514721109051607e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.25,
+      "reported_mode": 1,
+      "qed_mps": 282.5632,
+      "bracket_mps": [
+        282.5582,
+        282.5682
+      ],
+      "root_mps": 282.5631750386507,
+      "relative_min_singular_value": 2.538740218310092e-17,
+      "abs_difference_mps": 2.496134931107008e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.266666412353516,
+      "reported_mode": 0,
+      "qed_mps": 281.2198,
+      "bracket_mps": [
+        281.2148,
+        281.2248
+      ],
+      "root_mps": 281.2197947909594,
+      "relative_min_singular_value": 8.792428254502818e-16,
+      "abs_difference_mps": 5.2090406370552955e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.266666412353516,
+      "reported_mode": 1,
+      "qed_mps": 282.56199999999995,
+      "bracket_mps": [
+        282.55699999999996,
+        282.56699999999995
+      ],
+      "root_mps": 282.56204568057154,
+      "relative_min_singular_value": 6.483863719188654e-17,
+      "abs_difference_mps": 4.568057158849115e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.28333282470703,
+      "reported_mode": 0,
+      "qed_mps": 281.1963,
+      "bracket_mps": [
+        281.1913,
+        281.2013
+      ],
+      "root_mps": 281.19634180346173,
+      "relative_min_singular_value": 2.771624452052918e-16,
+      "abs_difference_mps": 4.180346172688587e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.28333282470703,
+      "reported_mode": 1,
+      "qed_mps": 282.5609,
+      "bracket_mps": [
+        282.5559,
+        282.5659
+      ],
+      "root_mps": 282.56091936096146,
+      "relative_min_singular_value": 3.98136060720809e-17,
+      "abs_difference_mps": 1.9360961459824466e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.29999923706055,
+      "reported_mode": 0,
+      "qed_mps": 281.1729,
+      "bracket_mps": [
+        281.16790000000003,
+        281.1779
+      ],
+      "root_mps": 281.17292942471227,
+      "relative_min_singular_value": 7.062531639385928e-16,
+      "abs_difference_mps": 2.942471223832399e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.29999923706055,
+      "reported_mode": 1,
+      "qed_mps": 282.55980000000005,
+      "bracket_mps": [
+        282.55480000000006,
+        282.56480000000005
+      ],
+      "root_mps": 282.5597960712817,
+      "relative_min_singular_value": 1.2599678463043904e-16,
+      "abs_difference_mps": 3.928718342649518e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.31666564941406,
+      "reported_mode": 0,
+      "qed_mps": 281.1496,
+      "bracket_mps": [
+        281.1446,
+        281.1546
+      ],
+      "root_mps": 281.14955755694405,
+      "relative_min_singular_value": 8.335424011192775e-16,
+      "abs_difference_mps": 4.244305597467246e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.31666564941406,
+      "reported_mode": 1,
+      "qed_mps": 282.5587,
+      "bracket_mps": [
+        282.5537,
+        282.5637
+      ],
+      "root_mps": 282.5586758030187,
+      "relative_min_singular_value": 2.4050884806567505e-17,
+      "abs_difference_mps": 2.4196981314617005e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.33333206176758,
+      "reported_mode": 0,
+      "qed_mps": 281.1262,
+      "bracket_mps": [
+        281.1212,
+        281.1312
+      ],
+      "root_mps": 281.1262261026968,
+      "relative_min_singular_value": 2.757432201036221e-16,
+      "abs_difference_mps": 2.6102696836005634e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.33333206176758,
+      "reported_mode": 1,
+      "qed_mps": 282.55760000000004,
+      "bracket_mps": [
+        282.55260000000004,
+        282.56260000000003
+      ],
+      "root_mps": 282.5575585476845,
+      "relative_min_singular_value": 2.47495259916466e-17,
+      "abs_difference_mps": 4.145231554275597e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.349998474121094,
+      "reported_mode": 0,
+      "qed_mps": 281.1029,
+      "bracket_mps": [
+        281.0979,
+        281.1079
+      ],
+      "root_mps": 281.1029349648146,
+      "relative_min_singular_value": 4.3941819066340464e-16,
+      "abs_difference_mps": 3.496481463116652e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.349998474121094,
+      "reported_mode": 1,
+      "qed_mps": 282.5564,
+      "bracket_mps": [
+        282.5514,
+        282.5614
+      ],
+      "root_mps": 282.5564442968168,
+      "relative_min_singular_value": 9.192694709483996e-17,
+      "abs_difference_mps": 4.429681678175257e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.36666488647461,
+      "reported_mode": 0,
+      "qed_mps": 281.0797,
+      "bracket_mps": [
+        281.0747,
+        281.0847
+      ],
+      "root_mps": 281.07968404644527,
+      "relative_min_singular_value": 5.654316161169301e-16,
+      "abs_difference_mps": 1.5953554736825026e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.36666488647461,
+      "reported_mode": 1,
+      "qed_mps": 282.5553,
+      "bracket_mps": [
+        282.5503,
+        282.5603
+      ],
+      "root_mps": 282.5553330419784,
+      "relative_min_singular_value": 5.792403292827659e-17,
+      "abs_difference_mps": 3.3041978383607784e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.38333511352539,
+      "reported_mode": 0,
+      "qed_mps": 281.05649999999997,
+      "bracket_mps": [
+        281.0515,
+        281.06149999999997
+      ],
+      "root_mps": 281.0564679430142,
+      "relative_min_singular_value": 2.7800425255439257e-17,
+      "abs_difference_mps": 3.205698578767624e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.38333511352539,
+      "reported_mode": 1,
+      "qed_mps": 282.5542,
+      "bracket_mps": [
+        282.5492,
+        282.5592
+      ],
+      "root_mps": 282.55422452143273,
+      "relative_min_singular_value": 6.955315107356062e-17,
+      "abs_difference_mps": 2.4521432749224914e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.400001525878906,
+      "reported_mode": 0,
+      "qed_mps": 281.0333,
+      "bracket_mps": [
+        281.0283,
+        281.0383
+      ],
+      "root_mps": 281.03329718347356,
+      "relative_min_singular_value": 7.155626980900949e-16,
+      "abs_difference_mps": 2.8165264325252792e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.400001525878906,
+      "reported_mode": 1,
+      "qed_mps": 282.55310000000003,
+      "bracket_mps": [
+        282.54810000000003,
+        282.5581
+      ],
+      "root_mps": 282.5531192341236,
+      "relative_min_singular_value": 5.164415294910601e-17,
+      "abs_difference_mps": 1.923412355608889e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.41666793823242,
+      "reported_mode": 0,
+      "qed_mps": 281.0102,
+      "bracket_mps": [
+        281.0052,
+        281.0152
+      ],
+      "root_mps": 281.01016635467755,
+      "relative_min_singular_value": 4.0643663585365845e-16,
+      "abs_difference_mps": 3.364532244631846e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.41666793823242,
+      "reported_mode": 1,
+      "qed_mps": 282.552,
+      "bracket_mps": [
+        282.547,
+        282.557
+      ],
+      "root_mps": 282.5520169176819,
+      "relative_min_singular_value": 1.3817327381606891e-16,
+      "abs_difference_mps": 1.6917681875838753e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.43333435058594,
+      "reported_mode": 0,
+      "qed_mps": 280.9871,
+      "bracket_mps": [
+        280.9821,
+        280.9921
+      ],
+      "root_mps": 280.98707536097703,
+      "relative_min_singular_value": 3.298627367696141e-16,
+      "abs_difference_mps": 2.4639022967676283e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.43333435058594,
+      "reported_mode": 1,
+      "qed_mps": 282.5509,
+      "bracket_mps": [
+        282.5459,
+        282.5559
+      ],
+      "root_mps": 282.550917563771,
+      "relative_min_singular_value": 5.1708738000376733e-17,
+      "abs_difference_mps": 1.756377099582096e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.45000076293945,
+      "reported_mode": 0,
+      "qed_mps": 280.964,
+      "bracket_mps": [
+        280.959,
+        280.969
+      ],
+      "root_mps": 280.9640241070204,
+      "relative_min_singular_value": 6.10846122675087e-17,
+      "abs_difference_mps": 2.410702040833712e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.45000076293945,
+      "reported_mode": 1,
+      "qed_mps": 282.5498,
+      "bracket_mps": [
+        282.5448,
+        282.5548
+      ],
+      "root_mps": 282.5498211640794,
+      "relative_min_singular_value": 1.509847667849507e-16,
+      "abs_difference_mps": 2.116407938501652e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.46666717529297,
+      "reported_mode": 0,
+      "qed_mps": 280.941,
+      "bracket_mps": [
+        280.936,
+        280.94599999999997
+      ],
+      "root_mps": 280.941012497753,
+      "relative_min_singular_value": 1.1405112185218256e-16,
+      "abs_difference_mps": 1.2497753004936385e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.46666717529297,
+      "reported_mode": 1,
+      "qed_mps": 282.5487,
+      "bracket_mps": [
+        282.5437,
+        282.5537
+      ],
+      "root_mps": 282.54872771032035,
+      "relative_min_singular_value": 9.616245694459046e-17,
+      "abs_difference_mps": 2.771032035298049e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.483333587646484,
+      "reported_mode": 0,
+      "qed_mps": 280.918,
+      "bracket_mps": [
+        280.913,
+        280.923
+      ],
+      "root_mps": 280.9180404384154,
+      "relative_min_singular_value": 2.6811044836300195e-16,
+      "abs_difference_mps": 4.043841539669302e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.483333587646484,
+      "reported_mode": 1,
+      "qed_mps": 282.5476,
+      "bracket_mps": [
+        282.5426,
+        282.5526
+      ],
+      "root_mps": 282.547637194232,
+      "relative_min_singular_value": 9.728700059864724e-17,
+      "abs_difference_mps": 3.719423199299854e-05,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.5,
+      "reported_mode": 0,
+      "qed_mps": 280.8951,
+      "bracket_mps": [
+        280.8901,
+        280.9001
+      ],
+      "root_mps": 280.8951078345427,
+      "relative_min_singular_value": 4.2579747747771867e-16,
+      "abs_difference_mps": 7.83454271413575e-06,
+      "passed": true
+    },
+    {
+      "frequency_hz": 41.5,
+      "reported_mode": 1,
+      "qed_mps": 282.5465,
+      "bracket_mps": [
+        282.5415,
+        282.5515
+      ],
+      "root_mps": 282.5465496075769,
+      "relative_min_singular_value": 1.40883902346922e-16,
+      "abs_difference_mps": 4.9607576897869876e-05,
+      "passed": true
+    }
+  ]
+}

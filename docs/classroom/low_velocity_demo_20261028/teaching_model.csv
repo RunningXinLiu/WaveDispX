@@ -1,0 +1,5 @@
+thickness_m,vp_mps,vs_mps,density_kgm3,qp,qs
+10,700,300,1800,inf,inf
+10,1600,800,2100,inf,inf
+10,650,260,1750,inf,inf
+inf,2200,1100,2300,inf,inf

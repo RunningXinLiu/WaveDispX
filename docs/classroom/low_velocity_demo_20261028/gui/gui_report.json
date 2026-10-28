@@ -1,0 +1,69 @@
+{
+  "phase": "complete",
+  "captures": {
+    "qedisp": {
+      "png_sha256": "3304903e1a72804e547fdd01d89617b7a72853604766568d2cde5b3cf1809787",
+      "binaries": {
+        "qedisp": {
+          "path": "/Volumes/lx_exFAT/PassiveFW_versionstable/.wavedispx-tools/QEDispInv/bin/forward",
+          "sha256": "66d7427bcfcbd48641d5151dd7707bc7994692e1d7e2d92bc7846cf4abbc1e46"
+        }
+      },
+      "timings": {
+        "curves_s": 0.8658429170027375,
+        "ideal_s": 0.0
+      },
+      "positive_per_mode": [
+        355,
+        334,
+        320,
+        267
+      ]
+    },
+    "cps": {
+      "png_sha256": "74587255f1d2e38cff99b51c8d2506cbfbaeb22168791efd1197e7625d8e089b",
+      "binaries": {
+        "sprep96": {
+          "path": "/Users/liuxin/Documents/projects/CPS/bin/sprep96",
+          "sha256": "9d966eff343d20ae22c4184a522efa9693485b32f5d51ee08e9e3ce44221005a"
+        },
+        "sdisp96": {
+          "path": "/Users/liuxin/Documents/projects/CPS/bin/sdisp96",
+          "sha256": "d62763424a8be4da4094186349cb249a2dd0c412babd9423226113487d2941d2"
+        },
+        "sdpsrf96": {
+          "path": "/Users/liuxin/Documents/projects/CPS/bin/sdpsrf96",
+          "sha256": "b0a2defed45e624c449d4f80a8a533581f9c94c83a808338a2977ab02f06146b"
+        }
+      },
+      "timings": {
+        "curves_s": 0.8886626660096226,
+        "ideal_s": 0.0
+      },
+      "positive_per_mode": [
+        355,
+        334,
+        320,
+        267
+      ]
+    }
+  },
+  "platform": "cocoa",
+  "frequency": "1-60 Hz, 355 uniformly spaced points",
+  "modes": 4,
+  "velocity_display_mps": [
+    200,
+    1200
+  ],
+  "ideal": false,
+  "capturing": false,
+  "max_same_ordinal_difference_mps": [
+    94.35509769999999,
+    131.57479539999997,
+    208.04639100000003,
+    238.62029410000002
+  ],
+  "m0_difference_over20_hz": [
+    40.33333333333333
+  ]
+}
