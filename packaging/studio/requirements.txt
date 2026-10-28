@@ -1,4 +1,14 @@
-# Reuse declared project dependencies; install only in isolated build machines.
--r ../classroom/requirements.txt
+# Isolated Studio builds. Numba/LLVM wheels must support Intel Mac too.
+# Keep Classroom's independently validated environment unchanged.
+numpy==2.3.4
+scipy==1.17.0
+h5py==3.16.0
+matplotlib==3.10.8
+PySide6==6.11.0
+pyinstaller==6.21.0
+pybind11==3.0.1
+setuptools==80.9.0
+wheel==0.45.1
 disba==0.7.0
-numba==0.65.0
+numba==0.62.1
+llvmlite==0.45.1

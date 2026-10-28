@@ -8,7 +8,6 @@ import json
 import math
 from pathlib import Path
 import platform
-import resource
 import shutil
 import sys
 import tomllib
@@ -16,6 +15,11 @@ from typing import Any
 
 import h5py
 import numpy as np
+
+try:
+    import resource
+except ImportError:  # Windows has no POSIX resource module.
+    resource = None
 
 from . import __version__
 from .active import ActiveShotGather
@@ -37,6 +41,36 @@ class RunArtifacts:
 
 
 def _peak_rss_bytes() -> int:
+    """Process peak resident bytes; -1 means unavailable, never zero usage."""
+    if resource is None:
+        if sys.platform != "win32":
+            return -1
+        import ctypes
+        from ctypes import wintypes
+
+        class ProcessMemoryCounters(ctypes.Structure):
+            _fields_ = [("cb", wintypes.DWORD), ("PageFaultCount", wintypes.DWORD)] + [
+                (name, ctypes.c_size_t) for name in (
+                    "PeakWorkingSetSize", "WorkingSetSize", "QuotaPeakPagedPoolUsage",
+                    "QuotaPagedPoolUsage", "QuotaPeakNonPagedPoolUsage",
+                    "QuotaNonPagedPoolUsage", "PagefileUsage", "PeakPagefileUsage",
+                )
+            ]
+
+        kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+        psapi = ctypes.WinDLL("psapi", use_last_error=True)
+        kernel.GetCurrentProcess.restype = wintypes.HANDLE
+        psapi.GetProcessMemoryInfo.argtypes = [
+            wintypes.HANDLE, ctypes.POINTER(ProcessMemoryCounters), wintypes.DWORD
+        ]
+        psapi.GetProcessMemoryInfo.restype = wintypes.BOOL
+        counters = ProcessMemoryCounters()
+        counters.cb = ctypes.sizeof(counters)
+        if not psapi.GetProcessMemoryInfo(
+            kernel.GetCurrentProcess(), ctypes.byref(counters), counters.cb
+        ):
+            return -1
+        return int(counters.PeakWorkingSetSize)
     peak = int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
     return peak if sys.platform == "darwin" else peak * 1024
 

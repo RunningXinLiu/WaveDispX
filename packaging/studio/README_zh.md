@@ -22,6 +22,8 @@
 
 使用各自操作系统原生构建；工作流`.github/workflows/studio-build.yml`。独立环境安装`packaging/studio/requirements.txt`，不更改本机seisloc/base；沿用已声明依赖，不引入新数值后端。
 
+Studio固定NumPy 2.3.4、Numba 0.62.1及llvmlite 0.45.1，使Intel Mac也使用官方二进制依赖，不临时编译LLVM。自动参数建议仍保留原有辅助实现，不因封装替换计算方法。Windows峰值内存统计使用原生GetProcessMemoryInfo；不可用记为-1，不伪报零内存。
+
 ```sh
 cmake -S packaging/studio/native -B native-build -DCMAKE_BUILD_TYPE=Release
 cmake --build native-build --parallel 2 --target forward qedisp_group

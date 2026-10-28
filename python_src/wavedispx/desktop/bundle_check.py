@@ -19,6 +19,9 @@ def main(output):
     window=None
     try:
         from .studio import StudioWindow
+        from wavedispx.artifacts import _peak_rss_bytes
+        report['peak_rss_bytes'] = _peak_rss_bytes()
+        assert report['peak_rss_bytes'] > 0, 'Native memory diagnostics failed'
         from wavedispx.classroom.runtime import configure_ui_font
         from PySide6.QtWidgets import QApplication
         from PySide6.QtCore import QEventLoop,QTimer
