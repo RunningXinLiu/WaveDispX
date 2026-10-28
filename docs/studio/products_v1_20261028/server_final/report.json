@@ -1,0 +1,50 @@
+{
+  "scope": "integration and controlled identities, NOT full physical convergence",
+  "cases": {
+    "active_transverse": {
+      "output": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/results_final/active_transverse/experiment_1793169181099564640",
+      "statuses": {
+        "rayleigh": "当前观测响应为零或缺少对应分量；请检查源方向与接收方向。未生成有效能量图。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "elapsed_s": 0.28607258293777704,
+      "config_sha256": "657735f94574f77cd15ca7d58df57d3fe3e01c7c7656f9368f552066e36a713e"
+    },
+    "active_tilted": {
+      "output": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/results_final/active_tilted/experiment_1793169182398208418",
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "elapsed_s": 0.39049019012600183,
+      "config_sha256": "85c89f7299288e6cb93b8658059196df8c93af81fcfd01f5e435985d89a42b7c"
+    },
+    "passive_isotropic_h": {
+      "output": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/results_final/passive_isotropic_h/experiment_1793169183821714372",
+      "statuses": {
+        "rayleigh": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+        "love": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+        "hvsr": "已计算逐台站原始XYZ谱比；窗间散度不是置信区间。"
+      },
+      "elapsed_s": 0.46802798192948103,
+      "config_sha256": "0df5c6c3e5e24042e9ec18899cccc74d026347dde8fefde01947c8ac01535911",
+      "hvsr_valid_fraction": 1.0,
+      "raw_preview_relative_l2": 2.5380494810461312e-08
+    },
+    "passive_directed_h": {
+      "output": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/results_final/passive_directed_h/experiment_1793169186538740127",
+      "statuses": {
+        "rayleigh": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+        "love": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+        "hvsr": "已计算逐台站原始XYZ谱比；窗间散度不是置信区间。"
+      },
+      "elapsed_s": 0.48351724073290825,
+      "config_sha256": "d05691945509e2bbc4356e903a2b61db5b1b8a5183983c4a7e82dcab930c283c",
+      "hvsr_valid_fraction": 1.0,
+      "raw_preview_relative_l2": 2.5327803263383674e-08
+    }
+  },
+  "script_sha256": "c92ee7f4d532f39b67e82d9fffd680cf239fa940e1ee09e8801a50b9b3a52246",
+  "core_sha256": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+  "qed_sha256": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+}

@@ -62,6 +62,55 @@ def explain_input_error(error: Exception) -> InputIssue:
 
     rules = (
         (
+            ("das v1",),
+            "② 观测系统 / DAS → 源分量与成像方法",
+            "das.enabled / active_source.component / ambient_sources.component / processing.dispersion_method",
+            "当前DAS实现不支持该源分量或成像组合。",
+            "当前DAS需vertical源、phase_shift且compare_methods=false；Love-DAS、水平/倾斜源DAS尚未实现/验收。需要节点三分量时明确关闭DAS，不会自动替换。",
+        ),
+        (
+            ("source activity", "source-activity", "ambient_sources.activity_file"),
+            "③ 源与记录 → activity_file（高级参数 / 文件）",
+            "ambient_sources.activity_file",
+            "噪声源活动表不存在或与当前源数、独立窗数不匹配。",
+            "CSV需含window_index,source_index,amplitude_multiplier；索引从0开始且不越界、不重复，幅值非负，每窗至少一个非零源。换位置后核对source_index与坐标行顺序；不使用活动表时明确移除activity_file。",
+        ),
+        (
+            ("weighted polarization v1", "weighted source polarization"),
+            "③ 源与记录 → 极化与时间过程",
+            "ambient_sources.polarization / noise.temporal_model / noise.independent_sources",
+            "带H/V功率比例的极化目前仅支持独立平稳高斯源。",
+            "使用stationary_gaussian且independent_sources=true；若需要Poisson事件，选择legacy_xyz并移除自定义比例/方向。两种源定义不同，不会自动替换。",
+        ),
+        (
+            ("horizontal_power_fraction", "horizontal_azimuth_deg", "polarization weights", "independent_hv has", "legacy_xyz does"),
+            "③ 源与记录 → 源分量 / 极化",
+            "component / polarization / horizontal_power_fraction / horizontal_azimuth_deg",
+            "源功率比例、方向或分量组合不兼容。",
+            "设three_component；比例在0–1内。有指定方向选directed_hv；水平无优选方向选independent_hv并设方位0。legacy_xyz不接受自定义比例/方向。比例是源功率，不是接收H/V。",
+        ),
+        (
+            ("force_azimuth_deg", "force_inclination_deg", "force_amplitude", "vector force", "non-default force direction"),
+            "③ 源与记录 → 主动矢量力",
+            "active_source.component / force_amplitude / force_azimuth_deg / force_inclination_deg",
+            "主动矢量力参数或载荷模式不兼容。",
+            "自定义方向选vector；幅值>0，方位从+X向+Y，倾角在−90°至90°。水平径向可产生Rayleigh，横向可产生Love；具体取决于源台方向。DAS暂只支持vertical。",
+        ),
+        (
+            ("hvsr",),
+            "附加分析 → 节点HVSR",
+            "experiment.product / ambient_sources.component / das.enabled",
+            "节点HVSR的输入组合或统计参数不满足要求。",
+            "只需频散时关闭附加分析；需要HVSR时选passive、three_component并关闭DAS。平滑b≥0，垂直谱下限比例在0–1之间；原始XYZ谱比不是NCF谱比。",
+        ),
+        (
+            ("新计算目标暂不支持processing.compare_methods",),
+            "④ 频散成像 → 高级参数",
+            "processing.compare_methods",
+            "新计算目标当前不提供多方法比较。",
+            "将compare_methods设为false，并选一个dispersion_method；若需旧方法比较与拾取，选择兼容流程。",
+        ),
+        (
             ("toml",),
             "建立算例 → 载入完整 TOML",
             "TOML 文件",

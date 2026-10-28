@@ -1,0 +1,29 @@
+{
+  "scope": "UI smoke only; actual active quick CPU/QED, no convergence certification",
+  "python": "/opt/miniconda3/envs/seisloc/bin/python",
+  "git_head": "11843ee3dfd8eb6e0a4b2098b60c778a1a198d07",
+  "working_tree": "contains pre-existing uncommitted classroom/QED work; HEAD alone is not the running version",
+  "energy_sha256_before_display": "e44cc12c2ca058c852e203765ac6f56889d992179365334ca398787723b871d3",
+  "energy_sha256_after_display": "e44cc12c2ca058c852e203765ac6f56889d992179365334ca398787723b871d3",
+  "shape": [
+    221,
+    164
+  ],
+  "fullscreen": true,
+  "logical_window": [
+    1728,
+    1084
+  ],
+  "device_pixel_ratio": 2.0,
+  "files_sha256": {
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/desktop/studio.py": "0b87c32881731a0f6b7513eceec1e335213bc90baa38927ab5165443a35cf9ae",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/scripts/check_studio_ui.py": "d35ed17e24589be9c6246dbc19a001ca01fe65acc19c4e40dc336039926d329a",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/processing/qedisp.py": "dd719d5f753a8ac7f492e36f3f2a0681a5aaa03e156b9b6c8122b81c2cbbc197",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/forward.py": "e2e20fc7f440582f2c777fe498f32d7eb4882e78e00399ab981b1764d2a8ab3e",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/workflow.py": "d02e6f815900f34874140b187abf69a6faddd29fd23419d573c9f9d281c5f0b5",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/_dwm_core.cpython-312-darwin.so": "ac1d18496f696972bc1ec80b925b761501d57b01ec97bac1756079eff1ce9e6d",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/.wavedispx-tools/QEDispInv/bin/forward": "66d7427bcfcbd48641d5151dd7707bc7994692e1d7e2d92bc7846cf4abbc1e46",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/examples/active_quick.toml": "527b325ddf1fb18668d2c6f24d6ecd5441ae0956a4609de06594f210565bdc90",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/docs/studio/checked_input.toml": "520fbdc531c9fef50e684524793542cc40aa43a751365a318eee5acb67c77cc9"
+  }
+}

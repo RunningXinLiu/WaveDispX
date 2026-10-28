@@ -1,0 +1,44 @@
+{
+  "scope": "real Qt worker CPU integration only, no convergence claim",
+  "cases": {
+    "active_vector": {
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "elapsed_s": 3.6677284159959527
+    },
+    "vertical_vector": {
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "当前矢量源为纯垂直力，没有Love横向激发；可单独计算Love理论曲线。"
+      },
+      "elapsed_s": 2.024583332997281
+    },
+    "theory_only": {
+      "statuses": {
+        "rayleigh": "未选择此波型。",
+        "love": "QED理论曲线已计算；不使用源、阵列或记录时长，不是频散能量。"
+      },
+      "elapsed_s": 0.11499195800570305
+    },
+    "hvsr": {
+      "statuses": {
+        "rayleigh": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+        "love": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。"
+      },
+      "elapsed_s": 61.40279658300278
+    }
+  },
+  "logical_window": [
+    1728,
+    1084
+  ],
+  "device_pixel_ratio": 2.0,
+  "files_sha256": {
+    "python_src/wavedispx/desktop/studio.py": "7fe47147d752da054c9d565507d0874a4c6a9bfd2819764349b34820d1b8ddae",
+    "scripts/check_studio_products_ui.py": "ea72d7a8df99b370be6e13974dde399cb53c9675c4e82fd1d961b2436031d01f",
+    "examples/active_vector_studio.toml": "72c439a616136eb462b68d6d0975b9ccd575597475c5b8bacf5ee06f5c08eacf",
+    "examples/passive_hvsr_studio.toml": "63e7dd416d15c8be6e3ac3870c04be7e492b8dbf6a11570c8e85083d9b8db320"
+  }
+}

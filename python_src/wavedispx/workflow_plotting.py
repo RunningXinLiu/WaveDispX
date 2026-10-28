@@ -103,6 +103,12 @@ def plot_workflow_forward(workflow: WaveDispXWorkflow):
                 (forward.horizontal_tangential[:, order], "Horizontal-load transverse gather"),
             )
         )
+        if getattr(forward, "vector_xyz", None) is not None:
+            from .source_vector import project_green_to_rtz
+            az = np.arctan2(forward.receiver_y_m-workflow.config.active_source.y_m, forward.receiver_x_m-workflow.config.active_source.x_m)
+            transverse = project_green_to_rtz(forward.components,az,forward.force_xyz)[...,1]
+            panels = ((forward.vector_xyz[:, order, 2], "Vector-force Z gather"),
+                      (transverse[:, order], "Vector-force transverse gather"))
         for axis, (gather, title) in zip(axes, panels):
             scale = np.percentile(np.abs(gather), 99.5)
             axis.imshow(

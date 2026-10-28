@@ -76,6 +76,19 @@ from .config_editor import ConfigTreeEditor
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
+
+
+def source_layout_mapping(current, **layout):
+    """Replace positions only; preserve explicit source physics and activity."""
+    result = deepcopy(current)
+    for key in ("inner_radius_m", "outer_radius_m", "x_min_m", "x_max_m", "y_m", "coordinates_file"):
+        result.pop(key, None)
+    result.setdefault("component", "vertical")
+    result.setdefault("seed", 42)
+    result.update(layout)
+    return result
+
+
 TEMPLATES = {
     "主动源｜快速检查": PROJECT_ROOT / "examples/active_quick.toml",
     "DAS｜主动线阵快速检查": PROJECT_ROOT / "examples/active_das_line_quick.toml",
@@ -246,7 +259,7 @@ class ParameterPage(QWidget):
             ("二维面阵", "receiver_grid", "用 x/y 起终点和间距设计规则二维阵列。被动处理还会增加径向距离箱 distance_bin_m。"),
             ("接收器 CSV", "receiver_file", "导入任意二维接收器坐标。文件必须为 UTF-8 CSV，至少两行，包含 x_m,y_m，且不能有重复位置。"),
             ("DAS 光缆 CSV", "das_channel_file", "导入逐道 DAS 几何。每行除 x_m,y_m 外填写两个端点，或填写该道标距与方位；同时切换为接收器文件输入。"),
-            ("源环", "source_annulus", "被动源改为环形方位照明；默认使用 stratified 方位抽样和至少 192 个源，适合检验近似弥散场恢复。"),
+            ("源环", "source_annulus", "改为环形源位置，保留已有源数、极化、方向和活动文件；仅填入新半径初值。请核对源范围和活动表的源编号。"),
             ("源线", "source_line", "被动源改为道路/线性噪声带；单侧照明可能造成 NCF 不对称，解释结果时应保留该限制。"),
             ("噪声源 CSV", "source_file", "导入已知噪声源位置 x_m,y_m；源数会按有效数据行自动更新，空间随机种子不再改变位置。"),
             ("炮点 CSV", "shot_file", "读取 shot_id,x_m,y_m 多炮表并明确选择本次的一炮；选中坐标会固化到 active_source。"),
@@ -844,6 +857,21 @@ class MainWindow(QMainWindow):
     def save_toml(self) -> None:
         try:
             mapping = self.parameter_page.mapping()
+            # Save-as must preserve file identity when the TOML moves folders.
+            # Use absolute references, without mutating the editable mapping.
+            mapping = deepcopy(mapping)
+            path_fields = (("run", "output_directory"),
+                           ("geometry", "receivers", "coordinates_file"),
+                           ("ambient_sources", "coordinates_file"),
+                           ("ambient_sources", "activity_file"),
+                           ("noise", "psd_file"))
+            for keys in path_fields:
+                section = mapping
+                for key in keys[:-1]:
+                    section = section.get(key, {})
+                value = section.get(keys[-1])
+                if value:
+                    section[keys[-1]] = str((self.session.workspace_directory / str(value)).resolve())
             content = toml_dumps(mapping)
         except Exception as exc:
             self._show_error("无法保存 TOML", exc)
@@ -982,27 +1010,15 @@ class MainWindow(QMainWindow):
             elif action == "source_annulus":
                 self._require_passive(mapping)
                 current = mapping.setdefault("ambient_sources", {})
-                mapping["ambient_sources"] = {
-                    "component": current.get("component", "vertical"),
-                    "layout": "annulus",
-                    "count": max(192, int(current.get("count", 192))),
-                    "seed": int(current.get("seed", 42)),
-                    "inner_radius_m": 250.0,
-                    "outer_radius_m": 450.0,
-                    "angular_sampling": "stratified",
-                }
+                mapping["ambient_sources"] = source_layout_mapping(
+                    current, layout="annulus", count=int(current.get("count", 192)),
+                    inner_radius_m=250.0, outer_radius_m=450.0)
             elif action == "source_line":
                 self._require_passive(mapping)
                 current = mapping.setdefault("ambient_sources", {})
-                mapping["ambient_sources"] = {
-                    "component": current.get("component", "vertical"),
-                    "layout": "line",
-                    "count": int(current.get("count", 192)),
-                    "seed": int(current.get("seed", 42)),
-                    "x_min_m": -500.0,
-                    "x_max_m": 500.0,
-                    "y_m": 300.0,
-                }
+                mapping["ambient_sources"] = source_layout_mapping(
+                    current, layout="line", count=int(current.get("count", 192)),
+                    x_min_m=-500.0, x_max_m=500.0, y_m=300.0)
             elif action == "source_file":
                 self._choose_source_file(mapping)
             elif action == "shot_file":
@@ -1071,13 +1087,8 @@ class MainWindow(QMainWindow):
         path = Path(filename).resolve()
         count = coordinate_csv_count(path.read_bytes())
         current = mapping.setdefault("ambient_sources", {})
-        mapping["ambient_sources"] = {
-            "component": current.get("component", "vertical"),
-            "layout": "file",
-            "count": count,
-            "seed": int(current.get("seed", 42)),
-            "coordinates_file": str(path),
-        }
+        mapping["ambient_sources"] = source_layout_mapping(
+            current, layout="file", count=count, coordinates_file=str(path))
 
     def _choose_shot_file(self, mapping: dict[str, Any]) -> None:
         if mapping.get("run", {}).get("mode") != "active":
@@ -1106,6 +1117,14 @@ class MainWindow(QMainWindow):
 
     def start_stage(self, stage: str) -> None:
         if self._running:
+            return
+        from wavedispx.experiment import ExperimentRequest
+        try:
+            request = ExperimentRequest.from_mapping(self.parameter_page.mapping())
+            if request.product != "legacy" or request.waves != "both":
+                raise ValueError("此分阶段入口不执行[experiment]新目标；请使用Studio主窗口的运行按钮。不会忽略所选计算目标。")
+        except ValueError as exc:
+            self._show_error("计算目标不支持", exc)
             return
         if self._dirty or self.workflow is None or self._review is None:
             if not self.validate_case(navigate=False, show_ready_dialog=False):

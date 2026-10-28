@@ -1,0 +1,56 @@
+{
+  "scope": "active/passive R/L and theory Qt check; no HVSR or convergence claim",
+  "cases": {
+    "active_vector": {
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "elapsed_s": 0.5301128749997588,
+      "energy_sha256": {
+        "rayleigh": "3abcdb8740f93dd214df7c03a6faf21d6f293d71cf36364ff1a9a1b07381bfab",
+        "love": "7dd57aa6eef2975d01c41afc46cf47035ab88a9ba487fca9d9541e65d10203b7"
+      }
+    },
+    "vertical_vector": {
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "当前矢量源为纯垂直力，没有Love横向激发；可单独计算Love理论曲线。"
+      },
+      "elapsed_s": 0.47620208299485967,
+      "energy_sha256": {
+        "rayleigh": "fa9b6b3c3e8acd67891f795714c6a73c4033e5198bc5e6fd37d1723ff3e2dfc4"
+      }
+    },
+    "theory_only": {
+      "statuses": {
+        "rayleigh": "未选择此波型。",
+        "love": "QED理论曲线已计算；不使用源、阵列或记录时长，不是频散能量。"
+      },
+      "elapsed_s": 0.12493962499138433,
+      "energy_sha256": {}
+    },
+    "passive_vector_energy": {
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "elapsed_s": 1.1653981670096982,
+      "energy_sha256": {
+        "rayleigh": "78deb5373813e0adcc826035daffc7cef9a225e3e20361480f2ad7a4aaece511",
+        "love": "e4a97aa7d22047b16e96623ced9269e737cc4d8d48414d3cfff4323ed64528ce"
+      }
+    }
+  },
+  "window_state": "normal",
+  "logical_window": [
+    1600,
+    924
+  ],
+  "files_sha256": {
+    "python_src/wavedispx/desktop/studio.py": "2b2370ded03c072bd70698051c18f0aac6826e77d4688ab74d907723c00ef0fb",
+    "python_src/wavedispx/desktop/app.py": "82273d26e34f20267faed8f4240d9146c1398ffcf9dac48c6aebc0139d23ee3b",
+    "python_src/wavedispx/app_service.py": "1eca9805d47cf56b071226b47e238fe1a431da66bb3ee4414636613207df2f40",
+    "scripts/check_studio_products_ui.py": "1e3f7d373a34819bfb50a3d0356c8ce6bd1f0edf97ce6cf1f2388aeeecec353d"
+  }
+}

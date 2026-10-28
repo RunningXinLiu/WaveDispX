@@ -1,0 +1,27 @@
+{
+  "scope": "same active model/source/geometry, Lg16; period changes native DWM discretization and damping too",
+  "script_sha256": "ac7b4246bcb01489c84a3a8c1ab2121e37a2af2e73ca6dcd01b1fee31f50e778",
+  "cases": {
+    "4.0": {
+      "elapsed_s": 3.676868231035769,
+      "tail_20pct_energy_fraction_near_mid_far": [
+        0.4977731912633586,
+        0.10716072307758782,
+        0.057150607153636984
+      ],
+      "input_sha256": "e15c9f989478a2e2b79fd3083c980e67290746f7465c86de8eef75bee383ddda"
+    },
+    "8.0": {
+      "elapsed_s": 3.540310699492693,
+      "tail_20pct_energy_fraction_near_mid_far": [
+        0.7974670305835406,
+        0.363730141703486,
+        0.2885659378406398
+      ],
+      "input_sha256": "dcedbea1e14a5f3ab16181947b8a311cbd1d0d9f5e3a0081068d3a42df9ea490"
+    }
+  },
+  "period_image_relative_l2": 0.11051496164032923,
+  "sampling_common_points_relative_l2": 0.00011285624757179635,
+  "sampling_note": "Common-point check only; finer interstitial peaks and weak modes are not certified by this scalar."
+}

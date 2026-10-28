@@ -1,0 +1,10 @@
+{
+  "case": "unchanged active_quick, CPU, QED overlay",
+  "energy_relative_l2": 6.069627515440458e-13,
+  "zz_waveform_relative_l2": 2.56352047441771e-08,
+  "thresholds": {
+    "energy": 1e-06,
+    "waveform": 1e-05
+  },
+  "note": "Linux waveform inspection reloaded from float32 HDF5; same algorithm, not independent solver evidence"
+}

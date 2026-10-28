@@ -184,6 +184,21 @@ def test_required_upload_error_explanation_is_actionable():
     assert "shot_id,x_m,y_m" in issue.suggestion
 
 
+@pytest.mark.parametrize("message, field, suggestion", [
+    ("source activity rows contain invalid indexes or amplitudes", "activity_file", "source_index"),
+    ("weighted polarization v1 supports stationary_gaussian only", "polarization", "stationary_gaussian"),
+    ("horizontal_power_fraction must be in [0,1]", "horizontal_power_fraction", "0–1"),
+    ("non-default force direction/amplitude requires active_source.component='vector'", "force_azimuth", "vector"),
+    ("active DAS v1 requires active_source.component='vertical'", "das.enabled", "尚未实现"),
+    ("节点HVSR需要被动three_component的XYZ观测且关闭DAS", "experiment.product", "关闭附加分析"),
+])
+def test_source_product_errors_have_chinese_location_and_repair(message, field, suggestion):
+    issue = explain_input_error(ValueError(message))
+    assert field in issue.field_path
+    assert suggestion in issue.suggestion
+    assert issue.technical_message == message
+
+
 def test_saved_ui_case_rewrites_uploaded_coordinates_to_portable_paths(tmp_path):
     receiver_file = tmp_path / "uploaded_receivers.csv"
     receiver_file.write_text("x_m,y_m\n5,0\n10,0\n15,0\n20,0\n")

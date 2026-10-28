@@ -1,0 +1,59 @@
+{
+  "scope": "Native cutoff sensitivity; unchanged model, source Ricker f0=7Hz, dt=.005, geometry, gauge16; not equivalent spectra",
+  "script_sha256": "198703fc1e5d1dc875ec22c31451d6fe39adce26626e46595aaf27621d0b60fa",
+  "cases": {
+    "cutoff16_T4": {
+      "input_sha256": "5aae2eb0c64fcaaf487659e7f08aaec85a299e494a0e86f34c806df49c82f221",
+      "tail_20pct_energy_fraction_near_mid_far": [
+        0.4977731912633586,
+        0.10716072307758782,
+        0.057150607153636984
+      ]
+    },
+    "cutoff16_T8": {
+      "input_sha256": "1fa90c68fc55e7b3d4196fe4ea202282a54761390a305b2fce19d969bf31faf7",
+      "tail_20pct_energy_fraction_near_mid_far": [
+        0.7974670305835406,
+        0.363730141703486,
+        0.2885659378406398
+      ]
+    },
+    "cutoff24_T4": {
+      "input_sha256": "426a443578afaaeeaa0b06245e4e1bf4ca9929efd2cb7a4866c679d4585ec2e1",
+      "tail_20pct_energy_fraction_near_mid_far": [
+        9.086761711246292e-05,
+        1.0640949776744858e-06,
+        2.651757983380258e-07
+      ]
+    },
+    "cutoff24_T8": {
+      "input_sha256": "550cd0ec2b85d59d408ba2f5bd5ecafbacb5d00dced29f1c5876f6317511cd2a",
+      "tail_20pct_energy_fraction_near_mid_far": [
+        0.00028583808707001326,
+        6.280518253178826e-06,
+        1.4198976566800657e-06
+      ]
+    },
+    "cutoff32_T4": {
+      "input_sha256": "85da0125633e63a2033af73b8a936cdcc493ca076b3d7073fcc6f6b03b3ec4a8",
+      "tail_20pct_energy_fraction_near_mid_far": [
+        1.96441084056387e-05,
+        1.5556118756951365e-09,
+        1.3600204481134942e-09
+      ]
+    },
+    "cutoff32_T8": {
+      "input_sha256": "804ba64c8b63737ee76c487cb1ba1f051c780f530075cde678c469597affe828",
+      "tail_20pct_energy_fraction_near_mid_far": [
+        1.3687537681830662e-06,
+        1.1161542650039878e-10,
+        1.3458584383879256e-10
+      ]
+    }
+  },
+  "period_image_relative_l2": {
+    "16.0": 0.11051496164032923,
+    "24.0": 0.032103271574083936,
+    "32.0": 0.0324498488936182
+  }
+}

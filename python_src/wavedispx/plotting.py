@@ -163,6 +163,8 @@ def plot_active_summary(
         else shot.vertical_vertical[:, distance_order]
     )
     sorted_distance = shot.distance_m[distance_order]
+    if shot.vector_xyz is not None:
+        gather = shot.vector_xyz[:, distance_order, 2]
     scale = np.percentile(np.abs(gather), 99.5)
     axes[1, 0].imshow(
         gather,
@@ -179,7 +181,7 @@ def plot_active_summary(
         title=(
             f"DAS {shot.das_record.measurement} shot gather"
             if shot.das_record is not None
-            else "Vertical shot gather"
+            else "Vector-force Z shot gather" if shot.vector_xyz is not None else "Vertical shot gather"
         ),
     )
     plotted_rayleigh = rayleigh_combined or rayleigh

@@ -201,7 +201,7 @@ def build_preflight_review(config: RunConfig) -> PreflightReview:
         )
     )
     all_theory = theory.rayleigh_mps
-    if config.mode == "active" and config.active_source.component in {"horizontal", "both"}:
+    if config.mode == "active" and config.active_source.component in {"horizontal", "both", "vector"}:
         all_theory = np.column_stack((all_theory, theory.love_mps))
     requested_frequency = (
         (theory.frequency_hz >= processing.frequency_min_hz)
@@ -808,7 +808,7 @@ def plot_preflight_review(review: PreflightReview):
             alpha=1.0 if mode_index == 0 else 0.65,
             label="Rayleigh" if mode_index == 0 else None,
         )
-    if config.mode == "active" and config.active_source.component in {"horizontal", "both"}:
+    if config.mode == "active" and config.active_source.component in {"horizontal", "both", "vector"}:
         for mode_index in range(review.theory.love_mps.shape[1]):
             axes[1, 2].plot(
                 review.theory.frequency_hz,

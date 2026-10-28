@@ -333,6 +333,11 @@ def save_active_results(
         shot_group.create_dataset("receiver_x_m", data=shot.receiver_x_m)
         shot_group.create_dataset("receiver_y_m", data=shot.receiver_y_m)
         shot_group.create_dataset("distance_m", data=shot.distance_m)
+        if shot.vector_xyz is not None:
+            shot_group.create_dataset("vector_xyz", data=shot.vector_xyz, compression="gzip")
+            shot_group.create_dataset("force_xyz", data=shot.force_xyz)
+            shot_group.attrs["vector_operator"] = "global-force-xyz/v1; azimuth +X toward +Y; Z=native Green sign"
+            shot_group.attrs["components_role"] = "unit-load basis responses, NOT the vector shot"
         shot_group.create_dataset(
             "components", data=shot.components.astype(np.float32), compression="gzip", shuffle=True
         )

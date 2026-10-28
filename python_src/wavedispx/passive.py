@@ -697,6 +697,7 @@ def accumulate_passive_correlation(
                 return_source_events=noise.temporal_model == "poisson_ricker",
                 source_block_size=config.source_block_size,
                 source_activity_weights=source_activity[window_index],
+                source_polarization=config.ambient_sources,
             )
         else:
             realization = synthesize_mixed_noise_window_band(

@@ -1,0 +1,35 @@
+{
+  "scope": "native Qt input/preview only, no automatic forward",
+  "workers": 2,
+  "window_normal": true,
+  "cases": {
+    "east_line": {
+      "sources": 12,
+      "receivers": 41,
+      "activity_file": "None"
+    },
+    "clusters_array": {
+      "sources": 12,
+      "receivers": 25,
+      "activity_file": "None"
+    },
+    "switching_array": {
+      "sources": 12,
+      "receivers": 25,
+      "activity_file": "/Volumes/lx_exFAT/PassiveFW_versionstable/examples/custom_geometry/source_activity_switching.csv"
+    }
+  },
+  "files_sha256": {
+    "python_src/wavedispx/desktop/studio.py": "c7ec4a719661701f885cd77baf881052dd00d0e40b23bc9c67d616226f6a5fe2",
+    "python_src/wavedispx/desktop/help_text.py": "c2929bcb9769bb987d07f1b7a69f33c2d167a9a576520e1a61ad5e66ee5f0791",
+    "scripts/check_studio_custom_inputs_ui.py": "b4f3c7a6ee7e8a5a3232d646ffac92b0168f253078419e624370056844b92571",
+    "examples/custom_geometry/passive_clusters_array.toml": "6abc2ff2bfe5cdecb12d27acccc7f600d001576ce2d1a478eb8d5a3ff4df4a31",
+    "examples/custom_geometry/passive_east_line.toml": "64ea4bf0fbe725e4f1ff3988c977bafbed1211af8ce12484fc7132009d622416",
+    "examples/custom_geometry/passive_switching_array.toml": "8656f7ab39a3ddadf694e6d811bc0d2f91cdded32331f9f883fdb0892db41a61",
+    "examples/custom_geometry/sources_east.csv": "b9e8c805acb73ad6eb81542eed7479ad649bca48e6670c34e4e5d7ac10072349",
+    "examples/custom_geometry/sources_two_clusters.csv": "bd34cdb1005c86dc77ce6ee27c63842c571ad2fb4ebdb10d500d8cd4196ebb84",
+    "examples/custom_geometry/receivers_irregular_array.csv": "61a8ff3d44cdfee34d37cffb322b63d5d994b810bdf6e511c3ea0450fd336b88",
+    "examples/custom_geometry/receivers_line.csv": "9c50993303dbc8513c5faca0486821effcfd5d491fffc9c52aa312c82df7c6a1",
+    "examples/custom_geometry/source_activity_switching.csv": "a72f59be9c4bfa9ec14fab35450caa1dbc9aec43b4a31bb2c8678af7bae8d45a"
+  }
+}

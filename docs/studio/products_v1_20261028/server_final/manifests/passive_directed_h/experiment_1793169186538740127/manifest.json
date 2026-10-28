@@ -1,0 +1,30 @@
+{
+  "schema": "wavedispx-experiment/v1",
+  "request": {
+    "product": "hvsr",
+    "waves": "both",
+    "theory_step_hz": 0.1,
+    "hvsr_smoothing_b": 40.0,
+    "hvsr_floor_ratio": 1e-06
+  },
+  "statuses": {
+    "rayleigh": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+    "love": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+    "hvsr": "已计算逐台站原始XYZ谱比；窗间散度不是置信区间。"
+  },
+  "elapsed_s": 0.48351724073290825,
+  "input_sha256": "d05691945509e2bbc4356e903a2b61db5b1b8a5183983c4a7e82dcab930c283c",
+  "arrays_sha256": "0006d661eefa53153970c7ed54bbf53f7b6aac2391b11499bcd102df340cc8be",
+  "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+  "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+  "implementation_sha256": {
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "c729518a145f96debd45a5e6718d1703651555dc8a9924cd08726b3005acfe8c",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4"
+  }
+}

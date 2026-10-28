@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 import sys
+import tomllib
 
 import numpy as np
 
@@ -72,6 +73,11 @@ def _summary(config) -> dict[str, object]:
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
+        if args.command == "run":
+            from .experiment import ExperimentRequest
+            request = ExperimentRequest.from_mapping(tomllib.loads(args.config.read_text(encoding="utf-8")))
+            if request.product != "legacy" or request.waves != "both":
+                raise ConfigError("此CLI入口不执行[experiment]新计算目标；请使用WaveDispX Studio或run_experiment接口，避免静默运行旧产品。")
         config = load_config(args.config)
         if args.command == "validate":
             summary = _summary(config)

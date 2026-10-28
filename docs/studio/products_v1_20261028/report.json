@@ -1,0 +1,48 @@
+{
+  "scope": "integration and controlled identities, NOT full physical convergence",
+  "cases": {
+    "active_transverse": {
+      "output": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/results/active_transverse/experiment_1793168364804347299",
+      "statuses": {
+        "rayleigh": "当前观测响应为零或缺少对应分量；请检查源方向与接收方向。未生成有效能量图。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "elapsed_s": 0.31071276031434536,
+      "config_sha256": "92ea4dfed8bb8378d908c4faa5f63e1303db501afbad2e05a0638eabde157708"
+    },
+    "active_tilted": {
+      "output": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/results/active_tilted/experiment_1793168366126173865",
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "elapsed_s": 0.3786891046911478,
+      "config_sha256": "fe84a60cc6ed16633efa4d3e535870d71c6f1daab42e3c023ca95b789280bb59"
+    },
+    "passive_isotropic_h": {
+      "output": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/results/passive_isotropic_h/experiment_1793168367601825134",
+      "statuses": {
+        "rayleigh": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+        "love": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。"
+      },
+      "elapsed_s": 0.4977124109864235,
+      "config_sha256": "ed1d3acd74aa604c5698a671119975ad9071a9b2891ad409a24557b4e0af112c",
+      "hvsr_valid_fraction": 1.0,
+      "raw_preview_relative_l2": 2.5380494810461312e-08
+    },
+    "passive_directed_h": {
+      "output": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/results/passive_directed_h/experiment_1793168375142950948",
+      "statuses": {
+        "rayleigh": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+        "love": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。"
+      },
+      "elapsed_s": 0.43931934144347906,
+      "config_sha256": "fe9fde8cbc796b378c6a65475b8299745fb7e8476cb132b3e2b20b53c0a71530",
+      "hvsr_valid_fraction": 1.0,
+      "raw_preview_relative_l2": 2.5327803263383674e-08
+    }
+  },
+  "script_sha256": "c92ee7f4d532f39b67e82d9fffd680cf239fa940e1ee09e8801a50b9b3a52246",
+  "core_sha256": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+  "qed_sha256": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+}

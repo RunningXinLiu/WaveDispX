@@ -76,9 +76,9 @@ PARAMETER_SPECS: dict[str, ParameterSpec] = {
     "run.name": H("算例名称", "—", "结果和图件使用的算例标识。", "不能为空。", "简短英文、数字和下划线，例如 passive_site01。", "只改变名称和元数据；不会改变数值结果。"),
     "run.mode": H("模拟模式", "—", "选择主动炮集或真实有限记录环境噪声流程。", "只能是 active 或 passive；改变模式时应载入同模式模板。", "主动炮集选 active；背景噪声互相关选 passive。", "切换模式会改变必需的源参数、观测阶段和默认频散方法。", (("active", "主动源炮集"), ("passive", "被动环境噪声"))),
     "run.output_directory": H("输出目录", "路径", "保存 HDF5、CSV、summary、manifest 和可复现 input.toml。", "必须是当前用户可创建或写入的目录。", "每个算例使用独立目录，避免结果互相覆盖。", "不改变计算；同名文件会在保存阶段更新。"),
-    "run.workers": H("CPU 并行线程数", "线程", "C++ 正演使用的 CPU 工作线程数。", "整数且 ≥0；0 表示自动。", "一般填 0；需要限制共享机器负载时再指定 1–8。", "增大可缩短正演时间，但超过物理核心后收益很小且可能抢占内存带宽。"),
-    "run.frequency_block_size": H("频率分块大小", "频点/块", "C++ 正演一次处理的频率数量。", "整数且 ≥1。", "常用 8–32；内存紧张用 4–8。", "增大可减少调度开销并提高速度，但增加峰值内存。"),
-    "run.source_block_size": H("噪声源分块大小", "源/块", "被动正演和混合记录一次处理的源数。", "整数且 ≥1。", "常用 8–32；主动模式基本不受它影响。", "增大通常更快但占用更多内存；不会改变物理结果。"),
+    "run.workers": H("CPU workers", "线程", "C++正演及支持并行的径向变换所请求的工作线程数，不是多炮/多任务数量。", "整数且≥0；0由内核按硬件并发数自动选择，并受当前任务数限制。", "可先保留模板4；需要腾出CPU时设1或2。0不意味着最快。", "不控制所有NumPy/BLAS、QED或界面线程，不保证全程序CPU占用上限；增加线程不保证线性提速，也不改变模型或源数量。"),
+    "run.frequency_block_size": H("频率分块大小", "频点/块", "频散成像等支持分批的步骤每批处理的频点数；不是频率步长df，也不是正演截断频率。", "整数且≥1。", "可先保留模板8；内存紧张时试4。", "影响临时数组大小与调度；不保证块越大越快，不改变请求频率坐标。"),
+    "run.source_block_size": H("噪声源分块大小", "源/块", "合成混合噪声记录时每批处理的源数，不是源总数。", "整数且≥1。", "可先保留模板8；主动模式通常不使用此项。", "影响临时内存和累加顺序；可能有浮点舍入差异，不改变源位置、源数或功率定义。"),
     "run.radial_interpolation_step_m": H("径向 Green 插值步长", "m", "源—接收器距离方向的 Green 函数插值间隔。", "必须 >0；被动模式还必须 ≤ 最短 S 波长的 5%。", "先用 0.5 m；高频或低 Vs 模型按审核给出的上限减小。", "减小提高径向插值精度但增加正演时间和内存；过大会失真并被 required 检查阻止。"),
     "run.store_source_responses": H("保存逐源传递响应", "—", "是否把每个被动噪声源的完整传递函数写入结果。", "true/false。", "常规有限记录模拟选 false；仅诊断单源传播时开启。", "开启显著增加 HDF5 和内存，不改变混合记录或频散结果。", BOOL_CHOICES),
     # Layered model.
@@ -112,9 +112,9 @@ PARAMETER_SPECS: dict[str, ParameterSpec] = {
     "active_source.component": H("主动载荷分量", "—", "决定计算 Rayleigh、Love 或二者。", "vertical、horizontal 或 both。", "未知目标时选 both；只研究竖直 Rayleigh 可选 vertical 以节省时间。", "both 计算五分量 Green 响应，信息最完整但运行和输出更大。", (("vertical", "竖直载荷 / Rayleigh"), ("horizontal", "水平横向载荷 / Love"), ("both", "两类载荷都计算"))),
     "active_source.wavelet": H("主动源子波", "—", "主动震源时间函数。", "ricker 或 unit_impulse。", "常规炮集用 ricker；验证宽频模型、观测系统和成像器时用 unit_impulse。", "unit_impulse 具有平坦离散振幅谱，只适合作为理想合成校准源。", (("ricker", "Ricker 子波"), ("unit_impulse", "单位脉冲（宽频校准）"))),
     "active_source.dominant_frequency_hz": H("Ricker 主频 / 参考频率", "Hz", "Ricker 时为功率谱主要能量中心；unit_impulse 时仅控制正演时窗与延迟。", ">0，且不能高于正演最高频率。", "Ricker 时放在目标频带中部；unit_impulse 时可取目标频带中部。", "Ricker 主频改变能量谱；unit_impulse 下不改变平坦源谱。"),
-    "active_source.maximum_frequency_hz": H("主动正演最高频率", "Hz", "波场正演保留的最高频率。", "≥主频/参考频率，且严格 < 1/(2dt)。", "略高于处理上限；Ricker 时还应覆盖子波有效尾部。", "增大扩大高频带宽和计算频点数；过高会带来时间/空间混叠。"),
+    "active_source.maximum_frequency_hz": H("主动正演最高频率", "Hz", "波场正演的频谱截断上限，不是频散图的显示上限。", "≥主频/参考频率，且严格 < 1/(2dt)。", "必须检查子波在截断处的剩余谱幅；不能只比成像上限略高。用固定模型的上限加密对照检查完整波形和频散图。", "截断过低可能产生振铃，并被时域指数校正放大；DAS 应变率尤其敏感。提高上限增加计算量，但不要求把频散图也画到该频率；成像频带另按阵列采样检查。"),
     "active_source.dt_s": H("主动时间采样间隔", "s", "炮集时间序列采样间隔。", ">0，且最高频率 < 1/(2dt)；最短周期建议至少 8 点。", "按 dt ≤ 1/(8 fmax) 选取。", "减小 dt 提高时间采样并扩大 Nyquist，但增加样点数、内存和 FFT 成本。"),
-    "active_source.record_duration_s": H("主动记录时长", "s", "去除 DWM 延迟后保存并用于频散成像的炮集时长；它决定真实 FFT 频率分辨率。", "0 表示按群速度、最大炮检距和处理最低频率自动设计；显式值必须不短于预检查建议。", "通常保持 0；只有复现实测记录窗或做时长敏感性试验时才显式填写。", "时长越长，低频慢群速度到时越完整且 df 越小；FFT 补零只能加密显示，不能替代真实时长。"),
+    "active_source.record_duration_s": H("主动记录时长", "s", "去除 DWM 延迟后保存并用于频散成像的炮集时长；1/T 给出有限记录的频率尺度。", "0 表示按群速度、最大炮检距和处理最低频率给出候选值；显式值必须不短于预检查建议。", "自动值不是收敛保证。检查近、中、远道完整波形，同时对记录周期和正演最高频率做敏感性检查。", "改变时长也会改变原生 DWM 频率网格和复频移，并非单纯多保存一段波形。末端振荡时不要只延长记录；FFT 补零不能增加真实记录的信息。"),
     # Ambient source geometry.
     "ambient_sources.component": H("环境源分量", "—", "选择竖直快速路径或物理三分量随机力。", "vertical 或 three_component。", "先用 vertical 调试；需要 RR/TT/ZZ 与 Love/Rayleigh 分量研究时用 three_component。", "three_component 计算 Fx/Fy/Fz 经完整 Green 张量传播，计算和内存明显增加。", (("vertical", "竖直随机力"), ("three_component", "三分量 Fx/Fy/Fz 随机力"))),
     "ambient_sources.layout": H("噪声源空间布局", "—", "选择环形照明、线性道路源或显式坐标。", "annulus、line/road 或 file。", "验证各向同性恢复优先 annulus+stratified；已知现场源位置用 file。", "源布局决定方位照明；严重单侧/线性分布会使 NCF 不对称并偏置频散能量。", (("annulus", "环形方位照明"), ("line", "道路 / 线性噪声带"), ("file", "CSV 显式源位置"))),
@@ -222,6 +222,20 @@ PARAMETER_SPECS: dict[str, ParameterSpec] = {
 
 
 # Backward-compatible plain summary mapping used by older tests/extensions.
+PARAMETER_SPECS.update({
+    "active_source.component": H("主动激发模式", "—", "旧模式是单位载荷基响应；vector是一个方向固定的真实力矢量。", "vector当前仅支持节点；DAS混合源尚未验收。", "指定力方向用vector；旧模板保持原模式。", "源方向和源台方位共同控制R/T响应；水平不等于只激发Love。", (("vertical","旧垂直载荷"),("horizontal","旧水平载荷基响应"),("both","旧双载荷基响应"),("vector","矢量力：幅值＋方向"))),
+    "active_source.force_amplitude": H("矢量力幅值系数", "倍", "相对于原单位载荷的总力幅值，各分量共用同一子波。", "有限正数；只用于vector。", "1；方向改变时保持总幅值。", "线性缩放XYZ波形；不是功率比例。"),
+    "active_source.force_azimuth_deg": H("水平力方位角", "deg", "全局+X到+Y为正，与接收器无关。", "有限数；只用于vector。", "0沿+X，90沿+Y。", "每个源台对单独转换到径向/横向，决定方向性。"),
+    "active_source.force_inclination_deg": H("力倾角", "deg", "0为水平，+90沿原生Green的+Z，-90反向；不隐式解释为ENU/NED。", "[-90,90]。", "研究水平源用0，斜向用明确角度。", "相干H/V分量比随倾角变化，不等于接收波场H/V。"),
+    "ambient_sources.polarization": H("源力极化 / 功率模式", "—", "区分旧XYZ幅值与固定总源力PSD的新模式。", "新模式需three_component、独立源、stationary_gaussian；逐事件方向尚未实现。", "旧模板保持legacy；研究比例选独立H/V或定向H/V。", "新模式总PSD为一份源PSD；旧等幅XYZ总PSD为三份，不偷偷重标定旧算例。", (("legacy_xyz","旧XYZ等谱幅值"),("independent_hv","独立H/V：水平无优选方向"),("directed_hv","独立H/V：水平指定方向"))),
+    "ambient_sources.horizontal_power_fraction": H("源力水平功率占比", "0–1", "pH=(Sxx+Syy)/总源力PSD，垂直为1-pH；不是接收HVSR或辐射波能量比例。", "[0,1]；新极化模式有效。", "先明确实验比例，如0.6；无优选方向时X/Y各0.3。", "振幅按功率权重平方根缩放；pH=0仍可计算XYZ接收响应。"),
+    "ambient_sources.horizontal_azimuth_deg": H("噪声水平力方向", "deg", "所有源共用的全局水平力方向；H与V时间过程独立。", "仅directed_hv；有限数。", "0沿+X，90沿+Y。", "不是源位置的方位，也不是光纤方向。逐源/逐事件方向尚未开放。"),
+    "experiment.product": H("计算目标", "—", "选择理论、观测能量、节点HVSR或组合。", "理论不运行波场；HVSR必须被动XYZ节点。", "按所需输出选择，旧模板默认兼容流程。", "未请求的产品不生成；理论线不替代缺失能量。"),
+    "experiment.waves": H("输出波型", "—", "选择Rayleigh、Love或两者。", "rayleigh、love、both；不改变源或观测分量。", "理论和能量分别核对可用性。", "未选择或不支持的结果页保留解释；HVSR不按波型分离。"),
+    "experiment.theory_step_hz": H("理论曲线实际df", "Hz", "仅理论曲线时的真实QED求值步长，与FFT补零无关。", ">0，最多10000频点。", "按目标频带设定并加密检查。", "不是能量图扫描df；叠加模式用能量图实际频率轴。"),
+    "experiment.hvsr_smoothing_b": H("HVSR KO平滑b", "—", "Konno–Ohmachi振幅谱平滑；先合并水平谱，再分别平滑H/V谱、相除。", "有限>=0；0关闭平滑。", "40是可改起点，不是收敛认证。", "越大越窄；保存该观测定义。窗使用10%Tukey，排除不足10周期频点。"),
+    "experiment.hvsr_floor_ratio": H("HVSR垂直谱相对下限", "比例", "低于每台每窗最大垂直谱的此比例时标无效，不加小常数制造高峰。", "(0,1)。", "1e-6作为数值筛查，检查有效窗数；不是仪器噪声模型。", "结果为逐台站逐窗几何平均与对数散度，至少3个有效窗；不是置信区间。"),
+})
 PARAMETER_HELP = {path: spec.summary for path, spec in PARAMETER_SPECS.items()}
 
 
@@ -282,7 +296,7 @@ def value_guidance(path: str, value: Any, mapping: dict[str, Any] | None) -> str
     normalized = canonical_path(path)
     try:
         if normalized == "run.workers":
-            return "当前为自动使用可用核心。" if int(value) == 0 else f"当前最多使用 {int(value)} 个 CPU 线程。"
+            return "当前请求内核自动选线程；不保证最快。" if int(value) == 0 else f"当前C++核请求 {int(value)} 个工作线程；不是全程序线程总上限。"
         if normalized == "run.radial_interpolation_step_m":
             layers = _get(mapping, "model.layers", [])
             noise_fmax = _get(mapping, "noise.maximum_frequency_hz")

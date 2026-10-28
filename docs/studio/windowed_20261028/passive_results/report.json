@@ -1,0 +1,120 @@
+{
+  "scope": "finite mixed records, R/L integration; NOT convergence certification",
+  "script_sha256": "3cbec803effcf7884bb0c2d4c4757615ecc740e95c1449833f5cb86295877a04",
+  "cases": {
+    "independent_quick": {
+      "output": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/passive_vector_energy_20261028_v1/independent_quick/experiment_1793177269582045669",
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "elapsed_s": 2.6041642855852842,
+      "manifest": {
+        "schema": "wavedispx-experiment/v1",
+        "request": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1,
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        },
+        "statuses": {
+          "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+          "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+        },
+        "elapsed_s": 2.6041642855852842,
+        "input_sha256": "394fa968808e9efc3047900b41443f8337dea7b6bccc0c333825bf5c865797d9",
+        "arrays_sha256": "85729d7066fa6fc03956ef71f86d888bafc6ec5bac12a023f3a6c4f50bec5c9e",
+        "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+        "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+        "implementation_sha256": {
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "c729518a145f96debd45a5e6718d1703651555dc8a9924cd08726b3005acfe8c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/build/solvers/forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+        }
+      }
+    },
+    "independent_extended": {
+      "output": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/passive_vector_energy_20261028_v1/independent_extended/experiment_1793177282184234591",
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "elapsed_s": 7.478229117579758,
+      "manifest": {
+        "schema": "wavedispx-experiment/v1",
+        "request": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1,
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        },
+        "statuses": {
+          "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+          "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+        },
+        "elapsed_s": 7.478229117579758,
+        "input_sha256": "4367592885de65c1dc374ec62ee6689dbaa80e80e7a49af24788249e5c4ef259",
+        "arrays_sha256": "2adc2c98fe3aa948ab102183bd1f1d0c079c8f2fccd4f4aad53a3596a044737c",
+        "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+        "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+        "implementation_sha256": {
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "c729518a145f96debd45a5e6718d1703651555dc8a9924cd08726b3005acfe8c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/build/solvers/forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+        }
+      }
+    },
+    "directed_extended": {
+      "output": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/passive_vector_energy_20261028_v1/directed_extended/experiment_1793177294659799467",
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "elapsed_s": 7.155929811298847,
+      "manifest": {
+        "schema": "wavedispx-experiment/v1",
+        "request": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1,
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        },
+        "statuses": {
+          "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+          "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+        },
+        "elapsed_s": 7.155929811298847,
+        "input_sha256": "654e65c8f4faad1b725cac82ca7242466881d4ef3ea698c583e22812c6ab9e07",
+        "arrays_sha256": "e22a10f37661a452c4fa30b0c8bcbd258ee66aa0cb9ca9a1ac6e406bd58d6397",
+        "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+        "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+        "implementation_sha256": {
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "c729518a145f96debd45a5e6718d1703651555dc8a9924cd08726b3005acfe8c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/build/solvers/forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+        }
+      }
+    }
+  }
+}

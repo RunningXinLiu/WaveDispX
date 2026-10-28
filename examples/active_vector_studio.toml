@@ -1,0 +1,74 @@
+[run]
+name = "active_vector_studio"
+mode = "active"
+output_directory = "../output_python/active_vector_studio"
+workers = 4
+frequency_block_size = 8
+source_block_size = 1
+radial_interpolation_step_m = 0.5
+store_source_responses = false
+
+[[model.layers]]
+thickness_m = 10.0
+vp_mps = 380.0
+vs_mps = 220.0
+density_kgm3 = 2000.0
+qp = inf
+qs = inf
+
+[[model.layers]]
+thickness_m = inf
+vp_mps = 760.0
+vs_mps = 440.0
+density_kgm3 = 2000.0
+qp = inf
+qs = inf
+
+[geometry.receivers]
+layout = "line"
+start_x_m = 5.0
+stop_x_m = 80.0
+spacing_m = 5.0
+y_m = 0.0
+
+[das]
+enabled = false
+geometry_mode = "uniform"
+gauge_length_m = 10.0
+measurement = "strain_rate"
+fiber_azimuth_deg = 0.0
+
+[active_source]
+x_m = 0.0
+y_m = 0.0
+component = "vector"
+force_amplitude = 1.0
+force_azimuth_deg = 45.0 # +X toward +Y
+force_inclination_deg = 35.0 # toward native Green +Z
+wavelet = "ricker"
+dominant_frequency_hz = 8.0
+maximum_frequency_hz = 32.0
+dt_s = 0.005
+record_duration_s = 4.0             # 0 = model/group-velocity automatic design
+
+[processing]
+correlation_normalization = "none"
+dispersion_method = "hankel"
+frequency_min_hz = 4.0
+frequency_max_hz = 18.0
+velocity_min_mps = 140.0
+velocity_max_mps = 580.0
+velocity_step_mps = 2.0
+distance_taper_fraction = 0.0
+zero_padding = 5.0
+radial_kernel_lookup_step = 0.002
+picker_smoothness = 0.3
+picker_maximum_jump_mps = 30.0
+picker_minimum_energy = 0.05
+rayleigh_modes = 3
+love_modes = 3
+
+[experiment]
+product = "energy_theory"
+waves = "both"
+theory_step_hz = 0.1

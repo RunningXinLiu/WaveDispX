@@ -1,5 +1,7 @@
 # 观测系统文件输入示例
 
+非均匀噪声源、可编辑线阵/不规则面阵CSV、逐窗振幅权重和CPU workers说明，见相邻[自定义输入包](../custom_geometry/README_CN.md)。
+
 这个目录给出一套可直接查看、上传和运行的观测系统：
 
 - `receivers.csv`：21 个接收器，`receiver_id` 用于人工识别，计算读取 `x_m,y_m`。
@@ -64,4 +66,4 @@ conda run -n seisloc wavedispx run examples/observation_system/active_selected_s
 conda run -n seisloc wavedispx run examples/observation_system/passive_poisson.toml
 ```
 
-`passive_poisson.toml` 的 48 源、120 s 用于演示文件与时间模型，不代表高收敛生产参数。需要稳定频散时，应把源数和独立窗数提高到正式案例的 192–384 源、600–1800 s。
+`passive_poisson.toml` 的48源、120 s用于演示文件与时间模型，不代表高收敛生产参数。增加源数和独立窗数后仍需固定其他条件检查收敛；192–384源、600–1800 s也不是通用保证。新H/V功率极化目前只支持独立平稳高斯源，不能直接与此Poisson例组合。Studio切换源布局/导入位置会保留已设极化和activity_file，必须核对活动表source_index对应的新坐标行顺序。

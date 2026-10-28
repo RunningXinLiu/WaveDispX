@@ -261,19 +261,29 @@ class ReceiverLineConfig:
 class ActiveSourceConfig:
     x_m: float
     y_m: float
-    component: Literal["vertical", "horizontal", "both"]
+    component: Literal["vertical", "horizontal", "both", "vector"]
     wavelet: Literal["ricker", "unit_impulse"]
     dominant_frequency_hz: float
     maximum_frequency_hz: float
     dt_s: float
     record_duration_s: float | None = None
+    force_amplitude: float = 1.0
+    force_azimuth_deg: float = 0.0
+    force_inclination_deg: float = 90.0
 
     @classmethod
     def from_root(cls, data: dict[str, Any]) -> "ActiveSourceConfig":
         source = _table(data, "active_source")
         component = str(source.get("component", "vertical")).lower()
-        if component not in {"vertical", "horizontal", "both"}:
-            raise ConfigError("active_source.component must be vertical, horizontal, or both")
+        if component not in {"vertical", "horizontal", "both", "vector"}:
+            raise ConfigError("active_source.component must be vertical, horizontal, both, or vector")
+        force_amplitude = _positive(source.get("force_amplitude", 1.0), "active_source.force_amplitude")
+        azimuth = float(source.get("force_azimuth_deg", 0.0))
+        inclination = float(source.get("force_inclination_deg", 90.0))
+        if not math.isfinite(azimuth) or not math.isfinite(inclination) or not -90 <= inclination <= 90:
+            raise ConfigError("force_azimuth_deg must be finite; force_inclination_deg must be within [-90,90]")
+        if component != "vector" and (force_amplitude != 1.0 or azimuth != 0.0 or inclination != 90.0):
+            raise ConfigError("non-default force direction/amplitude requires active_source.component='vector'")
         wavelet = str(source.get("wavelet", "ricker")).lower()
         if wavelet not in {"ricker", "unit_impulse"}:
             raise ConfigError(
@@ -307,6 +317,9 @@ class ActiveSourceConfig:
             maximum,
             dt,
             record_duration,
+            force_amplitude,
+            azimuth,
+            inclination,
         )
 
 
@@ -324,6 +337,9 @@ class AmbientSourceConfig:
     y_m: float | None = None
     coordinates_file: Path | None = None
     activity_file: Path | None = None
+    polarization: str = "legacy_xyz"
+    horizontal_power_fraction: float = 2.0 / 3.0
+    horizontal_azimuth_deg: float = 0.0
 
     @classmethod
     def from_root(cls, data: dict[str, Any], base_dir: Path) -> "AmbientSourceConfig":
@@ -345,6 +361,24 @@ class AmbientSourceConfig:
             )
 
         kwargs: dict[str, Any] = {}
+        polarization = str(source.get("polarization", "legacy_xyz"))
+        if polarization not in {"legacy_xyz", "independent_hv", "directed_hv"}:
+            raise ConfigError("ambient_sources.polarization must be legacy_xyz, independent_hv, or directed_hv")
+        fraction = float(source.get("horizontal_power_fraction", 2.0 / 3.0))
+        azimuth = float(source.get("horizontal_azimuth_deg", 0.0))
+        if not math.isfinite(fraction) or not 0 <= fraction <= 1 or not math.isfinite(azimuth):
+            raise ConfigError("horizontal_power_fraction must be in [0,1]; horizontal_azimuth_deg must be finite")
+        if polarization != "legacy_xyz" and component != "three_component":
+            raise ConfigError("source polarization weights require ambient_sources.component='three_component' (XYZ receivers)")
+        if polarization == "legacy_xyz" and (fraction != 2.0 / 3.0 or azimuth != 0):
+            raise ConfigError("legacy_xyz does not apply weights/direction; choose independent_hv or directed_hv")
+        if polarization == "independent_hv" and azimuth != 0:
+            raise ConfigError("independent_hv has no preferred azimuth; choose directed_hv")
+        if polarization != "legacy_xyz" and not bool(data.get("noise", {}).get("independent_sources", True)):
+            raise ConfigError("weighted source polarization v1 requires noise.independent_sources=true")
+        if polarization != "legacy_xyz" and data.get("noise", {}).get("temporal_model", "stationary_gaussian") != "stationary_gaussian":
+            raise ConfigError("weighted polarization v1 supports stationary_gaussian only; event-force catalogs are not yet implemented")
+        kwargs.update(polarization=polarization, horizontal_power_fraction=fraction, horizontal_azimuth_deg=azimuth)
         if layout == "annulus":
             inner = _positive(source.get("inner_radius_m"), "ambient_sources.inner_radius_m", allow_zero=True)
             outer = _positive(source.get("outer_radius_m"), "ambient_sources.outer_radius_m")

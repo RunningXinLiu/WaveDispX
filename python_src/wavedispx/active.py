@@ -49,6 +49,8 @@ class ActiveShotGather:
     distance_m: np.ndarray
     components: np.ndarray
     das_record: DASRecord | None = None
+    vector_xyz: np.ndarray | None = None
+    force_xyz: np.ndarray | None = None
 
     @property
     def horizontal_radial(self) -> np.ndarray:
@@ -199,7 +201,7 @@ def simulate_active_shot(
             rayleigh_modes=processing.rayleigh_modes,
             love_modes=(
                 processing.love_modes
-                if source.component in {"horizontal", "both"}
+                if source.component in {"horizontal", "both", "vector"}
                 else 0
             ),
         )
@@ -292,9 +294,12 @@ def simulate_active_shot(
             dt_s=source.dt_s,
             measurement=das.measurement,
         )
-    return ActiveShotGather(
-        time, receiver_x, receiver_y, distance, output, das_record
-    )
+    xyz = force = None
+    if source.component == "vector":
+        from .source_vector import force_vector, project_green_to_xyz
+        force = force_vector(source.force_amplitude, source.force_azimuth_deg, source.force_inclination_deg)
+        xyz = project_green_to_xyz(output, np.arctan2(receiver_y-source.y_m, receiver_x-source.x_m), force)
+    return ActiveShotGather(time, receiver_x, receiver_y, distance, output, das_record, xyz, force)
 
 
 def analyze_active_shot(config: RunConfig, shot: ActiveShotGather) -> ActiveAnalysis:
@@ -329,6 +334,11 @@ def analyze_active_shot(config: RunConfig, shot: ActiveShotGather) -> ActiveAnal
         "rz": (shot.vertical_radial, "radial"),
         "zz": (shot.vertical_vertical, "vertical"),
     }
+    if shot.vector_xyz is not None:
+        from .source_vector import project_green_to_rtz
+        az = np.arctan2(shot.receiver_y_m-config.active_source.y_m, shot.receiver_x_m-config.active_source.x_m)
+        r,t,z = np.moveaxis(project_green_to_rtz(shot.components,az,shot.force_xyz),-1,0)
+        component_data = {"rr": (r, "radial"), "tt": (t, "transverse"), "zz": (z, "vertical")}
     if config.das.enabled:
         if shot.das_record is None:
             raise ValueError("DAS is enabled but the active shot has no DAS record")
@@ -352,7 +362,9 @@ def analyze_active_shot(config: RunConfig, shot: ActiveShotGather) -> ActiveAnal
     }
     rayleigh = component_images["das"] if config.das.enabled else component_images["zz"]
     love = component_images["tt"]
-    if config.das.enabled:
+    if shot.vector_xyz is not None:
+        rayleigh_names = ("rr", "zz")
+    elif config.das.enabled:
         rayleigh_names = ("das",)
     elif config.active_source.component == "vertical":
         rayleigh_names = ("zz", "rz")

@@ -1,0 +1,26 @@
+{
+  "scope": "active/theory Qt rendering recheck only",
+  "cases": {
+    "active_vector": {
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "elapsed_s": 4.299224916001549
+    },
+    "vertical_vector": {
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "当前矢量源为纯垂直力，没有Love横向激发；可单独计算Love理论曲线。"
+      },
+      "elapsed_s": 1.6767555419937707
+    },
+    "theory_only": {
+      "statuses": {
+        "rayleigh": "未选择此波型。",
+        "love": "QED理论曲线已计算；不使用源、阵列或记录时长，不是频散能量。"
+      },
+      "elapsed_s": 0.15041662499425001
+    }
+  }
+}

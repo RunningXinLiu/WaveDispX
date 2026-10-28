@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-28",
+  "scope": "Studio products v1 implementation and controlled integration; NOT general physical convergence or HVSR reliability certification",
+  "tests": {
+    "passed": 117,
+    "seconds": 62.98,
+    "command": "PYTHONPATH=python_src conda run --no-capture-output -n seisloc pytest -q python_tests/test_config.py python_tests/test_noise.py python_tests/test_active.py python_tests/test_workflow.py python_tests/test_preflight.py python_tests/test_source_products.py python_tests/test_studio.py python_tests/test_studio_acceptance.py python_tests/test_studio_ux.py python_tests/test_desktop.py python_tests/test_plotting_axes.py --tb=short"
+  },
+  "legacy_active_energy_sha256": "e44cc12c2ca058c852e203765ac6f56889d992179365334ca398787723b871d3",
+  "server": "lx_lzf:/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028",
+  "server_report": "server_final/report.json",
+  "server_input_manifests": "server_final/manifests",
+  "ui": {
+    "actual_native_qt": true,
+    "logical_window": [
+      1728,
+      1084
+    ],
+    "dpr": 2,
+    "full_run": "ui_final/UI_PRODUCTS.json",
+    "context_redraw_recheck": "ui_render_fix/UI_PRODUCTS.json",
+    "notes": [
+      "ui/ is initial debug, not final manual evidence",
+      "ui_render_fix only reruns active/theory; HVSR full run is ui_final",
+      "Final post-screenshot edits add invalid-HVSR text and reject unsupported old entrypoints; covered by unit tests",
+      "Matplotlib hidden-canvas constrained-layout warnings remain in raw log; visible panels reviewed"
+    ]
+  },
+  "limitations": [
+    "DAS remains vertical-source only; no Love-DAS",
+    "New passive weighted modes stationary independent sources only; global shared horizontal direction",
+    "No per-source/event orientation catalog",
+    "HVSR log spread is window scatter, not confidence; incomplete reliability criteria",
+    "24-source 60 s examples are integration tests, not converged demonstration",
+    "New products no automatic picks or compare_methods",
+    "Old CLI / old stage UI explicitly reject new requests; use Studio or run_experiment"
+  ],
+  "files_sha256": {
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/artifacts.py": "8b89936a4757c0a8089d3fa9e38f1b9b1a23462677c4247bfd51af1b3c3c7f0e",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/desktop/app.py": "d38daa19ff3012b2be3d30f36caec91f120158b05c4f1d4a410ae1d39d43d5f1",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/desktop/studio.py": "53194a75bec15d8470c5053e800863dcde96a2e699060f3b56b452923d8c2a45",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/desktop/help_text.py": "ed3d4144653bc12b4b28aa3b7e159642d707340663f45732824b0bffeede4f3b",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/experiment.py": "c729518a145f96debd45a5e6718d1703651555dc8a9924cd08726b3005acfe8c",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/plotting.py": "f89863bf3754871b2a1bf660766d45fb43b18c09e8e9a51f7d1a33df2457dadd",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/preflight.py": "147b36dead0eefa41dec2ab46351466a829cb07d93b5132481745314ce47a2d5",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/survey_design.py": "e571972fcd15b70bff66f80b92dfaf998329f31f7a0213f494004b9b9b52420e",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/workflow_plotting.py": "55f3a018df9c26db2c4ea9650d6376687753f33059dd0f0f3733eac7f6dcbf97",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/cli.py": "bb62bf44e6a395cffb13e0f81a8a54709d7ee25edb744b9bebe40f2aa8b2378f",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_src/wavedispx/_dwm_core.cpython-312-darwin.so": "ac1d18496f696972bc1ec80b925b761501d57b01ec97bac1756079eff1ce9e6d",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/.wavedispx-tools/QEDispInv/bin/forward": "66d7427bcfcbd48641d5151dd7707bc7994692e1d7e2d92bc7846cf4abbc1e46",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/scripts/check_source_products.py": "c92ee7f4d532f39b67e82d9fffd680cf239fa940e1ee09e8801a50b9b3a52246",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/scripts/check_studio_products_ui.py": "a0e2dfbb84f3776b6209cc0a1ff320806d8e8fc1015d5019cbe9016d9dbc15f0",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_tests/test_source_products.py": "9ff2aead488d004c06da536eae0fa74656c592c99d628db845be7cacef1ed234",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/python_tests/test_studio_ux.py": "88344a11f87a3c7001ec80377ac3795bb5c51c2378e5c9827d4c36fdcdca45d1",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/examples/active_vector_studio.toml": "72c439a616136eb462b68d6d0975b9ccd575597475c5b8bacf5ee06f5c08eacf",
+    "/Volumes/lx_exFAT/PassiveFW_versionstable/examples/passive_hvsr_studio.toml": "63e7dd416d15c8be6e3ac3870c04be7e492b8dbf6a11570c8e85083d9b8db320"
+  }
+}

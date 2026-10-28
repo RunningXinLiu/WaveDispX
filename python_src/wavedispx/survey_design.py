@@ -243,7 +243,7 @@ def design_survey_window(
     )
     use_love = (
         config.mode == "active"
-        and config.active_source.component in {"horizontal", "both"}
+        and config.active_source.component in {"horizontal", "both", "vector"}
     )
     phase = (
         np.column_stack((theory.rayleigh_mps, theory.love_mps))
@@ -294,7 +294,7 @@ def design_survey_window(
     timing_love_modes = (
         config.processing.love_modes
         if (
-            (config.mode == "active" and config.active_source.component in {"horizontal", "both"})
+            (config.mode == "active" and config.active_source.component in {"horizontal", "both", "vector"})
             or (
                 config.mode == "passive"
                 and config.ambient_sources.component == "three_component"

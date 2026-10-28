@@ -207,6 +207,7 @@ def synthesize_mixed_noise_window_3c_band(
     return_source_events: bool = False,
     source_block_size: int | None = None,
     source_activity_weights: np.ndarray | None = None,
+    source_polarization=None,
 ) -> MixedNoiseWindow:
     """Mix physical global X/Y/Z random forces through five local Green terms.
 
@@ -237,6 +238,8 @@ def synthesize_mixed_noise_window_3c_band(
         frequency, 3 * source_count, config, rng
     )
     coefficients = flat_coefficients.reshape(source_count, 3, frequency.size)
+    from .source_vector import polarize_coefficients
+    coefficients = polarize_coefficients(coefficients, source_polarization)
     if source_activity_weights is not None:
         activity = np.asarray(source_activity_weights, dtype=np.float64).reshape(-1)
         if (

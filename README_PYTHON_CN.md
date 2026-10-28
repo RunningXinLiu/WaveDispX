@@ -1,5 +1,7 @@
 # WaveDispX Python/C++ 0.2
 
+推荐交互入口现为 **[WaveDispX Studio](docs/studio/README_zh.md)**：普通Qt窗口、源台/模型/结果同屏、可选R/L与HVSR、CPU workers及自定义CSV。运行`sh scripts/launch_studio.sh`（已有seisloc环境），或在配置好后端的源码环境中运行`python -m wavedispx.desktop.studio`。新`experiment`产品与旧分阶段/CLI流程有明确边界，不支持的组合会报错；下文旧网页/Notebook仍保留，不代表已同步全部新产品。
+
 当前操作入口：[新版完整操作手册（HTML）](docs/WaveDispX_USER_MANUAL_CN.html)。
 覆盖自动填参/重置、手动 f/v/df/dv、主动记录时长、被动 lag、line/array/CSV、DAS、
 完整窗口截图及本轮主动/被动实际结果。2026-09-17 全量回归：251 项通过；科学验证边界见证据登记。

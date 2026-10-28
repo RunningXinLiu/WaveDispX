@@ -1,0 +1,30 @@
+{
+  "schema": "wavedispx-experiment/v1",
+  "request": {
+    "product": "energy_theory",
+    "waves": "both",
+    "theory_step_hz": 0.1,
+    "hvsr_smoothing_b": 40.0,
+    "hvsr_floor_ratio": 1e-06
+  },
+  "statuses": {
+    "rayleigh": "当前观测响应为零或缺少对应分量；请检查源方向与接收方向。未生成有效能量图。",
+    "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+  },
+  "elapsed_s": 0.28607258293777704,
+  "input_sha256": "657735f94574f77cd15ca7d58df57d3fe3e01c7c7656f9368f552066e36a713e",
+  "arrays_sha256": "00c2b1d9389e5b639b9d93156f3f53050d54855ad926217ac0a2a8d779fbfbe1",
+  "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+  "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+  "implementation_sha256": {
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "c729518a145f96debd45a5e6718d1703651555dc8a9924cd08726b3005acfe8c",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+    "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/build/solvers/forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "scope": "read-only multi-station display; no new forward calculation",
+  "input": "/Volumes/lx_exFAT/PassiveFW_versionstable/docs/studio/products_v1_20261028/server_final/manifests/passive_directed_h/experiment_1793169186538740127/input.toml",
+  "snapshot_sha256": "7f5352b9b242a3e1d21d9f0c8bda386bcff169dcefd3bba4e1b3bf5b159b2ced",
+  "hvsr_arrays_sha256_before": "ae12f1051d91b192fcae3dd584ab87c89f1b4ef23999175241e55ce441af8f85",
+  "hvsr_arrays_sha256_after": "ae12f1051d91b192fcae3dd584ab87c89f1b4ef23999175241e55ce441af8f85",
+  "qt_geometry_click_station": 10,
+  "selected_overlay_stations": [
+    0,
+    10,
+    20,
+    30,
+    40
+  ],
+  "logical_window": [
+    1728,
+    1084
+  ],
+  "device_pixel_ratio": 2.0,
+  "runtime_output_override": "/Volumes/lx_exFAT/PassiveFW_versionstable/output_python/hvsr_interactive_demo",
+  "files_sha256": {
+    "python_src/wavedispx/desktop/studio.py": "8bd53dc665effd1514b0a82bfcff5330c30f335ce54f43f660b716a0a18f72c4",
+    "python_src/wavedispx/desktop/hvsr_view.py": "47b92f19243c24fb9b3680ba070af5284508de680ac52c505ff2cd0e66234330",
+    "scripts/show_hvsr_multistation.py": "e1736e63ecebd24cdd67ff787269b0976e56de4f9466941415aa24411c4108c6"
+  }
+}
