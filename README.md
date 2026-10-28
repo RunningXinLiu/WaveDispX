@@ -2,11 +2,13 @@
 
 从 **1D层状模型、震源与观测系统** 出发，模拟主动炮集或被动混合噪声，计算互相关与频散能量，并叠加 Rayleigh / Love 理论曲线。Python 组织实验，多线程 C++ 完成主要数值计算；Studio 使用原生 PySide6 界面，CPU 运行，无需 GPU。
 
-**[Studio 操作手册](docs/studio/README_zh.md)** · **[自定义台站与噪声源](examples/custom_geometry/README_CN.md)** · **[Notebook](notebooks/WaveDispX_workflow.ipynb)** · **[Classroom 下载](https://github.com/RunningXinLiu/WaveDispX/releases/tag/classroom-2026.10.27-rc1)** · **[反馈问题](https://github.com/RunningXinLiu/WaveDispX/issues)**
+**[Studio 下载](https://github.com/RunningXinLiu/WaveDispX/releases/tag/studio-2026.10.28-rc1)** · **[Studio 操作手册](docs/studio/README_zh.md)** · **[自定义台站与噪声源](examples/custom_geometry/README_CN.md)** · **[Notebook](notebooks/WaveDispX_workflow.ipynb)** · **[Classroom 下载](https://github.com/RunningXinLiu/WaveDispX/releases/tag/classroom-2026.10.27-rc1)** · **[反馈问题](https://github.com/RunningXinLiu/WaveDispX/issues)**
+
+开发者主页：[runningxinliu.github.io](https://runningxinliu.github.io/) · 联系：[xinliu_geo@outlook.com](mailto:xinliu_geo@outlook.com)。软件左上角可直接打开主页；「关于」单独感谢 Pan Lei 的 [QEDispInv](https://github.com/pan3rock/QEDispInv)，并保留上游来源。
 
 | 入口 | 适合做什么 | 如何获得 |
 |---|---|---|
-| **Studio 综合工作台** | 主动/被动、节点/DAS、Geometry、真实波形/NCF、R/L能量、可选HVSR | 本仓库源码运行；本轮未发布Studio独立安装包 |
+| **Studio 综合工作台** | 主动/被动、节点/DAS、Geometry、真实波形/NCF、R/L能量、可选HVSR | 四平台独立桌面试用包，亦可源码运行；见下文 |
 | **Classroom 教学版** | 交互层模型、QED或CPS理论曲线、ideal频域响应 | 已有四平台教学试用包，见下文；不是Studio安装包 |
 | **Notebook / Python API** | 分步骤修改输入、查看公式、编写可复现实验 | [Python/C++说明](README_PYTHON_CN.md)，新Studio产品请用对应实验接口 |
 
@@ -32,6 +34,21 @@
 
 ![CPU workers与分块输入：真实普通窗口截图](docs/studio/custom_inputs_20261028/ui_final/compute_options.png)
 
+### 下载 Studio 桌面试用版
+
+从[Studio Release](https://github.com/RunningXinLiu/WaveDispX/releases/tag/studio-2026.10.28-rc1)选择对应电脑的包：
+
+| 平台 | 文件 | 打开方式 |
+|---|---|---|
+| Apple芯片Mac | `WaveDispX-Studio-macos-arm64.tar.gz` | 解压打开`.app` |
+| Intel Mac | `WaveDispX-Studio-macos-x64.tar.gz` | 解压打开`.app` |
+| Windows 64位 | `WaveDispX-Studio-windows-x64.zip` | 完整解压，双击`.exe` |
+| Linux 64位 | `WaveDispX-Studio-linux-x64.tar.gz` | 完整解压运行同名程序；基线Ubuntu22.04 |
+
+无需安装Python、Conda或编译器。保留完整目录，不能只复制exe；另下载`WaveDispX-Studio-guide-zh.zip`查看中文说明与平台验收记录。`SHA256SUMS.txt`用于核对下载完整性。默认普通窗口，不自动全屏。**目前未签名、未公证，仅为桌面试用版**，不要全局关闭系统安全保护。
+
+四平台均完成8个小案例的实际GUI计算、数组对照与保存重读，以及默认主动兼容流程；这不是所有模型的科学收敛认证。[详细验收边界](docs/studio/PACKAGING_20261028_zh.md) · [安装与封装说明](packaging/studio/README_zh.md)。
+
 ### 从源码启动Studio
 
 已有项目环境可直接运行 `sh scripts/launch_studio.sh`（该便捷脚本使用本机名为`seisloc`的Conda环境）。在其他机器上，使用自己的独立Python ≥3.11环境，从仓库根目录执行：
@@ -41,7 +58,7 @@ python -m pip install -e '.[desktop]' matplotlib
 python -m wavedispx.desktop.studio --template examples/active_vector_studio.toml
 ```
 
-首次安装需要C++17编译器；pip会构建原生核心。**QED理论后端需另外准备，不包含在pip依赖中**：设置`QEDISPINV_FORWARD`为可执行文件绝对路径，或放到`.wavedispx-tools/QEDispInv/bin/forward`。固定源码与构建依赖见[原生后端构建说明](packaging/classroom/README_zh.md)，其中CMake的`forward`目标可单独构建；兼容流程的自动群速度估计还需配套群速度库，见[Python说明](README_PYTHON_CN.md)。缺少后端会明确报错，不静默换求解器。以上为源码启动方式，本轮没有新增依赖安装或全平台Studio安装验收。
+首次安装需要C++17编译器；pip会构建原生核心。**源码运行的理论后端需另外准备，不包含在pip依赖中**：设置`QEDISPINV_FORWARD`为可执行文件绝对路径，或放到`.wavedispx-tools/QEDispInv/bin/forward`。固定源码与构建依赖见[原生后端构建说明](packaging/classroom/README_zh.md)，其中CMake的`forward`目标可单独构建；兼容流程的自动群速度估计还需配套群速度库，见[Python说明](README_PYTHON_CN.md)。缺少后端会明确报错，不静默换求解器。以上仅为源码启动方式；独立桌面包已包含这些运行组件，不需要执行本节安装命令。
 
 1. 载入示例或打开TOML，修改模型与源台参数。
 2. 点击「检查与预览」，核对模型、Geometry和提示；自动建议是可修改的候选值，不保证收敛。

@@ -1,0 +1,31 @@
+name: Publish verified Studio 2026-10-28 packages
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/studio-packaging-20261028]
+    paths: [.github/workflows/studio-publish.yml]
+permissions:
+  actions: read
+  contents: write
+concurrency:
+  group: studio-2026-10-28-release-upload
+  cancel-in-progress: false
+jobs:
+  upload:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # One-time promotion of exact tested binaries; never rebuild or clobber.
+      - name: Verify original packages and publish trial release
+        run: >-
+          python packaging/studio/promote.py
+          --run 40681573877
+          --commit 59bd71c2b091d254cc07ad2d089c5d35d24b5edb
+          --tag studio-2026.10.28-rc1
