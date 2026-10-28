@@ -10,6 +10,24 @@ from wavedispx.app_service import load_template_mapping
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def test_about_button_preserves_inputs_and_reuses_dialog(window):
+    assert 'https://runningxinliu.github.io/' in window.author_link.text()
+    assert window.author_link.openExternalLinks()
+    assert 'QED' not in window.windowTitle() and 'CPS' not in window.windowTitle()
+    before = window.parameter_page.mapping()
+    workflow = window.workflow
+    window.about_button.click()
+    dialog = window._about_dialog
+    assert dialog.isVisible()
+    assert "xinliu_geo@outlook.com" in dialog.browser.toPlainText()
+    dialog.close()
+    window.about_button.click()
+    assert window._about_dialog is dialog and dialog.isVisible()
+    assert window.workflow is workflow
+    assert window.parameter_page.mapping() == before
+    dialog.close()
+
+
 @pytest.mark.parametrize("action", ["source_annulus", "source_line", "source_file"])
 def test_source_layout_keeps_physics_and_activity(window, monkeypatch, action):
     from wavedispx.desktop.app import QFileDialog

@@ -22,6 +22,8 @@ from wavedispx.plotting import _layer_steps
 from wavedispx.workflow_plotting import plot_workflow_observations
 from wavedispx.config import config_from_mapping
 from .studio_style import STUDIO_STYLE
+from .about import AboutDialog, AUTHOR_WEBSITE
+from .runtime import runtime_mapping
 from wavedispx.experiment import ExperimentRequest, run_experiment, save_experiment, wave_unavailable, theory_context
 
 
@@ -58,7 +60,7 @@ class StudioWindow(MainWindow):
         self.legacy.hide()
         self.dialogs = []
         self._page_dialogs = {}
-        self.setWindowTitle("WaveDispX Studio · CPU · QED")
+        self.setWindowTitle("WaveDispX Studio")
         self.setStyleSheet(STUDIO_STYLE)
         self.setMinimumSize(1180, 760)
         central = QWidget()
@@ -72,7 +74,12 @@ class StudioWindow(MainWindow):
         brand = QLabel("WaveDispX  Studio")
         brand.setObjectName("studioBrand")
         header_row.addWidget(brand)
-        subtitle = QLabel("波场正演与频散实验  /  CPU · QED")
+        self.author_link = QLabel(f'<a href="{AUTHOR_WEBSITE}" style="color:#bfdbfe;">runningxinliu.github.io</a>')
+        self.author_link.setObjectName("studioAuthorWebsite")
+        self.author_link.setOpenExternalLinks(True)
+        self.author_link.setToolTip("作者个人网站（点击在系统浏览器打开）")
+        header_row.addWidget(self.author_link)
+        subtitle = QLabel("波场正演与频散实验")
         subtitle.setObjectName("studioSubtitle")
         header_row.addWidget(subtitle)
         header_row.addStretch()
@@ -97,6 +104,11 @@ class StudioWindow(MainWindow):
         self.examples_button.setMenu(examples_menu)
         self.examples_button.setToolTip("载入示例会替换当前输入，不自动计算；请先保存当前参数。短记录例不代表收敛。")
         header_row.addWidget(self.examples_button)
+        self.about_button = QPushButton("关于")
+        self.about_button.setObjectName("studioAboutButton")
+        self.about_button.setToolTip("作者个人主页、联系邮箱、项目地址、软件版本与第三方致谢；打开窗口不会联网。")
+        self.about_button.clicked.connect(self.show_about)
+        header_row.addWidget(self.about_button)
         header_row.addWidget(full)
         root.addWidget(header)
         bar = QHBoxLayout()
@@ -110,7 +122,7 @@ class StudioWindow(MainWindow):
             bar.addWidget(widget)
         bar.addWidget(QLabel("计算目标"))
         self.product_combo = QComboBox()
-        for raw, label in (("legacy", "频散＋理论（兼容流程）"), ("energy_theory", "频散能量＋理论"), ("energy", "仅频散能量"), ("theory", "仅QED理论曲线")):
+        for raw, label in (("legacy", "频散＋理论（兼容流程）"), ("energy_theory", "频散能量＋理论"), ("energy", "仅频散能量"), ("theory", "仅理论曲线")):
             self.product_combo.addItem(label, raw)
         self.product_combo.setToolTip("日常频散计算目标。HVSR默认关闭，需要时在‘附加分析’中显式启用。仅理论使用独立的理论df。")
         self.product_combo.currentIndexChanged.connect(self._request_changed)
@@ -235,7 +247,7 @@ class StudioWindow(MainWindow):
         hint = QLabel("以下仅改变显示，不重算")
         hint.setObjectName("hint")
         result_controls.addWidget(hint)
-        self.overlay = QCheckBox("叠加 QED 曲线")
+        self.overlay = QCheckBox("叠加理论曲线")
         self.overlay.setChecked(True)
         self.overlay.toggled.connect(self.render_results)
         result_controls.addWidget(self.overlay)
@@ -350,7 +362,7 @@ class StudioWindow(MainWindow):
 
     def _load_mapping(self, mapping, base, message):
         try:
-            mapping = deepcopy(mapping)
+            mapping = runtime_mapping(mapping, base)
             mapping.setdefault("processing", {})["theory_solver"] = "qedisp"
             # Reject incomplete files before destroying the usable current case.
             request = ExperimentRequest.from_mapping(mapping)
@@ -494,6 +506,13 @@ class StudioWindow(MainWindow):
         path = PROJECT_ROOT / "examples" / filename
         self._load_mapping(load_template_mapping(path), path.parent, "已载入示例："+filename)
         self.validate_case(navigate=False)
+
+    def show_about(self):
+        if not hasattr(self, "_about_dialog"):
+            self._about_dialog = AboutDialog(self)
+        self._about_dialog.show()
+        self._about_dialog.raise_()
+        self._about_dialog.activateWindow()
 
     def show_studio_guide(self, path=None):
         dialog = QDialog(self)
@@ -722,7 +741,7 @@ class StudioWindow(MainWindow):
                 self._theory_context = context
                 self._dirty = False
                 self._set_ui_state("ready")
-                self.notice.setText("仅理论：检查模型与频率；不要求激发源、观测分量或记录时长。QED求根将在运行按钮后执行。")
+                self.notice.setText("仅理论：检查模型与频率；不要求激发源、观测分量或记录时长。理论求根将在运行按钮后执行。")
                 self.geometry_panel.show_placeholder("本次仅求理论曲线；不使用 Geometry 或源方向。")
                 fig, ax = plt.subplots(figsize=(4,3), layout="constrained")
                 for key,label,color in (("vp_mps","Vp","#ca8518"),("vs_mps","Vs","#117b96")):
@@ -789,7 +808,7 @@ class StudioWindow(MainWindow):
             ax.legend(fontsize=8)
             self.geometry_panel.set_figure(fig)
             mode = "主动" if config.mode == "active" else "被动"
-            self.notice.setText(f"{mode} · {config.processing.dispersion_method} · CPU正演 / QED理论曲线 · 输入审核通过（不等于收敛验收）" if ready else "输入审核有失败项，请打开审核详情")
+            self.notice.setText(f"{mode} · {config.processing.dispersion_method} · CPU正演 / 理论曲线 · 输入审核通过（不等于收敛验收）" if ready else "输入审核有失败项，请打开审核详情")
             d = self._review.diagnostics
             timing = (f"记录周期≈{d['record_duration_s']:.3g} s；1/T≈{d['physical_frequency_step_hz']:.3g} Hz"
                       if config.mode == "active" else
@@ -959,7 +978,7 @@ class StudioWindow(MainWindow):
                                  shading="nearest", cmap="turbo", vmin=0, vmax=1)
             if self.overlay.isChecked():
                 for mode in range(curves.shape[1]):
-                    ax.plot(image.frequency_hz, curves[:, mode], "--", lw=1.2, label=f"QED M{mode}")
+                    ax.plot(image.frequency_hz, curves[:, mode], "--", lw=1.2, label=f"Theory M{mode}")
                 ax.legend(loc="upper right")
             ax.set(xlabel="Frequency (Hz)", ylabel="Phase velocity (m/s)",
                    title=f"{title} | {self.workflow.config.mode} | {self.workflow.config.processing.dispersion_method}")
@@ -1140,7 +1159,7 @@ class StudioWindow(MainWindow):
             fig.colorbar(mesh,ax=ax,label="Normalized image")
         if curves is not None and (self.overlay.isChecked() or result.request.product == "theory"):
             for i in range(curves.shape[1]):
-                ax.plot(result.theory.frequency_hz,curves[:,i],"--",label=f"QED M{i}")
+                ax.plot(result.theory.frequency_hz,curves[:,i],"--",label=f"Theory M{i}")
             if curves.shape[1]:
                 ax.legend()
         ax.set(xlabel="Frequency (Hz)",ylabel="Phase velocity (m/s)",title=wave.title()+" | "+result.request.product)
@@ -1200,6 +1219,8 @@ def main():
     parser.add_argument("--screenshot", type=Path)
     args = parser.parse_args()
     app = QApplication.instance() or QApplication(sys.argv[:1])
+    from wavedispx.classroom.runtime import configure_ui_font
+    configure_ui_font(app)
     window = StudioWindow(args.template)
     window.show_windowed()
     if args.screenshot:

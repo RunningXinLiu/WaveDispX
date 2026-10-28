@@ -1,5 +1,6 @@
 """Explicit Studio products v1, separate from the legacy all-stage workflow."""
 from dataclasses import dataclass, field, asdict
+from copy import deepcopy
 from pathlib import Path
 import hashlib
 import json
@@ -168,7 +169,32 @@ def save_experiment(result, workflow, mapping):
     from .app_service import toml_dumps
     directory = Path(workflow.config.output_directory) / ("experiment_"+str(time.time_ns()))
     directory.mkdir(parents=True, exist_ok=False)
-    text = toml_dumps(mapping)
+    exported = deepcopy(mapping)
+    exported.setdefault("run", {})["output_directory"] = str(workflow.config.output_directory)
+    input_hashes = {}
+    # Bundle small external inputs with the result; relative paths must refer to
+    # the saved input.toml directory, not the template or app installation.
+    references = (
+        (("geometry", "receivers", "coordinates_file"), getattr(workflow.config, "receivers", None), "coordinates_file"),
+        (("ambient_sources", "coordinates_file"), getattr(workflow.config, "ambient_sources", None), "coordinates_file"),
+        (("ambient_sources", "activity_file"), getattr(workflow.config, "ambient_sources", None), "activity_file"),
+        (("noise", "psd_file"), getattr(workflow.config, "noise", None), "psd_file"),
+    )
+    for keys, config, attribute in references:
+        source = getattr(config, attribute, None)
+        if source is None:
+            continue
+        content = Path(source).read_bytes()
+        digest = hashlib.sha256(content).hexdigest()
+        relative = Path("inputs") / (digest[:12]+"-"+Path(source).name)
+        (directory/relative).parent.mkdir(exist_ok=True)
+        (directory/relative).write_bytes(content)
+        section = exported
+        for key in keys[:-1]:
+            section = section.setdefault(key, {})
+        section[keys[-1]] = relative.as_posix()
+        input_hashes[relative.as_posix()] = digest
+    text = toml_dumps(exported)
     (directory/"input.toml").write_text(text, encoding="utf-8")
     arrays = {}
     for name, image in result.images.items():
@@ -192,6 +218,7 @@ def save_experiment(result, workflow, mapping):
         arrays["hvsr_first_window_preview"] = workflow.hvsr_preview
     np.savez_compressed(directory/"arrays.npz", **arrays)
     metadata = {"schema": "wavedispx-experiment/v1", "request": asdict(result.request), "statuses": result.statuses,
+                "external_inputs_sha256": input_hashes,
                 "elapsed_s": result.elapsed_s, "input_sha256": hashlib.sha256(text.encode()).hexdigest(),
                 "arrays_sha256": hashlib.sha256((directory/"arrays.npz").read_bytes()).hexdigest(),
                 "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",

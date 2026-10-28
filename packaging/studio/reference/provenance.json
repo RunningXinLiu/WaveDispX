@@ -1,0 +1,891 @@
+{
+  "platform": "Linux-5.15.0-130-generic-x86_64-with-glibc2.31",
+  "cases": {
+    "active_vector": {
+      "input": {
+        "run": {
+          "name": "active_vector_studio",
+          "mode": "active",
+          "output_directory": "studio_packaging_reference_20261028_v1/active_vector",
+          "workers": 2,
+          "frequency_block_size": 8,
+          "source_block_size": 1,
+          "radial_interpolation_step_m": 0.5,
+          "store_source_responses": false
+        },
+        "model": {
+          "layers": [
+            {
+              "thickness_m": 10.0,
+              "vp_mps": 380.0,
+              "vs_mps": 220.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            },
+            {
+              "thickness_m": Infinity,
+              "vp_mps": 760.0,
+              "vs_mps": 440.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            }
+          ]
+        },
+        "geometry": {
+          "receivers": {
+            "layout": "line",
+            "start_x_m": 5.0,
+            "stop_x_m": 80.0,
+            "spacing_m": 5.0,
+            "y_m": 0.0
+          }
+        },
+        "das": {
+          "enabled": false,
+          "geometry_mode": "uniform",
+          "gauge_length_m": 10.0,
+          "measurement": "strain_rate",
+          "fiber_azimuth_deg": 0.0
+        },
+        "active_source": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "component": "vector",
+          "force_amplitude": 1.0,
+          "force_azimuth_deg": 45.0,
+          "force_inclination_deg": 35.0,
+          "wavelet": "ricker",
+          "dominant_frequency_hz": 8.0,
+          "maximum_frequency_hz": 32.0,
+          "dt_s": 0.005,
+          "record_duration_s": 4.0
+        },
+        "processing": {
+          "correlation_normalization": "none",
+          "dispersion_method": "hankel",
+          "frequency_min_hz": 4.0,
+          "frequency_max_hz": 18.0,
+          "velocity_min_mps": 140.0,
+          "velocity_max_mps": 580.0,
+          "velocity_step_mps": 2.0,
+          "distance_taper_fraction": 0.0,
+          "zero_padding": 5.0,
+          "radial_kernel_lookup_step": 0.002,
+          "picker_smoothness": 0.3,
+          "picker_maximum_jump_mps": 30.0,
+          "picker_minimum_energy": 0.05,
+          "rayleigh_modes": 3,
+          "love_modes": 3
+        },
+        "experiment": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1
+        }
+      },
+      "base_directory": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples",
+      "saved": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/studio_packaging_reference_20261028_v1/active_vector/experiment_1793185313625342382",
+      "elapsed_s": 0.979297524318099,
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      }
+    },
+    "passive_vector": {
+      "input": {
+        "run": {
+          "name": "passive_vector_energy_studio",
+          "mode": "passive",
+          "output_directory": "studio_packaging_reference_20261028_v1/passive_vector",
+          "workers": 2,
+          "frequency_block_size": 8,
+          "source_block_size": 8,
+          "radial_interpolation_step_m": 0.5,
+          "store_source_responses": false
+        },
+        "model": {
+          "layers": [
+            {
+              "thickness_m": 10.0,
+              "vp_mps": 380.0,
+              "vs_mps": 220.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            },
+            {
+              "thickness_m": Infinity,
+              "vp_mps": 760.0,
+              "vs_mps": 440.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            }
+          ]
+        },
+        "geometry": {
+          "receivers": {
+            "layout": "line",
+            "start_x_m": -100.0,
+            "stop_x_m": 100.0,
+            "spacing_m": 5.0,
+            "y_m": 0.0
+          }
+        },
+        "das": {
+          "enabled": false,
+          "geometry_mode": "uniform",
+          "gauge_length_m": 10.0,
+          "measurement": "strain_rate",
+          "fiber_azimuth_deg": 0.0
+        },
+        "ambient_sources": {
+          "component": "three_component",
+          "polarization": "independent_hv",
+          "horizontal_power_fraction": 0.6,
+          "horizontal_azimuth_deg": 0.0,
+          "layout": "annulus",
+          "count": 24,
+          "seed": 42,
+          "inner_radius_m": 250.0,
+          "outer_radius_m": 350.0,
+          "angular_sampling": "stratified"
+        },
+        "noise": {
+          "temporal_model": "stationary_gaussian",
+          "seed": 314159,
+          "duration_s": 60.0,
+          "dt_s": 0.01,
+          "window_s": 10.0,
+          "overlap": 0.0,
+          "psd_shape": "ricker",
+          "dominant_frequency_hz": 7.0,
+          "minimum_frequency_hz": 3.0,
+          "maximum_frequency_hz": 10.0,
+          "source_amplitude": 1.0,
+          "independent_sources": true,
+          "event_rate_hz": 0.4
+        },
+        "processing": {
+          "correlation_normalization": "spectral_whitening",
+          "dispersion_method": "phase_shift",
+          "frequency_min_hz": 3.5,
+          "frequency_max_hz": 10.0,
+          "velocity_min_mps": 150.0,
+          "velocity_max_mps": 580.0,
+          "velocity_step_mps": 2.0,
+          "distance_taper_fraction": 0.5,
+          "zero_padding": 8.0,
+          "radial_kernel_lookup_step": 0.002,
+          "picker_smoothness": 0.35,
+          "picker_maximum_jump_mps": 30.0,
+          "picker_minimum_energy": 0.05,
+          "rayleigh_modes": 3,
+          "love_modes": 3
+        },
+        "experiment": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1
+        }
+      },
+      "base_directory": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples",
+      "saved": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/studio_packaging_reference_20261028_v1/passive_vector/experiment_1793185317782387624",
+      "elapsed_s": 4.225136368535459,
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      }
+    },
+    "active_das_line": {
+      "input": {
+        "run": {
+          "name": "active_das_line_quick",
+          "mode": "active",
+          "output_directory": "studio_packaging_reference_20261028_v1/active_das_line",
+          "workers": 2,
+          "frequency_block_size": 8,
+          "source_block_size": 1,
+          "radial_interpolation_step_m": 0.5,
+          "store_source_responses": false
+        },
+        "model": {
+          "layers": [
+            {
+              "thickness_m": 10.0,
+              "vp_mps": 380.0,
+              "vs_mps": 220.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            },
+            {
+              "thickness_m": Infinity,
+              "vp_mps": 760.0,
+              "vs_mps": 440.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            }
+          ]
+        },
+        "geometry": {
+          "receivers": {
+            "layout": "line",
+            "start_x_m": 5.0,
+            "stop_x_m": 80.0,
+            "spacing_m": 5.0,
+            "y_m": 0.0
+          }
+        },
+        "das": {
+          "enabled": true,
+          "geometry_mode": "uniform",
+          "gauge_length_m": 8.0,
+          "measurement": "strain_rate",
+          "fiber_azimuth_deg": 0.0
+        },
+        "active_source": {
+          "x_m": 0.0,
+          "y_m": 0.0,
+          "component": "vertical",
+          "wavelet": "ricker",
+          "dominant_frequency_hz": 7.0,
+          "maximum_frequency_hz": 16.0,
+          "dt_s": 0.005,
+          "record_duration_s": 0.0
+        },
+        "processing": {
+          "correlation_normalization": "none",
+          "dispersion_method": "phase_shift",
+          "theory_solver": "disba",
+          "compare_methods": false,
+          "frequency_min_hz": 3.0,
+          "frequency_max_hz": 14.0,
+          "velocity_min_mps": 120.0,
+          "velocity_max_mps": 500.0,
+          "velocity_step_mps": 2.0,
+          "distance_taper_fraction": 0.2,
+          "zero_padding": 5.0,
+          "radial_kernel_lookup_step": 0.002,
+          "picker_smoothness": 0.3,
+          "picker_maximum_jump_mps": 30.0,
+          "picker_minimum_energy": 0.05,
+          "rayleigh_modes": 3,
+          "love_modes": 3
+        },
+        "experiment": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1
+        }
+      },
+      "base_directory": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples",
+      "saved": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/studio_packaging_reference_20261028_v1/active_das_line/experiment_1793185318098303938",
+      "elapsed_s": 0.17477450985461473,
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+      }
+    },
+    "passive_das_line": {
+      "input": {
+        "run": {
+          "name": "passive_das_line_quick",
+          "mode": "passive",
+          "output_directory": "studio_packaging_reference_20261028_v1/passive_das_line",
+          "workers": 2,
+          "frequency_block_size": 8,
+          "source_block_size": 8,
+          "radial_interpolation_step_m": 0.5,
+          "store_source_responses": false
+        },
+        "model": {
+          "layers": [
+            {
+              "thickness_m": 10.0,
+              "vp_mps": 380.0,
+              "vs_mps": 220.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            },
+            {
+              "thickness_m": Infinity,
+              "vp_mps": 760.0,
+              "vs_mps": 440.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            }
+          ]
+        },
+        "geometry": {
+          "receivers": {
+            "layout": "line",
+            "start_x_m": -100.0,
+            "stop_x_m": 100.0,
+            "spacing_m": 5.0,
+            "y_m": 0.0
+          }
+        },
+        "das": {
+          "enabled": true,
+          "geometry_mode": "uniform",
+          "gauge_length_m": 8.0,
+          "measurement": "strain_rate",
+          "fiber_azimuth_deg": 0.0
+        },
+        "ambient_sources": {
+          "component": "vertical",
+          "layout": "annulus",
+          "count": 48,
+          "seed": 42,
+          "inner_radius_m": 250.0,
+          "outer_radius_m": 350.0,
+          "angular_sampling": "stratified"
+        },
+        "noise": {
+          "temporal_model": "stationary_gaussian",
+          "seed": 314159,
+          "duration_s": 60.0,
+          "dt_s": 0.01,
+          "window_s": 10.0,
+          "overlap": 0.0,
+          "psd_shape": "ricker",
+          "dominant_frequency_hz": 7.0,
+          "minimum_frequency_hz": 3.0,
+          "maximum_frequency_hz": 10.0,
+          "source_amplitude": 1.0,
+          "independent_sources": true,
+          "event_rate_hz": 0.4
+        },
+        "processing": {
+          "correlation_normalization": "spectral_whitening",
+          "dispersion_method": "phase_shift",
+          "theory_solver": "disba",
+          "compare_methods": false,
+          "frequency_min_hz": 3.5,
+          "frequency_max_hz": 9.5,
+          "velocity_min_mps": 150.0,
+          "velocity_max_mps": 500.0,
+          "velocity_step_mps": 2.0,
+          "distance_taper_fraction": 0.5,
+          "zero_padding": 8.0,
+          "radial_kernel_lookup_step": 0.002,
+          "picker_smoothness": 0.35,
+          "picker_maximum_jump_mps": 30.0,
+          "picker_minimum_energy": 0.05,
+          "rayleigh_modes": 3,
+          "love_modes": 3
+        },
+        "experiment": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1
+        }
+      },
+      "base_directory": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples",
+      "saved": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/studio_packaging_reference_20261028_v1/passive_das_line/experiment_1793185318992756160",
+      "elapsed_s": 0.9364286512136459,
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+      }
+    },
+    "active_das_array": {
+      "input": {
+        "run": {
+          "name": "active_das_grid_quick",
+          "mode": "active",
+          "output_directory": "studio_packaging_reference_20261028_v1/active_das_array",
+          "workers": 2,
+          "frequency_block_size": 8,
+          "source_block_size": 1,
+          "radial_interpolation_step_m": 0.5,
+          "store_source_responses": false
+        },
+        "model": {
+          "layers": [
+            {
+              "thickness_m": 10.0,
+              "vp_mps": 380.0,
+              "vs_mps": 220.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            },
+            {
+              "thickness_m": Infinity,
+              "vp_mps": 760.0,
+              "vs_mps": 440.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            }
+          ]
+        },
+        "geometry": {
+          "receivers": {
+            "layout": "grid",
+            "start_x_m": 10.0,
+            "stop_x_m": 30.0,
+            "start_y_m": -10.0,
+            "stop_y_m": 10.0,
+            "spacing_x_m": 10.0,
+            "spacing_y_m": 10.0,
+            "distance_bin_m": 5.0
+          }
+        },
+        "das": {
+          "enabled": true,
+          "geometry_mode": "uniform",
+          "gauge_length_m": 8.0,
+          "measurement": "strain_rate",
+          "fiber_azimuth_deg": 0.0
+        },
+        "active_source": {
+          "x_m": -100.0,
+          "y_m": -30.0,
+          "component": "vertical",
+          "wavelet": "ricker",
+          "dominant_frequency_hz": 7.0,
+          "maximum_frequency_hz": 16.0,
+          "dt_s": 0.005,
+          "record_duration_s": 0.0
+        },
+        "processing": {
+          "correlation_normalization": "none",
+          "dispersion_method": "phase_shift",
+          "theory_solver": "disba",
+          "compare_methods": false,
+          "frequency_min_hz": 3.0,
+          "frequency_max_hz": 14.0,
+          "velocity_min_mps": 120.0,
+          "velocity_max_mps": 500.0,
+          "velocity_step_mps": 2.0,
+          "distance_taper_fraction": 0.2,
+          "zero_padding": 5.0,
+          "radial_kernel_lookup_step": 0.002,
+          "picker_smoothness": 0.3,
+          "picker_maximum_jump_mps": 30.0,
+          "picker_minimum_energy": 0.05,
+          "rayleigh_modes": 3,
+          "love_modes": 3
+        },
+        "experiment": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1
+        }
+      },
+      "base_directory": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples",
+      "saved": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/studio_packaging_reference_20261028_v1/active_das_array/experiment_1793185319227998928",
+      "elapsed_s": 0.1996141178533435,
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+      }
+    },
+    "passive_das_array": {
+      "input": {
+        "run": {
+          "name": "passive_das_grid_quick",
+          "mode": "passive",
+          "output_directory": "studio_packaging_reference_20261028_v1/passive_das_array",
+          "workers": 2,
+          "frequency_block_size": 8,
+          "source_block_size": 8,
+          "radial_interpolation_step_m": 0.5,
+          "store_source_responses": false
+        },
+        "model": {
+          "layers": [
+            {
+              "thickness_m": 10.0,
+              "vp_mps": 380.0,
+              "vs_mps": 220.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            },
+            {
+              "thickness_m": Infinity,
+              "vp_mps": 760.0,
+              "vs_mps": 440.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            }
+          ]
+        },
+        "geometry": {
+          "receivers": {
+            "layout": "grid",
+            "start_x_m": 10.0,
+            "stop_x_m": 30.0,
+            "start_y_m": -10.0,
+            "stop_y_m": 10.0,
+            "spacing_x_m": 10.0,
+            "spacing_y_m": 10.0,
+            "distance_bin_m": 5.0
+          }
+        },
+        "das": {
+          "enabled": true,
+          "geometry_mode": "uniform",
+          "gauge_length_m": 8.0,
+          "measurement": "strain_rate",
+          "fiber_azimuth_deg": 0.0
+        },
+        "ambient_sources": {
+          "component": "vertical",
+          "layout": "annulus",
+          "count": 48,
+          "seed": 42,
+          "inner_radius_m": 300.0,
+          "outer_radius_m": 380.0,
+          "angular_sampling": "stratified"
+        },
+        "noise": {
+          "temporal_model": "stationary_gaussian",
+          "seed": 314159,
+          "duration_s": 60.0,
+          "dt_s": 0.01,
+          "window_s": 10.0,
+          "overlap": 0.0,
+          "psd_shape": "ricker",
+          "dominant_frequency_hz": 5.0,
+          "minimum_frequency_hz": 2.5,
+          "maximum_frequency_hz": 8.0,
+          "source_amplitude": 1.0,
+          "independent_sources": true,
+          "event_rate_hz": 0.4
+        },
+        "processing": {
+          "correlation_normalization": "spectral_whitening",
+          "dispersion_method": "phase_shift",
+          "theory_solver": "disba",
+          "compare_methods": false,
+          "frequency_min_hz": 3.0,
+          "frequency_max_hz": 7.0,
+          "velocity_min_mps": 150.0,
+          "velocity_max_mps": 500.0,
+          "velocity_step_mps": 2.0,
+          "distance_taper_fraction": 0.5,
+          "zero_padding": 8.0,
+          "radial_kernel_lookup_step": 0.002,
+          "picker_smoothness": 0.35,
+          "picker_maximum_jump_mps": 30.0,
+          "picker_minimum_energy": 0.05,
+          "rayleigh_modes": 3,
+          "love_modes": 3
+        },
+        "experiment": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1
+        }
+      },
+      "base_directory": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples",
+      "saved": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/studio_packaging_reference_20261028_v1/passive_das_array/experiment_1793185319504286688",
+      "elapsed_s": 0.2703976100310683,
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+      }
+    },
+    "nonuniform_array": {
+      "input": {
+        "run": {
+          "name": "passive_switching_array",
+          "mode": "passive",
+          "output_directory": "studio_packaging_reference_20261028_v1/nonuniform_array",
+          "workers": 2,
+          "frequency_block_size": 8,
+          "source_block_size": 8,
+          "radial_interpolation_step_m": 0.5,
+          "store_source_responses": false
+        },
+        "model": {
+          "layers": [
+            {
+              "thickness_m": 10.0,
+              "vp_mps": 380.0,
+              "vs_mps": 220.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            },
+            {
+              "thickness_m": Infinity,
+              "vp_mps": 760.0,
+              "vs_mps": 440.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            }
+          ]
+        },
+        "geometry": {
+          "receivers": {
+            "layout": "file",
+            "coordinates_file": "receivers_irregular_array.csv",
+            "distance_bin_m": 5.0
+          }
+        },
+        "das": {
+          "enabled": false,
+          "geometry_mode": "uniform",
+          "gauge_length_m": 10.0,
+          "measurement": "strain_rate",
+          "fiber_azimuth_deg": 0.0
+        },
+        "ambient_sources": {
+          "component": "three_component",
+          "polarization": "independent_hv",
+          "horizontal_power_fraction": 0.6,
+          "horizontal_azimuth_deg": 0.0,
+          "layout": "file",
+          "count": 12,
+          "seed": 42,
+          "coordinates_file": "sources_two_clusters.csv",
+          "activity_file": "source_activity_switching.csv"
+        },
+        "noise": {
+          "temporal_model": "stationary_gaussian",
+          "seed": 314159,
+          "duration_s": 60.0,
+          "dt_s": 0.01,
+          "window_s": 10.0,
+          "overlap": 0.0,
+          "psd_shape": "ricker",
+          "dominant_frequency_hz": 7.0,
+          "minimum_frequency_hz": 3.0,
+          "maximum_frequency_hz": 10.0,
+          "source_amplitude": 1.0,
+          "independent_sources": true,
+          "event_rate_hz": 0.4
+        },
+        "processing": {
+          "correlation_normalization": "spectral_whitening",
+          "dispersion_method": "phase_shift",
+          "frequency_min_hz": 3.5,
+          "frequency_max_hz": 10.0,
+          "velocity_min_mps": 150.0,
+          "velocity_max_mps": 580.0,
+          "velocity_step_mps": 2.0,
+          "distance_taper_fraction": 0.5,
+          "zero_padding": 8.0,
+          "radial_kernel_lookup_step": 0.002,
+          "picker_smoothness": 0.35,
+          "picker_maximum_jump_mps": 30.0,
+          "picker_minimum_energy": 0.05,
+          "rayleigh_modes": 3,
+          "love_modes": 3
+        },
+        "experiment": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1
+        }
+      },
+      "base_directory": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/custom_geometry",
+      "saved": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/custom_geometry/studio_packaging_reference_20261028_v1/nonuniform_array/experiment_1793185320147114749",
+      "elapsed_s": 0.7138886423781514,
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      }
+    },
+    "hvsr": {
+      "input": {
+        "run": {
+          "name": "passive_hvsr_studio",
+          "mode": "passive",
+          "output_directory": "studio_packaging_reference_20261028_v1/hvsr",
+          "workers": 2,
+          "frequency_block_size": 8,
+          "source_block_size": 8,
+          "radial_interpolation_step_m": 0.5,
+          "store_source_responses": false
+        },
+        "model": {
+          "layers": [
+            {
+              "thickness_m": 10.0,
+              "vp_mps": 380.0,
+              "vs_mps": 220.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            },
+            {
+              "thickness_m": Infinity,
+              "vp_mps": 760.0,
+              "vs_mps": 440.0,
+              "density_kgm3": 2000.0,
+              "qp": Infinity,
+              "qs": Infinity
+            }
+          ]
+        },
+        "geometry": {
+          "receivers": {
+            "layout": "line",
+            "start_x_m": -100.0,
+            "stop_x_m": 100.0,
+            "spacing_m": 5.0,
+            "y_m": 0.0
+          }
+        },
+        "das": {
+          "enabled": false,
+          "geometry_mode": "uniform",
+          "gauge_length_m": 10.0,
+          "measurement": "strain_rate",
+          "fiber_azimuth_deg": 0.0
+        },
+        "ambient_sources": {
+          "component": "three_component",
+          "polarization": "directed_hv",
+          "horizontal_power_fraction": 0.6,
+          "horizontal_azimuth_deg": 45.0,
+          "layout": "annulus",
+          "count": 24,
+          "seed": 42,
+          "inner_radius_m": 250.0,
+          "outer_radius_m": 350.0,
+          "angular_sampling": "stratified"
+        },
+        "noise": {
+          "temporal_model": "stationary_gaussian",
+          "seed": 314159,
+          "duration_s": 60.0,
+          "dt_s": 0.01,
+          "window_s": 10.0,
+          "overlap": 0.0,
+          "psd_shape": "ricker",
+          "dominant_frequency_hz": 7.0,
+          "minimum_frequency_hz": 3.0,
+          "maximum_frequency_hz": 10.0,
+          "source_amplitude": 1.0,
+          "independent_sources": true,
+          "event_rate_hz": 0.4
+        },
+        "processing": {
+          "correlation_normalization": "none",
+          "dispersion_method": "phase_shift",
+          "frequency_min_hz": 3.5,
+          "frequency_max_hz": 10.0,
+          "velocity_min_mps": 150.0,
+          "velocity_max_mps": 580.0,
+          "velocity_step_mps": 2.0,
+          "distance_taper_fraction": 0.5,
+          "zero_padding": 8.0,
+          "radial_kernel_lookup_step": 0.002,
+          "picker_smoothness": 0.35,
+          "picker_maximum_jump_mps": 30.0,
+          "picker_minimum_energy": 0.05,
+          "rayleigh_modes": 3,
+          "love_modes": 3
+        },
+        "experiment": {
+          "product": "hvsr",
+          "waves": "both",
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        }
+      },
+      "base_directory": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples",
+      "saved": "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/examples/studio_packaging_reference_20261028_v1/hvsr/experiment_1793185320649015658",
+      "elapsed_s": 0.4642039183527231,
+      "statuses": {
+        "rayleigh": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+        "love": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+        "hvsr": "已计算逐台站原始XYZ谱比；窗间散度不是置信区间。"
+      }
+    }
+  },
+  "tolerances": {
+    "raw_and_energy_relative_L2": 1e-05,
+    "theory_atol_mps": 0.002,
+    "theory_rtol": 2e-06
+  },
+  "baseline_sha256": "e48711234ae385648cff410061d097581c12863a57fd9a216260fe8546c54d86",
+  "sources_sha256": {
+    "python_src/wavedispx/geometry.py": "8fa078364472fcccfce789fdaf7d8150d398f1a5ce8948879175d3609d7542ab",
+    "python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+    "python_src/wavedispx/forward.py": "e2e20fc7f440582f2c777fe498f32d7eb4882e78e00399ab981b1764d2a8ab3e",
+    "python_src/wavedispx/egf_reference.py": "6cbcad34dce3ed3bd038d3326857d5554586caa2e9eda6fe462de69d3b7b1a3e",
+    "python_src/wavedispx/core.py": "5abcc61c9320687a2651d57c552a6a4dee430ecc1591b0385ee5e2546a64fbaa",
+    "python_src/wavedispx/nnws_v2.py": "ac8eb7394ac9529a1befa65bef796f9833e2e4c56149787a5e6f079a59542d3b",
+    "python_src/wavedispx/experiment.py": "c729518a145f96debd45a5e6718d1703651555dc8a9924cd08726b3005acfe8c",
+    "python_src/wavedispx/quality.py": "0fbc6a95bfb66cceb33aa29648a0208bdcff9e2e247c0f38a6592e9b099969bd",
+    "python_src/wavedispx/dispersion_benchmark.py": "b22585d110cc4e28afeba1cbadf34bcf95efe235f3426bd397d682f3c40572fb",
+    "python_src/wavedispx/source_activity.py": "43e4e7cb57c93c0d868d0a645db760c65e5bab044a2133c10afd45717c8f7308",
+    "python_src/wavedispx/stacking.py": "2bd5046d511ce452bbd610b44009ac66a7f3c824eabc5987e1e7ba3958c5fea4",
+    "python_src/wavedispx/preflight.py": "147b36dead0eefa41dec2ab46351466a829cb07d93b5132481745314ce47a2d5",
+    "python_src/wavedispx/beamforming_selection.py": "9c8682fc073da52f5342a469a73bb3ed1729540344bd801b292bda26437694c3",
+    "python_src/wavedispx/das.py": "2f47e7fa54f98d4b947cadd4fec8657a41d5734c672e19409e38d62e29dd5d38",
+    "python_src/wavedispx/__main__.py": "2cdd23d4f5cd6c3b3e4cb690ad16d560637767b9ca5b2a3cf129fcc0a5ebc82b",
+    "python_src/wavedispx/notebook_support.py": "55fe843441efaf11e346ed9d0bba9ed25925e91e32c9ad33ec40b7ab2700685f",
+    "python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+    "python_src/wavedispx/runner.py": "d6ac10570d59a12074bd9a99b09768c9f24b6d8058cf39cbeaffb4a0f8505f92",
+    "python_src/wavedispx/plotting.py": "f89863bf3754871b2a1bf660766d45fb43b18c09e8e9a51f7d1a33df2457dadd",
+    "python_src/wavedispx/temporal_reweighting.py": "82f6f22ac959892f420b10c8ad48ddb1d53328152fc6ef66c4c3dd3cc9c8c82d",
+    "python_src/wavedispx/workflow_plotting.py": "55f3a018df9c26db2c4ea9650d6376687753f33059dd0f0f3733eac7f6dcbf97",
+    "python_src/wavedispx/cli.py": "bb62bf44e6a395cffb13e0f81a8a54709d7ee25edb744b9bebe40f2aa8b2378f",
+    "python_src/wavedispx/survey_design.py": "e571972fcd15b70bff66f80b92dfaf998329f31f7a0213f494004b9b9b52420e",
+    "python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+    "python_src/wavedispx/source_selection.py": "680463aac29a33e2e26e4b3bc203cb794204b912b303911d227be7428cac3855",
+    "python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+    "python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+    "python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+    "python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+    "python_src/wavedispx/pair_proxy_selection.py": "8b1bcccc2b331df7a7025e5f6a44a6555bb47920d0c420fc0cb7725e956db7ac",
+    "python_src/wavedispx/__init__.py": "fbae408b0441efae3127577c911cf0ea168da49291d65a54df80aa8b48dec2cb",
+    "python_src/wavedispx/app_service.py": "1eca9805d47cf56b071226b47e238fe1a431da66bb3ee4414636613207df2f40",
+    "python_src/wavedispx/pair_tau_p_selection.py": "0ccf169f67022769dedfb96e95eda8f0f8d8f178e81cbdfe079e3117ca46e5f5",
+    "python_src/wavedispx/workflow.py": "d02e6f815900f34874140b187abf69a6faddd29fd23419d573c9f9d281c5f0b5",
+    "python_src/wavedispx/nnws.py": "ae470bd6518a69f3c5d5f51f90a4b78a0ade047ce8a1eb02e20b22e811700ff6",
+    "python_src/wavedispx/nnws_qc.py": "bc295c3dabf38d32877000fb1b65f0e809a356cf4094457e538f1603adfe3d69",
+    "python_src/wavedispx/supervised_oracle.py": "e138f09214b1121956149c595a707e11aeeb61ce57f4b97e058ea3601905a47a",
+    "python_src/wavedispx/spz_selection.py": "537f3c6c2c38927fa06d0cd7d4e2ef63223b7b585b55873305d2a643195d7ab5",
+    "python_src/wavedispx/artifacts.py": "8b89936a4757c0a8089d3fa9e38f1b9b1a23462677c4247bfd51af1b3c3c7f0e",
+    "python_src/wavedispx/desktop/__init__.py": "e7798d8940c964ac07a79498987b6edc7fd67afab66bef8d1d3179659519012b",
+    "python_src/wavedispx/desktop/bundle_cases.py": "b7e23dd60d62b6b63afe1d92e25944f8a7ea630a814430232f7a6eb7a4b70591",
+    "python_src/wavedispx/desktop/studio_style.py": "04e5799717121fab483d36263ca7ba379d48725efd57e25850e213dfef3d3886",
+    "python_src/wavedispx/desktop/config_editor.py": "844717804678ce48dfa717a89f67c30dc08e0f328d42cda14005155911e369e0",
+    "python_src/wavedispx/desktop/studio.py": "724a69cc4cfa8a8cff025164894bc1ba98f2a240a65a9a0ee066206921eaacc3",
+    "python_src/wavedispx/desktop/__main__.py": "9965707164d4d8509254e3862f3fa9f5bae92a8619572479c07a44ce4cec4a51",
+    "python_src/wavedispx/desktop/help_text.py": "04afa540e3c0bdfe372f24a6b3df325b53702a953a26f41c8af9928a50c86603",
+    "python_src/wavedispx/desktop/about.py": "4013e595afef24b265c4f5da0358b079f36fd9c3e0c687526c9ae1d597fc4f9d",
+    "python_src/wavedispx/desktop/hvsr_view.py": "47b92f19243c24fb9b3680ba070af5284508de680ac52c505ff2cd0e66234330",
+    "python_src/wavedispx/desktop/app.py": "a99abd9f0d57241bc25f223dc3b702af227a26ad3256c25a161c540da675cd9d",
+    "python_src/wavedispx/desktop/launcher.py": "720ba91ca8b1e9a4aa53c29b4ef898c1f7387f29628a41b3c998a6c26a77197f",
+    "python_src/wavedispx/desktop/runtime.py": "34b32e3f9facda69c737ce9add3d8b6de6ac545cb5742a1ff9fffc41dbd6b1f1",
+    "python_src/wavedispx/desktop/bundle_check.py": "e5d3eafbb748e4b3d4c0d4be605d7533e7574285181af81a050445da4ff4d3ba",
+    "python_src/wavedispx/classroom/app.py": "0a206a74fbc2c6fc9eb0204d295aea9386fcfdb4763ed9a67a223c36e5f148c5",
+    "python_src/wavedispx/classroom/__init__.py": "3e2eb4871c74a4770153f285fded9de57bec194728b81f5889cbb56a7213a596",
+    "python_src/wavedispx/classroom/help_text.py": "e6960404406801cc48333643f13333d551bf3b320b7a49445d4abb7fae36eadb",
+    "python_src/wavedispx/classroom/runtime.py": "9acd05415d7909ffc645e2c993a40377bb75b51dbacf6c6937a64f1da405c1b2",
+    "python_src/wavedispx/classroom/engine.py": "31a24ee1de4c3eafadb323d56515a26f55afa302c891b3bdf0c16b61a275c7bc",
+    "python_src/wavedispx/classroom/bundle_check.py": "363e0d6a46163301ecdc24c52721376ec6e4ab7f26be1562031a3503a4d24682",
+    "python_src/wavedispx/classroom/plotting.py": "2a353c9fe9762fdb19eee0eb2c316ee13bdd424b5090dc585bcafb6d3e432b12",
+    "python_src/wavedispx/classroom/qt_runtime.py": "f5e0ae746597eb931e658477ad725292c5807f7548ca730a3bbd8982157c6a94",
+    "python_src/wavedispx/processing/ftan.py": "923fd5f25e72b1b9d6e76d07f3f81d099cb2f7b81640d6f63843b8f0bbd9f624",
+    "python_src/wavedispx/processing/array_dispersion.py": "55d7bda3dea77371bc01e8306e3271c559c3ffcdeebebf280165f8f3751b26c8",
+    "python_src/wavedispx/processing/dispersion.py": "66a6baa2ea7c96d63ed106ecd828be1d193f5cd39942c373f0abbe2e8818b862",
+    "python_src/wavedispx/processing/ncf.py": "0cf4fdcb300c7623f8ece9d674964ab9bf6bd1008b407f39c0abecec9806b84a",
+    "python_src/wavedispx/processing/__init__.py": "5742cc4adf239b97a0b826e030eaa1d86290210801e566a6ec61f0b262428f6a",
+    "python_src/wavedispx/processing/picking.py": "45b6fb248f8bcebc750273180e8c54dd73875476d6f4683ca3cc3d3d8b5842fe",
+    "python_src/wavedispx/processing/qedisp.py": "dd719d5f753a8ac7f492e36f3f2a0681a5aaa03e156b9b6c8122b81c2cbbc197",
+    "python_src/wavedispx/processing/theory.py": "043b233340ed91fe693a670f2d6c7d7590f14fd5fbd25490627a9ac9f9e05453",
+    "python_src/wavedispx/ui/__init__.py": "a87a8a9d0d68adeb359e3f7c2ab6c66c1f6de65e81614908769331aeeaf56602",
+    "python_src/wavedispx/ui/app.py": "5cb69d276f48e2498d6f1158e63a6695adead4fff605752aaa02d68293d2558e",
+    "python_src/wavedispx/ui/launcher.py": "98141f5c995394649cb75cb9708fbb42f0eae4f678cd880c30591f62d9f1ff74"
+  }
+}

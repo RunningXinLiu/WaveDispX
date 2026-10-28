@@ -1,0 +1,370 @@
+{
+  "passed": true,
+  "platform": "Linux-5.15.0-130-generic-x86_64-with-glibc2.31",
+  "cases": {
+    "active_vector": {
+      "passed": true,
+      "elapsed_s": 6.1730977995321155,
+      "relative_L2": {
+        "rayleigh_energy": 0.0,
+        "love_energy": 0.0,
+        "shot_basis": 0.0,
+        "shot_xyz": 0.0
+      },
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "manifest": {
+        "schema": "wavedispx-experiment/v1",
+        "request": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1,
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        },
+        "statuses": {
+          "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+          "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+        },
+        "external_inputs_sha256": {},
+        "elapsed_s": 0.7883224934339523,
+        "input_sha256": "489ff5c686380057897107189dc81cb87a97da540cf96766796aef7db5a3bb7a",
+        "arrays_sha256": "31eb9d313456950bc70a83a60cd113839261b3b8596b28616b2e486a751a4d70",
+        "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+        "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+        "implementation_sha256": {
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "f4bfad95d30e7966696d48a4a3ef9a3562fc742dbe22c4786491260da876db6c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/build/solvers/forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+        }
+      }
+    },
+    "passive_vector": {
+      "passed": true,
+      "elapsed_s": 4.587095202878118,
+      "relative_L2": {
+        "rayleigh_energy": 0.0,
+        "love_energy": 0.0,
+        "noise_preview": 0.0,
+        "rr_ncf": 0.0,
+        "tt_ncf": 0.0,
+        "zz_ncf": 0.0
+      },
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "manifest": {
+        "schema": "wavedispx-experiment/v1",
+        "request": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1,
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        },
+        "statuses": {
+          "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+          "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+        },
+        "external_inputs_sha256": {},
+        "elapsed_s": 2.3809676030650735,
+        "input_sha256": "a1d3d95ee29586446e5bdb4ac7b822515c86e57c5f8b8aecf37b424af882dbb7",
+        "arrays_sha256": "85729d7066fa6fc03956ef71f86d888bafc6ec5bac12a023f3a6c4f50bec5c9e",
+        "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+        "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+        "implementation_sha256": {
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "f4bfad95d30e7966696d48a4a3ef9a3562fc742dbe22c4786491260da876db6c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/build/solvers/forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+        }
+      }
+    },
+    "active_das_line": {
+      "passed": true,
+      "elapsed_s": 2.5264459354802966,
+      "relative_L2": {
+        "rayleigh_energy": 0.0,
+        "shot_basis": 0.0,
+        "shot_das": 0.0
+      },
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+      },
+      "manifest": {
+        "schema": "wavedispx-experiment/v1",
+        "request": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1,
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        },
+        "statuses": {
+          "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+          "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+        },
+        "external_inputs_sha256": {},
+        "elapsed_s": 0.4066941048949957,
+        "input_sha256": "0d506b0370f61a1ad8f288c943b35122696538e27b79647af0918b22442fe698",
+        "arrays_sha256": "986c90a193a5d812eacf24d3152ca762c76f2f0290cd1828c810d33874244167",
+        "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+        "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+        "implementation_sha256": {
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "f4bfad95d30e7966696d48a4a3ef9a3562fc742dbe22c4786491260da876db6c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/build/solvers/forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+        }
+      }
+    },
+    "passive_das_line": {
+      "passed": true,
+      "elapsed_s": 3.672942377626896,
+      "relative_L2": {
+        "rayleigh_energy": 0.0,
+        "noise_preview": 0.0,
+        "das_ncf": 0.0
+      },
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+      },
+      "manifest": {
+        "schema": "wavedispx-experiment/v1",
+        "request": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1,
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        },
+        "statuses": {
+          "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+          "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+        },
+        "external_inputs_sha256": {},
+        "elapsed_s": 1.7018944593146443,
+        "input_sha256": "f8b179027292b7dc18d3130eaebfc2d5149030a23a611d26dff22149d372ca1a",
+        "arrays_sha256": "6213ebeb368452ee404def5b2fe083d453a42a4e277f85f01f28e83ca3dac1b1",
+        "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+        "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+        "implementation_sha256": {
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "f4bfad95d30e7966696d48a4a3ef9a3562fc742dbe22c4786491260da876db6c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/build/solvers/forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+        }
+      }
+    },
+    "active_das_array": {
+      "passed": true,
+      "elapsed_s": 3.060521414503455,
+      "relative_L2": {
+        "rayleigh_energy": 0.0,
+        "shot_basis": 0.0,
+        "shot_das": 0.0
+      },
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+      },
+      "manifest": {
+        "schema": "wavedispx-experiment/v1",
+        "request": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1,
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        },
+        "statuses": {
+          "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+          "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+        },
+        "external_inputs_sha256": {},
+        "elapsed_s": 0.4926188047975302,
+        "input_sha256": "88ddc526c74c9ce53b4473dd9bc9a7dd83feefafbebecaf37580417330f9700a",
+        "arrays_sha256": "aac8e43c16d1f865c18729bc1d5a2c4728990bf87fd021e9af0437d3ca46705c",
+        "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+        "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+        "implementation_sha256": {
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "f4bfad95d30e7966696d48a4a3ef9a3562fc742dbe22c4786491260da876db6c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/build/solvers/forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+        }
+      }
+    },
+    "passive_das_array": {
+      "passed": true,
+      "elapsed_s": 2.9446524381637573,
+      "relative_L2": {
+        "rayleigh_energy": 0.0,
+        "noise_preview": 0.0,
+        "das_ncf": 0.0
+      },
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+      },
+      "manifest": {
+        "schema": "wavedispx-experiment/v1",
+        "request": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1,
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        },
+        "statuses": {
+          "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+          "love": "当前 DAS 路径仅支持垂直源；尚未实现/验收 Love-DAS。可另算 Love 理论曲线，不能替代 DAS 能量。"
+        },
+        "external_inputs_sha256": {},
+        "elapsed_s": 1.41537556797266,
+        "input_sha256": "7ac41c12566b0341209d06711a160c255ebd6783e4c45a87a4385bf90c7d42fc",
+        "arrays_sha256": "5dd5c6afc60c35b78eb64ee1ef50563e3b6f9f682deabf80a352ff4ed45e4df0",
+        "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+        "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+        "implementation_sha256": {
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "f4bfad95d30e7966696d48a4a3ef9a3562fc742dbe22c4786491260da876db6c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/build/solvers/forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+        }
+      }
+    },
+    "nonuniform_array": {
+      "passed": true,
+      "elapsed_s": 3.5296041695401073,
+      "relative_L2": {
+        "rayleigh_energy": 0.0,
+        "love_energy": 0.0,
+        "noise_preview": 0.0,
+        "rr_ncf": 0.0,
+        "tt_ncf": 0.0,
+        "zz_ncf": 0.0
+      },
+      "statuses": {
+        "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+        "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+      },
+      "manifest": {
+        "schema": "wavedispx-experiment/v1",
+        "request": {
+          "product": "energy_theory",
+          "waves": "both",
+          "theory_step_hz": 0.1,
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        },
+        "statuses": {
+          "rayleigh": "已计算观测能量；并非纯模态分离，也不代表数值收敛。",
+          "love": "已计算观测能量；并非纯模态分离，也不代表数值收敛。"
+        },
+        "external_inputs_sha256": {
+          "inputs/61a8ff3d44cd-receivers_irregular_array.csv": "61a8ff3d44cdfee34d37cffb322b63d5d994b810bdf6e511c3ea0450fd336b88",
+          "inputs/bd34cdb1005c-sources_two_clusters.csv": "bd34cdb1005c86dc77ce6ee27c63842c571ad2fb4ebdb10d500d8cd4196ebb84",
+          "inputs/a72f59be9c4b-source_activity_switching.csv": "a72f59be9c4bfa9ec14fab35450caa1dbc9aec43b4a31bb2c8678af7bae8d45a"
+        },
+        "elapsed_s": 1.4967342605814338,
+        "input_sha256": "ee35f8ce3418075e58c11ca754d05818f00a6a52f2ee39f4c822c239651ca1c2",
+        "arrays_sha256": "9a35cef11fa8b78c0d08a3e36e61ff8d9c9e6960ef0778295576633950343fe1",
+        "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+        "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+        "implementation_sha256": {
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "f4bfad95d30e7966696d48a4a3ef9a3562fc742dbe22c4786491260da876db6c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/build/solvers/forward": "caed7501cd06140ad72c9a959b61cbd02e34cbf7cd4474af26e5b7f7d55fbff8"
+        }
+      }
+    },
+    "hvsr": {
+      "passed": true,
+      "elapsed_s": 4.108622376807034,
+      "relative_L2": {
+        "hvsr_mean": 0.0,
+        "hvsr_scatter": 0.0
+      },
+      "statuses": {
+        "rayleigh": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+        "love": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+        "hvsr": "已计算逐台站原始XYZ谱比；窗间散度不是置信区间。"
+      },
+      "manifest": {
+        "schema": "wavedispx-experiment/v1",
+        "request": {
+          "product": "hvsr",
+          "waves": "both",
+          "theory_step_hz": 0.1,
+          "hvsr_smoothing_b": 40.0,
+          "hvsr_floor_ratio": 1e-06
+        },
+        "statuses": {
+          "rayleigh": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+          "love": "本次只计算节点HVSR，没有请求频散图；HVSR不是Rayleigh椭圆率。",
+          "hvsr": "已计算逐台站原始XYZ谱比；窗间散度不是置信区间。"
+        },
+        "external_inputs_sha256": {},
+        "elapsed_s": 1.6654857154935598,
+        "input_sha256": "1657ccc33a19f7de9106f1defdc4dee1ad693843c2406c4aba9e53d7ab996cc2",
+        "arrays_sha256": "0006d661eefa53153970c7ed54bbf53f7b6aac2391b11499bcd102df340cc8be",
+        "coordinate_convention": "+X toward +Y azimuth; Z uses native Green sign; no ENU/NED inference",
+        "hvsr_note": "full-duration raw XYZ window log statistics; not NCF; log_std is scatter not confidence; NaN marks invalid bins",
+        "implementation_sha256": {
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/experiment.py": "f4bfad95d30e7966696d48a4a3ef9a3562fc742dbe22c4786491260da876db6c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/source_vector.py": "b0d3173813c8ab3c0a0627169a205f77718cdb68f2a9d763d1aee69d2713d4da",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/hvsr.py": "e3b49080a80ed254b0aa7ec738c477c9b552b395e35bbab4460f612a689f65f1",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/active.py": "55d1d1c1ee2d82a3467d5ea5bc9a3510add5cb5bc6ed675d59b87053fb6e1ad5",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/noise.py": "0d2e00dbec351b76313c162eb36c323d6a78fc091e99735f0db873fa2b32fe48",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/passive.py": "a7d17e5e891c9d3b78af2be27b8ef23a9dba1ce617ef789e570d7e39d7a45f13",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/config.py": "b627269ba56f027a974cf5187580cb6c7af6920dc7ad96874547e5d0637ecc5c",
+          "/storage/HOME/yaolab/liuxin/wavedispx_classroom_build_20261027/studio_products_20261028/python_src/wavedispx/_dwm_core.cpython-313-x86_64-linux-gnu.so": "bf50a128f5f752d509e025f0e168ba3534b82390afd1960f77cc698ab0ae7ae4"
+        }
+      }
+    }
+  },
+  "legacy_active_default": "passed"
+}

@@ -75,7 +75,8 @@ from wavedispx.workflow_plotting import (
 from .config_editor import ConfigTreeEditor
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+from .runtime import resource_root
+PROJECT_ROOT = resource_root()
 
 
 def source_layout_mapping(current, **layout):

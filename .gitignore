@@ -46,3 +46,9 @@ venv/
 /classroom-delivery-20261027/
 
 /classroom-delivery-20261027.zip
+
+# Studio bundles and build-time provenance; curated reference/QC is explicit.
+/studio-release/
+/studio-smoke-output/
+/native-build/
+/packaging/studio/build_manifest.json
